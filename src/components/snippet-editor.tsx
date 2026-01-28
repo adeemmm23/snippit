@@ -4,12 +4,20 @@ import { Textarea } from "./ui/textarea";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Delete02Icon,
+  Copy01Icon,
+  Loading03Icon,
+} from "@hugeicons/core-free-icons";
 
 export function SnippetEditor() {
   const [template, setTemplate] = useState(
     "Hello [User], we want to inform you about [Subject]. Your [Status] has been updated.",
   );
   const [variables, setVariables] = useState<Record<string, string>>({});
+  const [copied, setCopied] = useState(false);
 
   // Extract variables from template
   useEffect(() => {
@@ -38,6 +46,29 @@ export function SnippetEditor() {
       preview = preview.replace(regex, value || `[${name}]`);
     });
     return preview;
+  };
+
+  // Handle copy to clipboard
+  const handleCopy = async () => {
+    const output = renderPreview();
+    await navigator.clipboard.writeText(output);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Handle clear template
+  const handleClear = () => {
+    setTemplate("");
+    setVariables({});
+  };
+
+  // Handle reset variables
+  const handleResetVariables = () => {
+    const resetVars: Record<string, string> = {};
+    Object.keys(variables).forEach((key) => {
+      resetVars[key] = "";
+    });
+    setVariables(resetVars);
   };
 
   // Render template with highlighted variables
@@ -91,39 +122,68 @@ export function SnippetEditor() {
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Side - Template Editor */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* Left Side - Combined Editor */}
+          <div className="lg:col-span-2">
             <Card className="p-6">
-              <Label htmlFor="template" className="text-lg font-semibold mb-2">
-                Template Editor
-              </Label>
-              <p className="text-sm text-gray-500 mb-4">
-                Use [VariableName] to create variables
-              </p>
+              {/* Header with buttons */}
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <Label htmlFor="template" className="text-lg font-semibold">
+                    Snippet Editor
+                  </Label>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Use [VariableName] to create variables
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleClear}
+                    className="gap-2"
+                  >
+                    <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
+                    Clear
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopy}
+                    className="gap-2"
+                  >
+                    <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
+                    {copied ? "Copied!" : "Copy"}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Template Editor */}
               <Textarea
                 id="template"
                 value={template}
                 onChange={(e) => setTemplate(e.target.value)}
-                className="min-h-[200px] font-mono text-base"
+                className="min-h-[200px] font-mono text-base mb-6"
                 placeholder="Type your message template here..."
               />
-            </Card>
 
-            {/* Preview with Highlights */}
-            <Card className="p-6">
-              <Label className="text-lg font-semibold mb-2">
-                Template Preview (with highlights)
-              </Label>
-              <div className="min-h-[100px] p-4 bg-gray-50 rounded-md border text-base leading-relaxed">
-                {renderTemplateWithHighlights()}
+              {/* Preview with Highlights */}
+              <div className="mb-4">
+                <Label className="text-sm font-semibold mb-2 block">
+                  Preview (with highlights)
+                </Label>
+                <div className="min-h-[80px] p-4 bg-gray-50 rounded-md border text-base leading-relaxed">
+                  {renderTemplateWithHighlights()}
+                </div>
               </div>
-            </Card>
 
-            {/* Final Preview */}
-            <Card className="p-6">
-              <Label className="text-lg font-semibold mb-2">Final Output</Label>
-              <div className="min-h-[100px] p-4 bg-white rounded-md border text-base leading-relaxed whitespace-pre-wrap">
-                {renderPreview()}
+              {/* Final Output */}
+              <div>
+                <Label className="text-sm font-semibold mb-2 block">
+                  Final Output
+                </Label>
+                <div className="min-h-[80px] p-4 bg-white rounded-md border text-base leading-relaxed whitespace-pre-wrap">
+                  {renderPreview()}
+                </div>
               </div>
             </Card>
           </div>
@@ -131,9 +191,22 @@ export function SnippetEditor() {
           {/* Right Side - Variable Inputs */}
           <div className="lg:col-span-1">
             <Card className="p-6 sticky top-8">
-              <Label className="text-lg font-semibold mb-4">
-                Variables ({Object.keys(variables).length})
-              </Label>
+              <div className="flex items-center justify-between mb-4">
+                <Label className="text-lg font-semibold">
+                  Variables ({Object.keys(variables).length})
+                </Label>
+                {Object.keys(variables).length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleResetVariables}
+                    className="gap-2 h-8"
+                  >
+                    <HugeiconsIcon icon={Loading03Icon} className="h-4 w-4" />
+                    Reset
+                  </Button>
+                )}
+              </div>
 
               {Object.keys(variables).length === 0 ? (
                 <div className="text-center py-8 text-gray-400">
