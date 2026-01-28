@@ -1,4 +1,5 @@
-import { ComponentExample } from "@/components/component-example";
+import { SnippetEditor } from "@/components/snippet-editor";
+
 export default function App() {
-  return <ComponentExample />;
+  return <SnippetEditor />;
 }
