@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card } from "./ui/card";
 import { Textarea } from "./ui/textarea";
 import { Input } from "./ui/input";
@@ -17,7 +17,124 @@ export function SnippetEditor() {
     "Hello [User], we want to inform you about [Subject]. Your [Status] has been updated.",
   );
   const [variables, setVariables] = useState<Record<string, string>>({});
+  const editorRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
+
+  // Save and restore cursor position
+  const saveCursorPosition = () => {
+    const selection = window.getSelection();
+    if (!selection || !editorRef.current || selection.rangeCount === 0)
+      return null;
+
+    const range = selection.getRangeAt(0);
+    const preSelectionRange = range.cloneRange();
+    preSelectionRange.selectNodeContents(editorRef.current);
+    preSelectionRange.setEnd(range.startContainer, range.startOffset);
+    const start = preSelectionRange.toString().length;
+
+    return { start, end: start + range.toString().length };
+  };
+
+  const restoreCursorPosition = (
+    position: { start: number; end: number } | null,
+  ) => {
+    if (!position || !editorRef.current) return;
+
+    const selection = window.getSelection();
+    if (!selection) return;
+
+    let charIndex = 0;
+    const range = document.createRange();
+    range.setStart(editorRef.current, 0);
+    range.collapse(true);
+
+    const nodeStack = [editorRef.current];
+    let node;
+    let foundStart = false;
+
+    while ((node = nodeStack.pop())) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const nextCharIndex = charIndex + (node.textContent?.length || 0);
+        if (
+          !foundStart &&
+          position.start >= charIndex &&
+          position.start <= nextCharIndex
+        ) {
+          range.setStart(node, position.start - charIndex);
+          foundStart = true;
+        }
+        if (
+          foundStart &&
+          position.end >= charIndex &&
+          position.end <= nextCharIndex
+        ) {
+          range.setEnd(node, position.end - charIndex);
+          break;
+        }
+        charIndex = nextCharIndex;
+      } else {
+        let i = node.childNodes.length;
+        while (i--) {
+          nodeStack.push(node.childNodes[i]);
+        }
+      }
+    }
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+
+  // Handle input and update the editor with styled badges
+  const handleEditorInput = () => {
+    if (!editorRef.current) return;
+
+    const position = saveCursorPosition();
+    const text = editorRef.current.innerText;
+    setTemplate(text);
+
+    // Parse and render with badges
+    const fragment = document.createDocumentFragment();
+    const regex = /\[([^\]]+)\]/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+      // Add text before the variable
+      if (match.index > lastIndex) {
+        fragment.appendChild(
+          document.createTextNode(text.substring(lastIndex, match.index)),
+        );
+      }
+
+      // Create styled span for variable
+      const span = document.createElement("span");
+      span.className = "bg-blue-100 text-blue-700";
+      span.contentEditable = "true";
+      span.textContent = match[0];
+      fragment.appendChild(span);
+
+      lastIndex = regex.lastIndex;
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+    }
+
+    // Update DOM
+    editorRef.current.innerHTML = "";
+    editorRef.current.appendChild(fragment);
+
+    // Restore cursor
+    restoreCursorPosition(position);
+  };
+
+  // Initialize editor content on mount
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerText !== template) {
+      handleEditorInput();
+    }
+  }, []);
 
   // Extract variables from template
   useEffect(() => {
@@ -158,33 +275,42 @@ export function SnippetEditor() {
               </div>
 
               {/* Template Editor */}
-              <Textarea
+              {/*<Textarea
                 id="template"
                 value={template}
                 onChange={(e) => setTemplate(e.target.value)}
                 className="min-h-[200px] font-mono text-base mb-6"
                 placeholder="Type your message template here..."
+              />*/}
+
+              <div
+                ref={editorRef}
+                id="template-editor"
+                className="min-h-[200px] p-4 bg-white rounded-md border font-mono text-base mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                contentEditable={true}
+                onInput={handleEditorInput}
+                suppressContentEditableWarning={true}
               />
 
               {/* Preview with Highlights */}
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <Label className="text-sm font-semibold mb-2 block">
                   Preview (with highlights)
                 </Label>
                 <div className="min-h-[80px] p-4 bg-gray-50 rounded-md border text-base leading-relaxed">
                   {renderTemplateWithHighlights()}
                 </div>
-              </div>
+              </div> */}
 
               {/* Final Output */}
-              <div>
+              {/* <div>
                 <Label className="text-sm font-semibold mb-2 block">
                   Final Output
                 </Label>
                 <div className="min-h-[80px] p-4 bg-white rounded-md border text-base leading-relaxed whitespace-pre-wrap">
                   {renderPreview()}
                 </div>
-              </div>
+              </div> */}
             </Card>
           </div>
 
