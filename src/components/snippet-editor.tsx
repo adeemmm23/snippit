@@ -111,7 +111,7 @@ export function SnippetEditor() {
 
       // Add the replacement value or variable name in blue
       parts.push(
-        <span key={`value-${index}`} className="text-blue-600">
+        <span key={`value-${index}`} className="text-primary">
           {replacement.value}
         </span>,
       );
@@ -130,10 +130,10 @@ export function SnippetEditor() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Snippet Editor</h1>
-        <p className="text-gray-600 mb-6">
+        <p className="text-foreground/75 mb-6">
           Create message templates with variables like [User], [Subject], etc.
         </p>
 
@@ -188,7 +188,7 @@ export function SnippetEditor() {
                   </Button>
                 </div>
 
-                <div className="min-h-20 p-4 bg-white rounded-md border text-base leading-relaxed whitespace-pre-wrap font-mono">
+                <div className="min-h-20 p-4 bg-foreground/5 rounded-md border text-sm leading-relaxed whitespace-pre-wrap font-mono">
                   {renderFinalOutput()}
                 </div>
               </div>
