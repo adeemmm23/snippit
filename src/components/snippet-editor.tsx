@@ -141,19 +141,12 @@ export function SnippetEditor() {
           {/* Left Side - Combined Editor */}
           <div className="lg:col-span-2">
             <Card className="p-6">
-              {/* Header with buttons */}
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <Label htmlFor="template" className="text-lg font-semibold">
-                    Snippet Editor
-                  </Label>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Use [VariableName] to create variables
-                  </p>
-                </div>
-                <div className="flex gap-2">
+              {/* Template Editor */}
+              <div>
+                <div className="flex gap-2 align-center justify-between mb-2">
+                  <Label>Message Template</Label>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
                     onClick={handleClear}
                     className="gap-2"
@@ -162,16 +155,14 @@ export function SnippetEditor() {
                     Clear
                   </Button>
                 </div>
+                <Textarea
+                  id="template"
+                  value={template}
+                  onChange={(e) => setTemplate(e.target.value)}
+                  className="min-h-50 font-mono mb-6"
+                  placeholder="Type your message template here..."
+                />
               </div>
-
-              {/* Template Editor */}
-              <Textarea
-                id="template"
-                value={template}
-                onChange={(e) => setTemplate(e.target.value)}
-                className="min-h-50 font-mono mb-6"
-                placeholder="Type your message template here..."
-              />
 
               {/* Final Output */}
               <div>
@@ -187,7 +178,6 @@ export function SnippetEditor() {
                     {copied ? "Copied!" : "Copy"}
                   </Button>
                 </div>
-
                 <div className="min-h-20 p-4 bg-foreground/5 rounded-md border text-sm leading-relaxed whitespace-pre-wrap font-mono">
                   {renderFinalOutput()}
                 </div>
