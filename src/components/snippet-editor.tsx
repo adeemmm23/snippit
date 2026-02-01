@@ -71,46 +71,80 @@ export function SnippetEditor() {
     setVariables(resetVars);
   };
 
-  // Render template with highlighted variables
-  const renderTemplateWithHighlights = () => {
+  // Render final output with blue highlighted values
+  const renderFinalOutput = () => {
     const parts = [];
-    const regex = /\[([^\]]+)\]/g;
-    let lastIndex = 0;
-    let match;
+    let preview = template;
+    const replacements: Array<{ start: number; end: number; value: string }> =
+      [];
 
-    const text = template;
-    while ((match = regex.exec(text)) !== null) {
-      // Add text before the variable
-      if (match.index > lastIndex) {
+    // Find all variables and their positions
+    Object.entries(variables).forEach(([name, value]) => {
+      if (!value) return; // Skip empty values
+
+      const regex = new RegExp(`\\[${name}\\]`, "g");
+      let match;
+      while ((match = regex.exec(template)) !== null) {
+        replacements.push({
+          start: match.index,
+          end: match.index + match[0].length,
+          value: value,
+        });
+      }
+    });
+
+    // Sort replacements by position
+    replacements.sort((a, b) => a.start - b.start);
+
+    // Build the output with highlighted values
+    let lastIndex = 0;
+    replacements.forEach((replacement, index) => {
+      // Add text before the replacement
+      if (replacement.start > lastIndex) {
         parts.push(
-          <span key={`text-${lastIndex}`}>
-            {text.substring(lastIndex, match.index)}
+          <span key={`text-${index}`}>
+            {template.substring(lastIndex, replacement.start)}
           </span>,
         );
       }
 
-      // Add the variable as a badge
+      // Add the replacement value in blue
       parts.push(
-        <Badge
-          key={`var-${match.index}`}
-          variant="secondary"
-          className="mx-1 bg-blue-100 text-blue-700 hover:bg-blue-200"
-        >
-          [{match[1]}]
-        </Badge>,
+        <span key={`value-${index}`} className="text-blue-600">
+          {replacement.value}
+        </span>,
       );
 
-      lastIndex = regex.lastIndex;
+      lastIndex = replacement.end;
+    });
+
+    // Add remaining text or handle unfilled variables
+    if (lastIndex < template.length) {
+      const remaining = template.substring(lastIndex);
+      // Replace any remaining unfilled variables
+      const regex = /\[([^\]]+)\]/g;
+      const remainingParts = [];
+      let lastRemainingIndex = 0;
+      let match;
+
+      while ((match = regex.exec(remaining)) !== null) {
+        if (match.index > lastRemainingIndex) {
+          remainingParts.push(
+            remaining.substring(lastRemainingIndex, match.index),
+          );
+        }
+        remainingParts.push(match[0]);
+        lastRemainingIndex = match.index + match[0].length;
+      }
+
+      if (lastRemainingIndex < remaining.length) {
+        remainingParts.push(remaining.substring(lastRemainingIndex));
+      }
+
+      parts.push(<span key={`text-remaining`}>{remainingParts.join("")}</span>);
     }
 
-    // Add remaining text
-    if (lastIndex < text.length) {
-      parts.push(
-        <span key={`text-${lastIndex}`}>{text.substring(lastIndex)}</span>,
-      );
-    }
-
-    return parts;
+    return parts.length > 0 ? parts : renderPreview();
   };
 
   return (
@@ -166,23 +200,13 @@ export function SnippetEditor() {
                 placeholder="Type your message template here..."
               />
 
-              {/* Preview with Highlights */}
-              <div className="mb-4">
-                <Label className="text-sm font-semibold mb-2 block">
-                  Preview (with highlights)
-                </Label>
-                <div className="min-h-[80px] p-4 bg-gray-50 rounded-md border text-base leading-relaxed">
-                  {renderTemplateWithHighlights()}
-                </div>
-              </div>
-
               {/* Final Output */}
               <div>
                 <Label className="text-sm font-semibold mb-2 block">
                   Final Output
                 </Label>
                 <div className="min-h-[80px] p-4 bg-white rounded-md border text-base leading-relaxed whitespace-pre-wrap">
-                  {renderPreview()}
+                  {renderFinalOutput()}
                 </div>
               </div>
             </Card>
