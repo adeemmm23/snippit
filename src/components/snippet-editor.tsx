@@ -74,21 +74,23 @@ export function SnippetEditor() {
   // Render final output with blue highlighted values
   const renderFinalOutput = () => {
     const parts = [];
-    let preview = template;
-    const replacements: Array<{ start: number; end: number; value: string }> =
-      [];
+    const replacements: Array<{
+      start: number;
+      end: number;
+      value: string;
+      isFilled: boolean;
+    }> = [];
 
     // Find all variables and their positions
     Object.entries(variables).forEach(([name, value]) => {
-      if (!value) return; // Skip empty values
-
       const regex = new RegExp(`\\[${name}\\]`, "g");
       let match;
       while ((match = regex.exec(template)) !== null) {
         replacements.push({
           start: match.index,
           end: match.index + match[0].length,
-          value: value,
+          value: value || `[${name}]`,
+          isFilled: !!value,
         });
       }
     });
@@ -108,7 +110,7 @@ export function SnippetEditor() {
         );
       }
 
-      // Add the replacement value in blue
+      // Add the replacement value or variable name in blue
       parts.push(
         <span key={`value-${index}`} className="text-blue-600">
           {replacement.value}
@@ -118,30 +120,11 @@ export function SnippetEditor() {
       lastIndex = replacement.end;
     });
 
-    // Add remaining text or handle unfilled variables
+    // Add remaining text
     if (lastIndex < template.length) {
-      const remaining = template.substring(lastIndex);
-      // Replace any remaining unfilled variables
-      const regex = /\[([^\]]+)\]/g;
-      const remainingParts = [];
-      let lastRemainingIndex = 0;
-      let match;
-
-      while ((match = regex.exec(remaining)) !== null) {
-        if (match.index > lastRemainingIndex) {
-          remainingParts.push(
-            remaining.substring(lastRemainingIndex, match.index),
-          );
-        }
-        remainingParts.push(match[0]);
-        lastRemainingIndex = match.index + match[0].length;
-      }
-
-      if (lastRemainingIndex < remaining.length) {
-        remainingParts.push(remaining.substring(lastRemainingIndex));
-      }
-
-      parts.push(<span key={`text-remaining`}>{remainingParts.join("")}</span>);
+      parts.push(
+        <span key={`text-remaining`}>{template.substring(lastIndex)}</span>,
+      );
     }
 
     return parts.length > 0 ? parts : renderPreview();
@@ -196,7 +179,7 @@ export function SnippetEditor() {
                 id="template"
                 value={template}
                 onChange={(e) => setTemplate(e.target.value)}
-                className="min-h-[200px] font-mono text-base mb-6"
+                className="min-h-50 font-mono text-base mb-6"
                 placeholder="Type your message template here..."
               />
 
@@ -205,7 +188,7 @@ export function SnippetEditor() {
                 <Label className="text-sm font-semibold mb-2 block">
                   Final Output
                 </Label>
-                <div className="min-h-[80px] p-4 bg-white rounded-md border text-base leading-relaxed whitespace-pre-wrap">
+                <div className="min-h-20 p-4 bg-white rounded-md border text-base leading-relaxed whitespace-pre-wrap font-mono">
                   {renderFinalOutput()}
                 </div>
               </div>
