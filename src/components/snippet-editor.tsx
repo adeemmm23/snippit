@@ -3,7 +3,6 @@ import { Card } from "./ui/card";
 import { Textarea } from "./ui/textarea";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -199,9 +198,7 @@ export function SnippetEditor() {
           <div className="lg:col-span-1">
             <Card className="p-6 sticky top-8">
               <div className="flex items-center justify-between mb-4">
-                <Label className="text-lg font-semibold">
-                  Variables ({Object.keys(variables).length})
-                </Label>
+                <Label className="text-lg font-semibold">Variables</Label>
                 {Object.keys(variables).length > 0 && (
                   <Button
                     variant="ghost"
@@ -230,13 +227,27 @@ export function SnippetEditor() {
                         htmlFor={varName}
                         className="mb-2 flex items-center gap-2"
                       >
-                        <Badge variant="outline" className="font-mono text-xs">
-                          {varName}
-                        </Badge>
+                        {varName}
                       </Label>
                       <Input
                         id={varName}
                         value={variables[varName]}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            const varKeys = Object.keys(variables);
+                            const currentIndex = varKeys.indexOf(varName);
+                            const nextIndex =
+                              (currentIndex + 1) % varKeys.length;
+                            const nextVarName = varKeys[nextIndex];
+                            const nextInput = document.getElementById(
+                              nextVarName,
+                            ) as HTMLInputElement;
+                            if (nextInput) {
+                              nextInput.focus();
+                            }
+                          }
+                        }}
                         onChange={(e) =>
                           setVariables((prev) => ({
                             ...prev,
