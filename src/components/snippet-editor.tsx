@@ -161,15 +161,6 @@ export function SnippetEditor() {
                     <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
                     Clear
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCopy}
-                    className="gap-2"
-                  >
-                    <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
-                    {copied ? "Copied!" : "Copy"}
-                  </Button>
                 </div>
               </div>
 
@@ -178,15 +169,25 @@ export function SnippetEditor() {
                 id="template"
                 value={template}
                 onChange={(e) => setTemplate(e.target.value)}
-                className="min-h-50 font-mono text-base mb-6"
+                className="min-h-50 font-mono mb-6"
                 placeholder="Type your message template here..."
               />
 
               {/* Final Output */}
               <div>
-                <Label className="text-sm font-semibold mb-2 block">
-                  Final Output
-                </Label>
+                <div className="flex gap-2 align-center justify-between mb-2">
+                  <Label>Final Output</Label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopy}
+                    className="gap-2"
+                  >
+                    <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
+                    {copied ? "Copied!" : "Copy"}
+                  </Button>
+                </div>
+
                 <div className="min-h-20 p-4 bg-white rounded-md border text-base leading-relaxed whitespace-pre-wrap font-mono">
                   {renderFinalOutput()}
                 </div>
