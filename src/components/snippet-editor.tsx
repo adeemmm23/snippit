@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
+
 import {
   Delete02Icon,
   Copy01Icon,
@@ -16,7 +17,6 @@ export function SnippetEditor() {
     "Hello [User], we want to inform you about [Subject]. Your [Status] has been updated.",
   );
   const [variables, setVariables] = useState<Record<string, string>>({});
-  const [copied, setCopied] = useState(false);
 
   // Extract variables from template
   useEffect(() => {
@@ -37,19 +37,47 @@ export function SnippetEditor() {
     setVariables(newVariables);
   }, [template]);
 
-  // Replace variables in template with their values
-  const renderPreview = () => {
-    let preview = template;
-    Object.entries(variables).forEach(([name, value]) => {
-      const regex = new RegExp(`\\[${name}\\]`, "g");
-      preview = preview.replace(regex, value || `[${name}]`);
-    });
-    return preview;
-  };
+  return (
+    <div className="min-h-screen bg-background p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Snippet Editor</h1>
+        <p className="text-foreground/75 mb-6">
+          Create message templates with variables like [User], [Subject], etc.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Editor
+            template={template}
+            setTemplate={setTemplate}
+            variables={variables}
+            setVariables={setVariables}
+          />
+
+          <Variables variables={variables} setVariables={setVariables} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type EditorProps = {
+  template: string;
+  setTemplate: (value: string) => void;
+  variables: Record<string, string>;
+  setVariables: (vars: Record<string, string>) => void;
+};
+
+function Editor({
+  template,
+  setTemplate,
+  variables,
+  setVariables,
+}: EditorProps) {
+  const [copied, setCopied] = useState(false);
 
   // Handle copy to clipboard
   const handleCopy = async () => {
-    const output = renderPreview();
+    const output = generatePreview();
     await navigator.clipboard.writeText(output);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -61,15 +89,15 @@ export function SnippetEditor() {
     setVariables({});
   };
 
-  // Handle reset variables
-  const handleResetVariables = () => {
-    const resetVars: Record<string, string> = {};
-    Object.keys(variables).forEach((key) => {
-      resetVars[key] = "";
+  // Replace variables in template with their values
+  const generatePreview = () => {
+    let preview = template;
+    Object.entries(variables).forEach(([name, value]) => {
+      const regex = new RegExp(`\\[${name}\\]`, "g");
+      preview = preview.replace(regex, value || `[${name}]`);
     });
-    setVariables(resetVars);
+    return preview;
   };
-
   // Render final output with blue highlighted values
   const renderFinalOutput = () => {
     const parts = [];
@@ -126,137 +154,137 @@ export function SnippetEditor() {
       );
     }
 
-    return parts.length > 0 ? parts : renderPreview();
+    return parts.length > 0 ? parts : generatePreview();
   };
-
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Snippet Editor</h1>
-        <p className="text-foreground/75 mb-6">
-          Create message templates with variables like [User], [Subject], etc.
-        </p>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Side - Combined Editor */}
-          <div className="lg:col-span-2">
-            <Card className="p-6">
-              <Label className="text-lg font-semibold">Editor</Label>
-              {/* Template Editor */}
-              <div>
-                <div className="flex gap-2 align-center justify-between mb-2">
-                  <Label>Message Template</Label>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleClear}
-                    className="gap-2"
-                  >
-                    <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
-                    Clear
-                  </Button>
-                </div>
-                <Textarea
-                  id="template"
-                  value={template}
-                  onChange={(e) => setTemplate(e.target.value)}
-                  className="min-h-50 font-mono mb-6"
-                  placeholder="Type your message template here..."
-                />
-              </div>
-
-              {/* Final Output */}
-              <div>
-                <div className="flex gap-2 align-center justify-between mb-2">
-                  <Label>Final Output</Label>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleCopy}
-                    className="gap-2"
-                  >
-                    <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
-                    {copied ? "Copied!" : "Copy"}
-                  </Button>
-                </div>
-                <div className="min-h-20 p-4 bg-foreground/5 rounded-md border text-sm leading-relaxed whitespace-pre-wrap font-mono">
-                  {renderFinalOutput()}
-                </div>
-              </div>
-            </Card>
+    <div className="lg:col-span-2">
+      <Card className="p-6">
+        <Label className="text-lg font-semibold">Editor</Label>
+        {/* Template Editor */}
+        <div>
+          <div className="flex gap-2 align-center justify-between mb-2">
+            <Label>Message Template</Label>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClear}
+              className="gap-2"
+            >
+              <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
+              Clear
+            </Button>
           </div>
+          <Textarea
+            id="template"
+            value={template}
+            onChange={(e) => setTemplate(e.target.value)}
+            className="min-h-50 font-mono mb-6"
+            placeholder="Type your message template here..."
+          />
+        </div>
 
-          {/* Right Side - Variable Inputs */}
-          <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-8">
-              <div className="flex items-center justify-between mb-4">
-                <Label className="text-lg font-semibold">Variables</Label>
-                {Object.keys(variables).length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleResetVariables}
-                    className="gap-2 h-8"
-                  >
-                    <HugeiconsIcon icon={Loading03Icon} className="h-4 w-4" />
-                    Reset
-                  </Button>
-                )}
-              </div>
-
-              {Object.keys(variables).length === 0 ? (
-                <div className="text-center py-8 text-gray-400">
-                  <p className="text-sm">No variables detected</p>
-                  <p className="text-xs mt-2">
-                    Add [VariableName] to your template
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {Object.keys(variables).map((varName) => (
-                    <div key={varName}>
-                      <Label
-                        htmlFor={varName}
-                        className="mb-2 flex items-center gap-2"
-                      >
-                        {varName}
-                      </Label>
-                      <Input
-                        id={varName}
-                        value={variables[varName]}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            const varKeys = Object.keys(variables);
-                            const currentIndex = varKeys.indexOf(varName);
-                            const nextIndex =
-                              (currentIndex + 1) % varKeys.length;
-                            const nextVarName = varKeys[nextIndex];
-                            const nextInput = document.getElementById(
-                              nextVarName,
-                            ) as HTMLInputElement;
-                            if (nextInput) {
-                              nextInput.focus();
-                            }
-                          }
-                        }}
-                        onChange={(e) =>
-                          setVariables((prev) => ({
-                            ...prev,
-                            [varName]: e.target.value,
-                          }))
-                        }
-                        placeholder={`Enter ${varName}...`}
-                        className="w-full"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Card>
+        {/* Final Output */}
+        <div>
+          <div className="flex gap-2 align-center justify-between mb-2">
+            <Label>Final Output</Label>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCopy}
+              className="gap-2"
+            >
+              <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
+              {copied ? "Copied!" : "Copy"}
+            </Button>
+          </div>
+          <div className="min-h-20 p-4 bg-foreground/5 rounded-md border text-sm leading-relaxed whitespace-pre-wrap font-mono">
+            {renderFinalOutput()}
           </div>
         </div>
-      </div>
+      </Card>
+    </div>
+  );
+}
+
+type VariablesProps = {
+  variables: Record<string, string>;
+  setVariables: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+};
+
+function Variables({ variables, setVariables }: VariablesProps) {
+  // Handle reset variables
+  const handleResetVariables = () => {
+    const resetVars: Record<string, string> = {};
+    Object.keys(variables).forEach((key) => {
+      resetVars[key] = "";
+    });
+    setVariables(resetVars);
+  };
+  return (
+    <div className="lg:col-span-1">
+      <Card className="p-6 sticky top-8">
+        <div className="flex items-center justify-between mb-4">
+          <Label className="text-lg font-semibold">Variables</Label>
+          {Object.keys(variables).length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleResetVariables}
+              className="gap-2 h-8"
+            >
+              <HugeiconsIcon icon={Loading03Icon} className="h-4 w-4" />
+              Reset
+            </Button>
+          )}
+        </div>
+
+        {Object.keys(variables).length === 0 ? (
+          <div className="text-center py-8 text-gray-400">
+            <p className="text-sm">No variables detected</p>
+            <p className="text-xs mt-2">Add [VariableName] to your template</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {Object.keys(variables).map((varName) => (
+              <div key={varName}>
+                <Label
+                  htmlFor={varName}
+                  className="mb-2 flex items-center gap-2"
+                >
+                  {varName}
+                </Label>
+                <Input
+                  id={varName}
+                  value={variables[varName]}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const varKeys = Object.keys(variables);
+                      const currentIndex = varKeys.indexOf(varName);
+                      const nextIndex = (currentIndex + 1) % varKeys.length;
+                      const nextVarName = varKeys[nextIndex];
+                      const nextInput = document.getElementById(
+                        nextVarName,
+                      ) as HTMLInputElement;
+                      if (nextInput) {
+                        nextInput.focus();
+                      }
+                    }
+                  }}
+                  onChange={(e) =>
+                    setVariables((prev) => ({
+                      ...prev,
+                      [varName]: e.target.value,
+                    }))
+                  }
+                  placeholder={`Enter ${varName}...`}
+                  className="w-full"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
     </div>
   );
 }
