@@ -11,6 +11,12 @@ import {
   Loading03Icon,
 } from "@hugeicons/core-free-icons";
 
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+
 export function SnippetEditor() {
   const [template, setTemplate] = useState(
     "Hello [User], we want to inform you about [Subject]. Your [Status] has been updated.",
@@ -141,6 +147,7 @@ export function SnippetEditor() {
           {/* Left Side - Combined Editor */}
           <div className="lg:col-span-2">
             <Card className="p-6">
+              <Label className="text-lg font-semibold">Editor</Label>
               {/* Template Editor */}
               <div>
                 <div className="flex gap-2 align-center justify-between mb-2">
