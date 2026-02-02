@@ -1,37 +1,16 @@
 import { SnippetEditor } from "@/components/snippet-editor";
-// import {
-//   Menubar,
-//   MenubarContent,
-//   MenubarGroup,
-//   MenubarItem,
-//   MenubarMenu,
-//   MenubarSeparator,
-//   MenubarShortcut,
-//   MenubarTrigger,
-// } from "@/components/ui/menubar";
 
 export default function App() {
   return (
-    <>
-      {/* <Menubar className="mx-1 my-1">
-        <MenubarMenu>
-          <MenubarTrigger>File</MenubarTrigger>
-          <MenubarContent>
-            <MenubarGroup>
-              <MenubarItem>
-                New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-              </MenubarItem>
-              <MenubarItem>New Window</MenubarItem>
-            </MenubarGroup>
-            <MenubarSeparator />
-            <MenubarGroup>
-              <MenubarItem>Share</MenubarItem>
-              <MenubarItem>Print</MenubarItem>
-            </MenubarGroup>
-          </MenubarContent>
-        </MenubarMenu>
-      </Menubar> */}
-      <SnippetEditor />
-    </>
+    <div className="min-h-screen bg-background p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Snippet Editor</h1>
+        <p className="text-foreground/75 mb-6">
+          Create message templates with variables like [User], [Subject], etc.
+        </p>
+
+        <SnippetEditor />
+      </div>
+    </div>
   );
 }
