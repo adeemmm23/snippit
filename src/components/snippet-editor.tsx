@@ -11,12 +11,6 @@ import {
   Loading03Icon,
 } from "@hugeicons/core-free-icons";
 
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-
 export function SnippetEditor() {
   const [template, setTemplate] = useState(
     "Hello [User], we want to inform you about [Subject]. Your [Status] has been updated.",
