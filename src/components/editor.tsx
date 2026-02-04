@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
@@ -19,6 +19,14 @@ export default function Editor({
   setVariables,
 }: EditorProps) {
   const [copied, setCopied] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  // Sync the contentEditable div with the template state
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.textContent !== template) {
+      editorRef.current.textContent = template;
+    }
+  }, [template]);
 
   // Handle copy to clipboard
   const handleCopy = async () => {
@@ -102,10 +110,10 @@ export default function Editor({
     return parts.length > 0 ? parts : generatePreview();
   };
   return (
-    <>
-      <Label className="text-lg font-semibold">Editor</Label>
+    <div className="flex flex-col h-full">
+      <Label className="text-lg font-semibold mb-4">Editor</Label>
       {/* Template Editor */}
-      <div>
+      <div className="flex-1 flex flex-col mb-4 min-h-0">
         <div className="flex gap-2 align-center justify-between mb-2">
           <Label>Message Template</Label>
           <Button
@@ -118,17 +126,17 @@ export default function Editor({
             Clear
           </Button>
         </div>
-        <Textarea
-          id="template"
-          value={template}
-          onChange={(e) => setTemplate(e.target.value)}
-          className="min-h-50 font-mono mb-6"
-          placeholder="Type your message template here..."
+        <div
+          ref={editorRef}
+          contentEditable
+          onInput={(e) => setTemplate(e.currentTarget.textContent || "")}
+          className="flex-1 font-mono p-3 rounded-md border border-input overflow-auto focus:outline-none focus:ring-2 focus:ring-ring/50  min-h-0 text-base bg-input/10 shadow-xs dark:bg-input/30 transition-all"
+          suppressContentEditableWarning
         />
       </div>
 
       {/* Final Output */}
-      <div>
+      <div className="flex-1 flex flex-col min-h-0">
         <div className="flex gap-2 align-center justify-between mb-2">
           <Label>Final Output</Label>
           <Button
@@ -141,10 +149,10 @@ export default function Editor({
             {copied ? "Copied!" : "Copy"}
           </Button>
         </div>
-        <div className="min-h-20 p-4 dark:bg-input/30 rounded-md border border-input text-sm leading-relaxed whitespace-pre-wrap font-mono shadow-xs">
+        <div className="flex-1 p-4 dark:bg-input/30 rounded-md border border-input text-base leading-relaxed whitespace-pre-wrap font-mono shadow-xs overflow-auto min-h-0">
           {renderFinalOutput()}
         </div>
       </div>
-    </>
+    </div>
   );
 }
