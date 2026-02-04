@@ -13,6 +13,7 @@ import {
   Folder01Icon,
 } from "@hugeicons/core-free-icons";
 import { Label } from "./ui/label";
+import { Button } from "./ui/button";
 
 type FileSystemItem = {
   [key: string]: string | FileSystemItem;
@@ -113,17 +114,21 @@ export const Files: React.FC<FilesProps> = ({ data }) => {
   const fileTree = useMemo(() => parseFileSystem(data), [data]);
 
   return (
-    <>
+    <div className="flex flex-col grow h-full">
       <Label className="text-lg font-semibold mb-4">Files</Label>
       <div className="relative my-2">
         <Input type="text" placeholder="Search files and folders..." />
       </div>
-
       <div className="space-y-0.5">
         {fileTree.map((node, index) => (
           <FileTreeNode key={`${node.path}-${index}`} node={node} />
         ))}
       </div>
-    </>
+      <div className="mt-auto pt-4 border-t border-border">
+        <Button variant="outline" className="w-full">
+          Export Files
+        </Button>
+      </div>
+    </div>
   );
 };
