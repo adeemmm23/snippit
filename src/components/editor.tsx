@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
