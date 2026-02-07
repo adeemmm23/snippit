@@ -19,24 +19,32 @@ export default function Variables() {
   return (
     <div className="flex flex-col grow h-full gap-2">
       <div className="flex items-center justify-between">
-        <Label className="text-lg font-medium px-2">Variables</Label>
         {Object.keys(variables).length > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleResetVariables}
-            className="gap-2 h-8"
-          >
-            <HugeiconsIcon icon={Loading03Icon} className="h-4 w-4" />
-            Reset
-          </Button>
+          <>
+            <Label className="text-lg font-medium px-2">Variables</Label>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleResetVariables}
+              className="gap-2 h-8"
+            >
+              <HugeiconsIcon icon={Loading03Icon} className="h-4 w-4" />
+              Reset
+            </Button>
+          </>
         )}
       </div>
 
       {Object.keys(variables).length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-8 text-muted-foreground my-auto">
+          <div className="rounded-sm bg-muted p-2 inline-flex items-center justify-center mb-4">
+            <HugeiconsIcon icon={Delete01Icon} className="size-5" />
+          </div>
           <p className="text-sm">No variables detected</p>
           <p className="text-xs mt-2">Add [VariableName] to your template</p>
+          <Button variant="ghost" size="xs" className="mt-4">
+            Learn More
+          </Button>
         </div>
       ) : (
         <div className="space-y-4">
