@@ -15,6 +15,16 @@ import { useState } from "react";
 import { useEditor } from "@/context/editor/editor-context";
 import { cn } from "@/lib/utils";
 
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
 type FileSystemItem = {
   [key: string]: string | FileSystemItem;
 };
@@ -52,14 +62,49 @@ function Header() {
 }
 
 function SearchBar() {
+  const [open, setOpen] = useState(false);
   return (
-    <Button variant="outline" className="w-full cursor-text">
-      <div className="flex gap-2">
-        <HugeiconsIcon icon={Search01Icon} className="size-5" />
-        <span className="text-sm text-muted-foreground">Find...</span>
-      </div>
-      <Kbd className="ml-auto">F</Kbd>
-    </Button>
+    <>
+      <Button
+        variant="outline"
+        className="w-full cursor-text"
+        onClick={() => setOpen(true)}
+      >
+        <div className="flex gap-2">
+          <HugeiconsIcon icon={Search01Icon} className="size-5" />
+          <span className="text-sm text-muted-foreground">Find...</span>
+        </div>
+        <Kbd className="ml-auto">F</Kbd>
+      </Button>
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <Command>
+          <CommandInput placeholder="Find..." />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Latest">
+              <CommandItem>
+                <span>WiFi Troubleshooting</span>
+                <span className="ml-auto text-xs text-muted-foreground">
+                  ./Security/WiFi Troubleshooting
+                </span>
+              </CommandItem>
+              <CommandItem>
+                <span>Password Reset</span>
+                <span className="ml-auto text-xs text-muted-foreground">
+                  ./User Management/Password Reset
+                </span>
+              </CommandItem>
+              <CommandItem>
+                <span>Software Installation</span>
+                <span className="ml-auto text-xs text-muted-foreground">
+                  ./Software/Software Installation
+                </span>
+              </CommandItem>
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </CommandDialog>
+    </>
   );
 }
 
