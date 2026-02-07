@@ -6,7 +6,6 @@ import {
   Search01Icon,
   Refresh01Icon,
   ArrowLeft01Icon,
-  Home01Icon,
   Download01Icon,
   Upload01Icon,
   Settings01Icon,

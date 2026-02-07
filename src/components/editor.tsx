@@ -2,16 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Copy01Icon,
-  Delete02Icon,
-  FloppyDiskIcon,
-  Menu01Icon,
-} from "@hugeicons/core-free-icons";
+import { Copy01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
 
-import { Separator } from "./ui/separator";
-import { ButtonGroup } from "./ui/button-group";
 import { toast } from "sonner";
 
 export default function Editor() {
