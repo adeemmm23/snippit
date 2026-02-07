@@ -6,17 +6,19 @@ import {
   Search01Icon,
   Refresh01Icon,
   ArrowLeft01Icon,
+  Home01Icon,
   Download01Icon,
   Upload01Icon,
   Settings01Icon,
+  Home02Icon,
 } from "@hugeicons/core-free-icons";
 import { Button } from "./ui/button";
 import { Kbd } from "./ui/kbd";
-import { Separator } from "./ui/separator";
 import { Badge } from "./ui/badge";
 import { useState } from "react";
 import { useEditor } from "@/context/editor/editor-context";
 import { ButtonGroup } from "./ui/button-group";
+import { cn } from "@/lib/utils";
 
 type FileSystemItem = {
   [key: string]: string | FileSystemItem;
@@ -32,8 +34,8 @@ export function Files({ data }: FilesProps) {
       <Header />
       <SearchBar />
       <Tree data={data} />
-      <Separator className="mt-auto" />
-      <ButtonGroup className="w-full">
+      {/* <Separator className="mt-auto" /> */}
+      <ButtonGroup className="w-full mt-auto">
         <ButtonGroup className="grow">
           <Button variant="outline" className="grow">
             <HugeiconsIcon icon={Download01Icon} className="size-4" />
@@ -87,7 +89,7 @@ function SearchBar() {
 function Tree({ data }: FilesProps) {
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [currentData, setCurrentData] = useState<FileSystemItem>(data);
-  const { setTemplate, setFilePath } = useEditor();
+  const { setTemplate, setFilePath, filePath } = useEditor();
 
   const { folders, files } = Object.entries(currentData).reduce(
     (acc, [name, content]) => {
@@ -105,23 +107,42 @@ function Tree({ data }: FilesProps) {
   );
   return (
     <>
-      {currentPath.length > 0 && (
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-2"
-          onClick={() => {
-            setCurrentPath(currentPath.slice(0, -1));
-            setCurrentData(() => {
-              let newData = data;
-              for (const segment of currentPath.slice(0, -1)) {
-                newData = newData[segment] as FileSystemItem;
-              }
-              return newData;
-            });
-          }}
-        >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-          <span>{currentPath[currentPath.length - 1]}</span>
+      {currentPath.length > 0 ? (
+        <div className="flex gap-2 w-full">
+          <Button
+            variant="ghost"
+            className="grow justify-start gap-1 flex-1 min-w-0"
+            onClick={() => {
+              setCurrentPath(currentPath.slice(0, -1));
+              setCurrentData(() => {
+                let newData = data;
+                for (const segment of currentPath.slice(0, -1)) {
+                  newData = newData[segment] as FileSystemItem;
+                }
+                return newData;
+              });
+            }}
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+            <span className="text-ellipsis overflow-hidden">
+              {currentPath[currentPath.length - 1]}
+            </span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setCurrentPath([]);
+              setCurrentData(data);
+            }}
+          >
+            <HugeiconsIcon icon={Home02Icon} className="size-4" />
+          </Button>
+        </div>
+      ) : (
+        <Button variant="ghost" className="w-full justify-start gap-2">
+          <HugeiconsIcon icon={Home02Icon} className="size-4" />
+          <span>Root</span>
         </Button>
       )}
       {folders.map(({ name }) => (
@@ -146,8 +167,13 @@ function Tree({ data }: FilesProps) {
         <Button
           key={name}
           title={name}
+          data-path={currentPath.concat(name).join("/")}
           variant="ghost"
-          className="w-full justify-start gap-2"
+          className={cn(
+            "w-full justify-start gap-2",
+            filePath.join("/") === currentPath.concat(name).join("/") &&
+              "bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30",
+          )}
           onClick={() => {
             setTemplate(currentData[name] as string);
             setFilePath(currentPath.concat(name));
