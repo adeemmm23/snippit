@@ -9,9 +9,9 @@ import {
   Home02Icon,
 } from "@hugeicons/core-free-icons";
 import { Button } from "./ui/button";
-import { Kbd } from "./ui/kbd";
+import { Kbd, KbdGroup } from "./ui/kbd";
 import { Badge } from "./ui/badge";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useEditor } from "@/context/editor/editor-context";
 import { cn } from "@/lib/utils";
 
@@ -63,6 +63,18 @@ function Header() {
 
 function SearchBar() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((open) => !open);
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
   return (
     <>
       <Button
@@ -74,7 +86,11 @@ function SearchBar() {
           <HugeiconsIcon icon={Search01Icon} className="size-5" />
           <span className="text-sm text-muted-foreground">Find...</span>
         </div>
-        <Kbd className="ml-auto">F</Kbd>
+        <KbdGroup className="ml-auto">
+          <Kbd>Ctrl</Kbd>
+          <span>+</span>
+          <Kbd>K</Kbd>
+        </KbdGroup>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <Command>
