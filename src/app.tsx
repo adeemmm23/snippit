@@ -3,17 +3,58 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import Variables from "./components/variables";
-import Editor from "./components/editor";
-import { Files } from "./components/files";
-import { EditorProvider } from "./context/editor/editor-provider";
-import { IT_SUPPORT_SNIPPETS } from "./lib/const";
+import Variables from "@/components/variables";
+import Editor from "@/components/editor";
+import { Files } from "@/components/files";
+import { EditorProvider } from "@/context/editor/editor-provider";
+import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 import { Toaster } from "@/components/ui/sonner";
+import { Button } from "@/components/ui/button";
+import {
+  FloppyDiskIcon,
+  Menu01Icon,
+  Settings01Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { toast } from "sonner";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Separator } from "@/components/ui/separator";
+import { FilePath } from "@/components/file-path";
 
 export default function App() {
   return (
     <EditorProvider>
-      <main className="bg-background h-screen">
+      <main className="bg-background h-screen flex flex-col">
+        <div className="flex gap-2 px-2 py-2">
+          <FilePath />
+          <ButtonGroup className="ml-auto">
+            <ButtonGroup className="grow">
+              <Button
+                variant="outline"
+                className="grow"
+                onClick={() => {
+                  toast("Saved successfully", {
+                    icon: (
+                      <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
+                    ),
+                    position: "bottom-center",
+                  });
+                }}
+              >
+                <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
+              </Button>
+              <Button variant="outline" className="grow">
+                <HugeiconsIcon icon={Settings01Icon} className="size-4" />
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button variant="outline" className="grow">
+                <HugeiconsIcon icon={Menu01Icon} className="size-4" />
+              </Button>
+            </ButtonGroup>
+          </ButtonGroup>
+        </div>
+        <Separator />
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel
             defaultSize={250}

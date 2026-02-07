@@ -2,31 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Copy01Icon,
-  Delete02Icon,
-  FloppyDiskIcon,
-  Menu01Icon,
-} from "@hugeicons/core-free-icons";
+import { Copy01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbEllipsis,
-  BreadcrumbPage,
-} from "./ui/breadcrumb";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-} from "./ui/dropdown-menu";
-import { Separator } from "./ui/separator";
-import { ButtonGroup } from "./ui/button-group";
+
 import { toast } from "sonner";
 
 export default function Editor() {
@@ -132,31 +110,6 @@ export default function Editor() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex gap-2">
-        <FilePath />
-        <ButtonGroup className="ml-auto">
-          <ButtonGroup className="grow">
-            <Button
-              variant="outline"
-              className="grow"
-              onClick={() => {
-                toast("Saved successfully", {
-                  icon: (
-                    <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
-                  ),
-                  position: "bottom-center",
-                });
-              }}
-            >
-              <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
-            </Button>
-            <Button variant="outline" className="grow">
-              <HugeiconsIcon icon={Menu01Icon} className="size-4" />
-            </Button>
-          </ButtonGroup>
-        </ButtonGroup>
-      </div>
-      <Separator className="my-2" />
       {/* Template Editor */}
       <div className="flex-1 flex flex-col mb-4 min-h-0">
         <div className="flex gap-2 align-center justify-between mb-2">
@@ -202,69 +155,5 @@ export default function Editor() {
         </div>
       </div>
     </div>
-  );
-}
-
-export function FilePath() {
-  const { filePath } = useEditor();
-  const { fileName, folderName, rest } = filePath.reduce(
-    (acc, segment, index) => {
-      if (index === filePath.length - 1) {
-        acc.fileName = segment;
-      } else if (index === filePath.length - 2) {
-        acc.folderName = segment;
-      } else {
-        acc.rest.push(segment);
-      }
-      return acc;
-    },
-    { fileName: "", folderName: "", rest: [] as string[] },
-  );
-  return (
-    <Breadcrumb className="h-9 flex items-center px-2">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink className="select-none">Root</BreadcrumbLink>
-        </BreadcrumbItem>
-        {rest.length != 0 && (
-          <>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Button size="icon-sm" variant="ghost">
-                    <BreadcrumbEllipsis />
-                    <span className="sr-only">Toggle menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-50">
-                  <DropdownMenuGroup>
-                    {rest.map((segment, index) => (
-                      <DropdownMenuItem key={index}>{segment}</DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </BreadcrumbItem>
-          </>
-        )}
-        {folderName != "" && (
-          <>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink className="select-none">
-                {folderName}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-          </>
-        )}
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage className="select-none">
-            {fileName != "" ? filePath[filePath.length - 1] : "New Snippet"}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
   );
 }
