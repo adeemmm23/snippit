@@ -22,8 +22,11 @@ export default function Editor({
 
   // Sync the contentEditable div with the template state
   useEffect(() => {
-    if (editorRef.current && editorRef.current.textContent !== template) {
-      editorRef.current.textContent = template;
+    if (editorRef.current) {
+      const currentText = editorRef.current.innerText || "";
+      if (currentText !== template) {
+        editorRef.current.textContent = template;
+      }
     }
   }, [template]);
 
@@ -108,6 +111,7 @@ export default function Editor({
 
     return parts.length > 0 ? parts : generatePreview();
   };
+
   return (
     <div className="flex flex-col h-full">
       <Label className="text-lg font-semibold mb-4">Editor</Label>
@@ -127,8 +131,11 @@ export default function Editor({
         </div>
         <div
           ref={editorRef}
-          contentEditable
-          onInput={(e) => setTemplate(e.currentTarget.textContent || "")}
+          contentEditable="plaintext-only"
+          onInput={(e) => {
+            const text = e.currentTarget.innerText || "";
+            setTemplate(text);
+          }}
           className="flex-1 font-mono p-3 rounded-md border border-input overflow-auto focus:outline-none focus:ring-2 focus:ring-ring/50  min-h-0 text-base bg-input/10 shadow-xs dark:bg-input/30 transition-all"
           suppressContentEditableWarning
         />

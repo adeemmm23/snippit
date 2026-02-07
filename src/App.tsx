@@ -1,4 +1,3 @@
-// import { SnippetEditor } from "@/components/snippet-editor";
 import {
   ResizableHandle,
   ResizablePanel,
