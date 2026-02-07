@@ -12,29 +12,31 @@ import { IT_SUPPORT_SNIPPETS } from "./lib/const";
 export default function App() {
   return (
     <EditorProvider>
-      <div className="min-h-screen bg-background h-screen">
+      <main className="bg-background h-screen">
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel
-            defaultSize={300}
+            defaultSize={250}
             minSize={200}
-            className="p-4 rounded-md"
+            maxSize={300}
+            className="p-2"
           >
             <Files data={IT_SUPPORT_SNIPPETS} />
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel minSize="50%" className="px-8 py-4 rounded-md">
+          <ResizablePanel minSize="50%" className="px-4 py-2">
             <Editor />
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel
-            defaultSize={300}
+            defaultSize={250}
             minSize={200}
-            className="p-4 rounded-md"
+            maxSize={300}
+            className="p-2"
           >
             <Variables />
           </ResizablePanel>
         </ResizablePanelGroup>
-      </div>
+      </main>
     </EditorProvider>
   );
 }

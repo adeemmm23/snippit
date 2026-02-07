@@ -37,4 +37,5 @@ export const IT_SUPPORT_SNIPPETS = {
     "Follow Up":
       "Hi [User],\n\nJust following up on ticket #[TicketNumber]. Has the issue been resolved to your satisfaction?\n\nPlease let me know if you need any further assistance.\n\nRegards,\n[Agent]",
   },
+  "Read Me": "IT Support Email Snippets",
 };
