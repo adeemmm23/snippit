@@ -52,7 +52,6 @@ export default function Editor() {
     toast("Copied successfully", {
       icon: <HugeiconsIcon icon={Copy01Icon} className="size-4" />,
       position: "bottom-center",
-      className: "bg-popover text-popover-foreground",
     });
     setTimeout(() => setCopied(false), 2000);
   };
@@ -137,7 +136,18 @@ export default function Editor() {
         <FilePath />
         <ButtonGroup className="ml-auto">
           <ButtonGroup className="grow">
-            <Button variant="outline" className="grow">
+            <Button
+              variant="outline"
+              className="grow"
+              onClick={() => {
+                toast("Saved successfully", {
+                  icon: (
+                    <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
+                  ),
+                  position: "bottom-center",
+                });
+              }}
+            >
               <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
             </Button>
             <Button variant="outline" className="grow">
