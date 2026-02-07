@@ -31,7 +31,7 @@ export default function Editor() {
     if (editorRef.current) {
       const currentText = editorRef.current.innerText || "";
       if (currentText !== template) {
-        editorRef.current.textContent = template;
+        editorRef.current.innerText = template;
       }
     }
   }, [template]);
