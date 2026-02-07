@@ -109,6 +109,7 @@ function Tree({ data }: FilesProps) {
       {folders.map(({ name }) => (
         <Button
           key={name}
+          title={name}
           variant="ghost"
           className="w-full justify-start gap-2"
           onClick={() => {
@@ -117,13 +118,16 @@ function Tree({ data }: FilesProps) {
           }}
         >
           <HugeiconsIcon icon={Folder01Icon} className="size-4" />
-          <span>{name}</span>
+          <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+            {name}
+          </span>
           <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 ml-auto" />
         </Button>
       ))}
       {files.map(({ name }) => (
         <Button
           key={name}
+          title={name}
           variant="ghost"
           className="w-full justify-start gap-2"
           onClick={() => {
@@ -132,7 +136,9 @@ function Tree({ data }: FilesProps) {
           }}
         >
           <HugeiconsIcon icon={File01Icon} className="size-4" />
-          <span>{name}</span>
+          <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+            {name}
+          </span>
         </Button>
       ))}
     </>
