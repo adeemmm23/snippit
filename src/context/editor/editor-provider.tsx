@@ -8,13 +8,7 @@ type EditorProviderProps = {
 export function EditorProvider({ children }: EditorProviderProps) {
   const [variables, setVariables] = useState<Record<string, string>>({});
   const [template, setTemplate] = useState("");
-
-  const value = {
-    variables,
-    setVariables,
-    template,
-    setTemplate,
-  };
+  const [filePath, setFilePath] = useState<string[]>([]);
 
   useEffect(() => {
     const regex = /\[([^\]]+)\]/g;
@@ -33,6 +27,15 @@ export function EditorProvider({ children }: EditorProviderProps) {
     setVariables(newVariables);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [template]);
+
+  const value = {
+    variables,
+    setVariables,
+    template,
+    setTemplate,
+    filePath,
+    setFilePath,
+  };
 
   return (
     <EditorContext.Provider value={value}>{children}</EditorContext.Provider>

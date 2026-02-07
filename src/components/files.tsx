@@ -69,7 +69,7 @@ function SearchBar() {
 function Tree({ data }: FilesProps) {
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [currentData, setCurrentData] = useState<FileSystemItem>(data);
-  const { setTemplate } = useEditor();
+  const { setTemplate, setFilePath } = useEditor();
 
   const { folders, files } = Object.entries(currentData).reduce(
     (acc, [name, content]) => {
@@ -128,6 +128,7 @@ function Tree({ data }: FilesProps) {
           className="w-full justify-start gap-2"
           onClick={() => {
             setTemplate(currentData[name] as string);
+            setFilePath(currentPath.concat(name));
           }}
         >
           <HugeiconsIcon icon={File01Icon} className="size-4" />

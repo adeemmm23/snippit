@@ -7,6 +7,8 @@ type EditorContextType = {
   setVariables: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   template: string;
   setTemplate: React.Dispatch<React.SetStateAction<string>>;
+  filePath: string[];
+  setFilePath: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export const EditorContext = createContext<EditorContextType | undefined>(
