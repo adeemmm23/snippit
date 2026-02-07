@@ -1,9 +1,9 @@
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Loading03Icon } from "@hugeicons/core-free-icons";
-import { Input } from "./ui/input";
+import { Loading03Icon, Delete01Icon } from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 
 export default function Variables() {
   const { variables, setVariables } = useEditor();
@@ -17,9 +17,9 @@ export default function Variables() {
     setVariables(resetVars);
   };
   return (
-    <>
-      <div className="flex items-center justify-between mb-4">
-        <Label className="text-lg font-semibold">Variables</Label>
+    <div className="flex flex-col grow h-full gap-2">
+      <div className="flex items-center justify-between">
+        <Label className="text-lg font-medium px-2">Variables</Label>
         {Object.keys(variables).length > 0 && (
           <Button
             variant="ghost"
@@ -34,7 +34,7 @@ export default function Variables() {
       </div>
 
       {Object.keys(variables).length === 0 ? (
-        <div className="text-center py-8 text-gray-400">
+        <div className="text-center py-8 text-muted-foreground">
           <p className="text-sm">No variables detected</p>
           <p className="text-xs mt-2">Add [VariableName] to your template</p>
         </div>
@@ -42,40 +42,61 @@ export default function Variables() {
         <div className="space-y-4">
           {Object.keys(variables).map((varName) => (
             <div key={varName}>
-              <Label htmlFor={varName} className="mb-2 flex items-center gap-2">
+              <Label
+                htmlFor={varName}
+                className="mb-2 flex items-center gap-2 px-2"
+              >
                 {varName}
               </Label>
-              <Input
-                id={varName}
-                value={variables[varName]}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    const varKeys = Object.keys(variables);
-                    const currentIndex = varKeys.indexOf(varName);
-                    const nextIndex = (currentIndex + 1) % varKeys.length;
-                    const nextVarName = varKeys[nextIndex];
-                    const nextInput = document.getElementById(
-                      nextVarName,
-                    ) as HTMLInputElement;
-                    if (nextInput) {
-                      nextInput.focus();
+              <InputGroup className="w-full">
+                <InputGroupInput
+                  id={varName}
+                  value={variables[varName]}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const varKeys = Object.keys(variables);
+                      const currentIndex = varKeys.indexOf(varName);
+                      const nextIndex = (currentIndex + 1) % varKeys.length;
+                      const nextVarName = varKeys[nextIndex];
+                      const nextInput = document.getElementById(
+                        nextVarName,
+                      ) as HTMLInputElement;
+                      if (nextInput) {
+                        nextInput.focus();
+                      }
                     }
+                  }}
+                  onChange={(e) =>
+                    setVariables((prev) => ({
+                      ...prev,
+                      [varName]: e.target.value,
+                    }))
                   }
-                }}
-                onChange={(e) =>
-                  setVariables((prev) => ({
-                    ...prev,
-                    [varName]: e.target.value,
-                  }))
-                }
-                placeholder={`Enter ${varName}...`}
-                className="w-full"
-              />
+                  placeholder={`Enter ${varName}...`}
+                />
+                {variables[varName] && (
+                  <InputGroupAddon align="inline-end" className="pr-1.5">
+                    <Button
+                      variant={null}
+                      size="icon-sm"
+                      className="cursor-pointer"
+                      onClick={() =>
+                        setVariables((prev) => ({
+                          ...prev,
+                          [varName]: "",
+                        }))
+                      }
+                    >
+                      <HugeiconsIcon icon={Delete01Icon} className="size-4" />
+                    </Button>
+                  </InputGroupAddon>
+                )}
+              </InputGroup>
             </div>
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 }

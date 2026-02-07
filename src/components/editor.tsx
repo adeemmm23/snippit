@@ -124,7 +124,7 @@ export default function Editor() {
       {/* Template Editor */}
       <div className="flex-1 flex flex-col mb-4 min-h-0">
         <div className="flex gap-2 align-center justify-between mb-2">
-          <Label>Message Template</Label>
+          <Label className="px-2">Message Template</Label>
           <Button
             variant="ghost"
             size="sm"
@@ -150,7 +150,7 @@ export default function Editor() {
       {/* Final Output */}
       <div className="flex-1 flex flex-col min-h-0">
         <div className="flex gap-2 align-center justify-between mb-2">
-          <Label>Final Output</Label>
+          <Label className="px-2">Final Output</Label>
           <Button
             variant="ghost"
             size="sm"
@@ -185,7 +185,7 @@ export function FilePath() {
     { fileName: "", folderName: "", rest: [] as string[] },
   );
   return (
-    <Breadcrumb className="h-9 flex items-center">
+    <Breadcrumb className="h-9 flex items-center px-2">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink className="select-none">Root</BreadcrumbLink>

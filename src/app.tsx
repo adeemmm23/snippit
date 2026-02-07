@@ -23,7 +23,7 @@ export default function App() {
             <Files data={IT_SUPPORT_SNIPPETS} />
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel minSize="50%" className="px-4 py-2">
+          <ResizablePanel minSize="50%" className="px-2 py-2">
             <Editor />
           </ResizablePanel>
           <ResizableHandle />

@@ -30,7 +30,7 @@ export function Files({ data }: FilesProps) {
       <Tree data={data} />
       <Separator className="mt-auto" />
       <Button variant="outline" className="w-full">
-        Export Files
+        Export Collection
       </Button>
     </div>
   );
