@@ -5,64 +5,36 @@ import {
 } from "@/components/ui/resizable";
 import Variables from "./components/variables";
 import Editor from "./components/editor";
-import { useState, useEffect } from "react";
 import { Files } from "./components/files";
+import { EditorProvider } from "./context/editor/editor-provider";
 
 export default function App() {
-  const [template, setTemplate] = useState(
-    "Hello [User], we want to inform you about [Subject]. Your [Status] has been updated.",
-  );
-  const [variables, setVariables] = useState<Record<string, string>>({});
-
-  // Extract variables from template
-  useEffect(() => {
-    const regex = /\[([^\]]+)\]/g;
-    const matches = template.matchAll(regex);
-    const foundVars = new Set<string>();
-
-    for (const match of matches) {
-      foundVars.add(match[1]);
-    }
-
-    // Initialize new variables with empty values
-    const newVariables: Record<string, string> = {};
-    foundVars.forEach((varName) => {
-      newVariables[varName] = variables[varName] || "";
-    });
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setVariables(newVariables);
-  }, [template]);
-
   return (
-    <div className="min-h-screen bg-background h-screen">
-      <ResizablePanelGroup orientation="horizontal">
-        <ResizablePanel
-          defaultSize={300}
-          minSize={200}
-          className="p-4 rounded-md"
-        >
-          <Files data={IT_SUPPORT_SNIPPETS} />
-        </ResizablePanel>
-        <ResizableHandle />
-        <ResizablePanel minSize="50%" className="px-8 py-4 rounded-md">
-          <Editor
-            template={template}
-            setTemplate={setTemplate}
-            variables={variables}
-            setVariables={setVariables}
-          />
-        </ResizablePanel>
-        <ResizableHandle />
-        <ResizablePanel
-          defaultSize={300}
-          minSize={200}
-          className="p-4 rounded-md"
-        >
-          <Variables variables={variables} setVariables={setVariables} />
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </div>
+    <EditorProvider>
+      <div className="min-h-screen bg-background h-screen">
+        <ResizablePanelGroup orientation="horizontal">
+          <ResizablePanel
+            defaultSize={300}
+            minSize={200}
+            className="p-4 rounded-md"
+          >
+            <Files data={IT_SUPPORT_SNIPPETS} />
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel minSize="50%" className="px-8 py-4 rounded-md">
+            <Editor />
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel
+            defaultSize={300}
+            minSize={200}
+            className="p-4 rounded-md"
+          >
+            <Variables />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    </EditorProvider>
   );
 }
 

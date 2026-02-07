@@ -3,20 +3,10 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Copy01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
+import { useEditor } from "@/context/editor/editor-context";
 
-type EditorProps = {
-  template: string;
-  setTemplate: (value: string) => void;
-  variables: Record<string, string>;
-  setVariables: (vars: Record<string, string>) => void;
-};
-
-export default function Editor({
-  template,
-  setTemplate,
-  variables,
-  setVariables,
-}: EditorProps) {
+export default function Editor() {
+  const { variables, setVariables, template, setTemplate } = useEditor();
   const [copied, setCopied] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
 

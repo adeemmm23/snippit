@@ -4,9 +4,9 @@ import { createContext, useContext } from "react";
 
 type EditorContextType = {
   variables: Record<string, string>;
-  setVariables: (vars: Record<string, string>) => void;
+  setVariables: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   template: string;
-  setTemplate: (value: string) => void;
+  setTemplate: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const EditorContext = createContext<EditorContextType | undefined>(

@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { EditorContext } from "./editor-context";
 
 type EditorProviderProps = {
@@ -15,6 +15,24 @@ export function EditorProvider({ children }: EditorProviderProps) {
     template,
     setTemplate,
   };
+
+  useEffect(() => {
+    const regex = /\[([^\]]+)\]/g;
+    const matches = template.matchAll(regex);
+    const foundVars = new Set<string>();
+
+    for (const match of matches) {
+      foundVars.add(match[1]);
+    }
+
+    const newVariables: Record<string, string> = {};
+    foundVars.forEach((varName) => {
+      newVariables[varName] = variables[varName] || "";
+    });
+
+    setVariables(newVariables);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [template]);
 
   return (
     <EditorContext.Provider value={value}>{children}</EditorContext.Provider>

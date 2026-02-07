@@ -3,13 +3,11 @@ import { Button } from "./ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Loading03Icon } from "@hugeicons/core-free-icons";
 import { Input } from "./ui/input";
+import { useEditor } from "@/context/editor/editor-context";
 
-type VariablesProps = {
-  variables: Record<string, string>;
-  setVariables: React.Dispatch<React.SetStateAction<Record<string, string>>>;
-};
+export default function Variables() {
+  const { variables, setVariables } = useEditor();
 
-export default function Variables({ variables, setVariables }: VariablesProps) {
   // Handle reset variables
   const handleResetVariables = () => {
     const resetVars: Record<string, string> = {};
