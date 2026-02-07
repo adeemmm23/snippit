@@ -6,9 +6,6 @@ import {
   Search01Icon,
   Refresh01Icon,
   ArrowLeft01Icon,
-  Download01Icon,
-  Upload01Icon,
-  Settings01Icon,
   Home02Icon,
 } from "@hugeicons/core-free-icons";
 import { Button } from "./ui/button";
@@ -16,7 +13,6 @@ import { Kbd } from "./ui/kbd";
 import { Badge } from "./ui/badge";
 import { useState } from "react";
 import { useEditor } from "@/context/editor/editor-context";
-import { ButtonGroup } from "./ui/button-group";
 import { cn } from "@/lib/utils";
 
 type FileSystemItem = {
@@ -33,24 +29,6 @@ export function Files({ data }: FilesProps) {
       <Header />
       <SearchBar />
       <Tree data={data} />
-      {/* <Separator className="mt-auto" /> */}
-      <ButtonGroup className="w-full mt-auto">
-        <ButtonGroup className="grow">
-          <Button variant="outline" className="grow">
-            <HugeiconsIcon icon={Download01Icon} className="size-4" />
-            Export
-          </Button>
-          <Button variant="outline" className="grow">
-            <HugeiconsIcon icon={Upload01Icon} className="size-4" />
-            Import
-          </Button>
-        </ButtonGroup>
-        <ButtonGroup>
-          <Button variant="outline" size="icon">
-            <HugeiconsIcon icon={Settings01Icon} className="size-4" />
-          </Button>
-        </ButtonGroup>
-      </ButtonGroup>
     </div>
   );
 }
