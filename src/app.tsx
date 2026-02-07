@@ -8,6 +8,7 @@ import Editor from "./components/editor";
 import { Files } from "./components/files";
 import { EditorProvider } from "./context/editor/editor-provider";
 import { IT_SUPPORT_SNIPPETS } from "./lib/const";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
           </ResizablePanel>
         </ResizablePanelGroup>
       </main>
+      <Toaster />
     </EditorProvider>
   );
 }

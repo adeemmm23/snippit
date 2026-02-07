@@ -2,7 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Copy01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
+import {
+  Copy01Icon,
+  Delete02Icon,
+  FloppyDiskIcon,
+  Menu01Icon,
+} from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
 import {
   Breadcrumb,
@@ -20,6 +25,9 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
+import { Separator } from "./ui/separator";
+import { ButtonGroup } from "./ui/button-group";
+import { toast } from "sonner";
 
 export default function Editor() {
   const { variables, setVariables, template, setTemplate } = useEditor();
@@ -41,6 +49,11 @@ export default function Editor() {
     const output = generatePreview();
     await navigator.clipboard.writeText(output);
     setCopied(true);
+    toast("Copied successfully", {
+      icon: <HugeiconsIcon icon={Copy01Icon} className="size-4" />,
+      position: "bottom-center",
+      className: "bg-popover text-popover-foreground",
+    });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -120,7 +133,20 @@ export default function Editor() {
 
   return (
     <div className="flex flex-col h-full">
-      <FilePath />
+      <div className="flex gap-2">
+        <FilePath />
+        <ButtonGroup className="ml-auto">
+          <ButtonGroup className="grow">
+            <Button variant="outline" className="grow">
+              <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
+            </Button>
+            <Button variant="outline" className="grow">
+              <HugeiconsIcon icon={Menu01Icon} className="size-4" />
+            </Button>
+          </ButtonGroup>
+        </ButtonGroup>
+      </div>
+      <Separator className="my-2" />
       {/* Template Editor */}
       <div className="flex-1 flex flex-col mb-4 min-h-0">
         <div className="flex gap-2 align-center justify-between mb-2">
