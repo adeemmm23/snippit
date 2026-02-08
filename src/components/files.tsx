@@ -24,6 +24,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 
 type FileSystemItem = {
   [key: string]: string | FileSystemItem;
@@ -63,6 +64,59 @@ function Header() {
 
 function SearchBar() {
   const [open, setOpen] = useState(false);
+  const { setTemplate, setFilePath } = useEditor();
+
+  const flattenFiles = (
+    data: FileSystemItem,
+    prefix: string = "",
+  ): { filename: string; path: string }[] => {
+    const result: { filename: string; path: string }[] = [];
+
+    for (const [name, content] of Object.entries(data)) {
+      const fullPath = prefix ? `${prefix}/${name}` : name;
+
+      if (typeof content === "string") {
+        result.push({ filename: name, path: fullPath });
+      } else {
+        result.push(...flattenFiles(content, fullPath));
+      }
+    }
+
+    return result;
+  };
+
+  const getFileContent = (path: string): string => {
+    const segments = path.split("/");
+    let current: string | FileSystemItem = IT_SUPPORT_SNIPPETS;
+
+    for (const segment of segments) {
+      current = (current as FileSystemItem)[segment];
+    }
+
+    return current as string;
+  };
+
+  const indexedFiles = flattenFiles(IT_SUPPORT_SNIPPETS);
+
+  const generatePreview = () => {
+    return indexedFiles.map((file, index) => (
+      <CommandItem
+        key={index}
+        onSelect={() => {
+          setTemplate(getFileContent(file.path));
+          setFilePath(file.path.split("/"));
+          setOpen(false);
+        }}
+      >
+        <span className="text-ellipsis whitespace-nowrap overflow-hidden grow">
+          {file.filename}
+        </span>
+        <span className="ml-auto text-xs text-muted-foreground text-ellipsis whitespace-nowrap overflow-hidden flex-1 text-right">
+          {file.path}
+        </span>
+      </CommandItem>
+    ));
+  };
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -98,7 +152,7 @@ function SearchBar() {
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Latest">
-              <CommandItem>
+              {/* <CommandItem>
                 <span>WiFi Troubleshooting</span>
                 <span className="ml-auto text-xs text-muted-foreground">
                   ./Security/WiFi Troubleshooting
@@ -115,7 +169,9 @@ function SearchBar() {
                 <span className="ml-auto text-xs text-muted-foreground">
                   ./Software/Software Installation
                 </span>
-              </CommandItem>
+              </CommandItem> */}
+              {/* Dynamically generate CommandItems from indexedFiles */}
+              {generatePreview()}
             </CommandGroup>
           </CommandList>
         </Command>
