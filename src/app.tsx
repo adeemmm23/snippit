@@ -23,17 +23,20 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
 import { FilePath } from "@/components/file-path";
 import { usePanelRef } from "react-resizable-panels";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function App() {
   const leftPanelRef = usePanelRef();
   const rightPanelRef = usePanelRef();
+  const [isWindowSmall, setIsWindowSmall] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
+        setIsWindowSmall(true);
         leftPanelRef.current?.collapse();
       } else {
+        setIsWindowSmall(false);
         leftPanelRef.current?.expand();
       }
     };
@@ -53,6 +56,9 @@ export default function App() {
                 variant="ghost"
                 onClick={() => {
                   if (leftPanelRef.current?.isCollapsed()) {
+                    if (isWindowSmall) {
+                      rightPanelRef.current?.collapse();
+                    }
                     leftPanelRef.current?.expand();
                   } else {
                     leftPanelRef.current?.collapse();
@@ -94,6 +100,9 @@ export default function App() {
                 variant="ghost"
                 onClick={() => {
                   if (rightPanelRef.current?.isCollapsed()) {
+                    if (isWindowSmall) {
+                      leftPanelRef.current?.collapse();
+                    }
                     rightPanelRef.current?.expand();
                   } else {
                     rightPanelRef.current?.collapse();
