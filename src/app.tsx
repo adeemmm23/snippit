@@ -11,38 +11,16 @@ import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 import { Toaster } from "@/components/ui/sonner";
 import { Separator } from "@/components/ui/separator";
 import { usePanelRef } from "react-resizable-panels";
-import { useEffect, useState } from "react";
 import { Appbar } from "./components/appbar";
 
 export default function App() {
   const leftPanelRef = usePanelRef();
   const rightPanelRef = usePanelRef();
-  const [isWindowSmall, setIsWindowSmall] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIsWindowSmall(true);
-        leftPanelRef.current?.collapse();
-      } else {
-        setIsWindowSmall(false);
-        leftPanelRef.current?.expand();
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [leftPanelRef]);
   return (
     <EditorProvider>
       <main className="bg-background h-screen flex flex-col">
-        <Appbar
-          leftPanelRef={leftPanelRef}
-          rightPanelRef={rightPanelRef}
-          isWindowSmall={isWindowSmall}
-        />
+        <Appbar leftPanelRef={leftPanelRef} rightPanelRef={rightPanelRef} />
         <Separator />
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel
