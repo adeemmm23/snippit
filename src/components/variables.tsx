@@ -4,6 +4,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Loading03Icon, Delete01Icon } from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
+import { useEffect } from "react";
 
 export default function Variables() {
   const { variables, setVariables } = useEditor();
@@ -16,8 +17,28 @@ export default function Variables() {
     });
     setVariables(resetVars);
   };
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      // enter + meta/ctrl to focus first variable input
+      if (e.key === "m" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        // focus first input
+        const firstVarName = Object.keys(variables)[0];
+        const firstInput = document.getElementById(
+          firstVarName,
+        ) as HTMLInputElement | null;
+        if (firstInput) {
+          firstInput.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [variables]);
   return (
-    <div className="flex flex-col grow h-full gap-2">
+    <div className="flex flex-col grow h-full gap-2 min-w-48">
       <div className="flex items-center justify-between">
         {Object.keys(variables).length > 0 && (
           <>
