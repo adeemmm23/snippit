@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useContext } from "react";
 
 type EditorContextType = {
@@ -9,6 +7,7 @@ type EditorContextType = {
   setTemplate: React.Dispatch<React.SetStateAction<string>>;
   filePath: string[];
   setFilePath: React.Dispatch<React.SetStateAction<string[]>>;
+  resetFileState: () => void;
 };
 
 export const EditorContext = createContext<EditorContextType | undefined>(

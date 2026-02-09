@@ -10,6 +10,11 @@ export function EditorProvider({ children }: EditorProviderProps) {
   const [template, setTemplate] = useState("");
   const [filePath, setFilePath] = useState<string[]>([]);
 
+  const resetFileState = () => {
+    setFilePath([]);
+    setTemplate("");
+  };
+
   useEffect(() => {
     const regex = /\[([^\]]+)\]/g;
     const matches = template.matchAll(regex);
@@ -35,6 +40,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
     setTemplate,
     filePath,
     setFilePath,
+    resetFileState,
   };
 
   return (
