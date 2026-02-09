@@ -22,15 +22,43 @@ import { toast } from "sonner";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
 import { FilePath } from "@/components/file-path";
+import { usePanelRef } from "react-resizable-panels";
+import { useEffect } from "react";
 
 export default function App() {
+  const leftPanelRef = usePanelRef();
+  const rightPanelRef = usePanelRef();
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        leftPanelRef.current?.collapse();
+      } else {
+        leftPanelRef.current?.expand();
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [leftPanelRef]);
   return (
     <EditorProvider>
       <main className="bg-background h-screen flex flex-col">
         <div className="flex gap-2 px-2 py-2">
           <ButtonGroup>
             <ButtonGroup>
-              <Button variant="ghost" className="grow">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  if (leftPanelRef.current?.isCollapsed()) {
+                    leftPanelRef.current?.expand();
+                  } else {
+                    leftPanelRef.current?.collapse();
+                  }
+                }}
+              >
                 <HugeiconsIcon icon={LayoutAlignLeftIcon} className="size-4" />
               </Button>
             </ButtonGroup>
@@ -62,7 +90,16 @@ export default function App() {
               </Button>
             </ButtonGroup>
             <ButtonGroup>
-              <Button variant="ghost" className="grow">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  if (rightPanelRef.current?.isCollapsed()) {
+                    rightPanelRef.current?.expand();
+                  } else {
+                    rightPanelRef.current?.collapse();
+                  }
+                }}
+              >
                 <HugeiconsIcon icon={LayoutAlignRightIcon} className="size-4" />
               </Button>
             </ButtonGroup>
@@ -72,22 +109,26 @@ export default function App() {
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel
             defaultSize={250}
-            minSize={0}
+            minSize={200}
             maxSize={300}
             className="p-2"
+            panelRef={leftPanelRef}
+            collapsible
           >
             <Files data={IT_SUPPORT_SNIPPETS} />
           </ResizablePanel>
-          <ResizableHandle withHandle />
+          <ResizableHandle />
           <ResizablePanel minSize="50%" className="px-2 py-2">
             <Editor />
           </ResizablePanel>
-          <ResizableHandle withHandle />
+          <ResizableHandle />
           <ResizablePanel
             defaultSize={250}
-            minSize={0}
+            minSize={200}
             maxSize={300}
             className="p-2"
+            panelRef={rightPanelRef}
+            collapsible
           >
             <Variables />
           </ResizablePanel>

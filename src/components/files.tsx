@@ -36,7 +36,7 @@ interface FilesProps {
 
 export function Files({ data }: FilesProps) {
   return (
-    <div className="flex flex-col grow h-full gap-2">
+    <div className="flex flex-col grow h-full gap-2 min-w-48">
       <Header />
       <SearchBar />
       <Tree data={data} />
