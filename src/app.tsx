@@ -12,8 +12,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import {
   FloppyDiskIcon,
-  Menu01Icon,
   Settings01Icon,
+  LayoutAlignLeftIcon,
+  LayoutAlignRightIcon,
+  File02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { toast } from "sonner";
@@ -26,6 +28,18 @@ export default function App() {
     <EditorProvider>
       <main className="bg-background h-screen flex flex-col">
         <div className="flex gap-2 px-2 py-2">
+          <ButtonGroup>
+            <ButtonGroup>
+              <Button variant="ghost" className="grow">
+                <HugeiconsIcon icon={LayoutAlignLeftIcon} className="size-4" />
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup className="grow">
+              <Button variant="outline" className="grow">
+                <HugeiconsIcon icon={File02Icon} className="size-4" />
+              </Button>
+            </ButtonGroup>
+          </ButtonGroup>
           <FilePath />
           <ButtonGroup className="ml-auto">
             <ButtonGroup className="grow">
@@ -48,8 +62,8 @@ export default function App() {
               </Button>
             </ButtonGroup>
             <ButtonGroup>
-              <Button variant="outline" className="grow">
-                <HugeiconsIcon icon={Menu01Icon} className="size-4" />
+              <Button variant="ghost" className="grow">
+                <HugeiconsIcon icon={LayoutAlignRightIcon} className="size-4" />
               </Button>
             </ButtonGroup>
           </ButtonGroup>
