@@ -25,6 +25,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
+import { ScrollArea } from "./ui/scroll-area";
 
 type FileSystemItem = {
   [key: string]: string | FileSystemItem;
@@ -36,7 +37,7 @@ interface FilesProps {
 
 export function Files({ data }: FilesProps) {
   return (
-    <div className="flex flex-col grow h-full gap-2 min-w-48">
+    <div dir="ltr" className="flex flex-col grow h-full gap-2 min-w-48">
       <Header />
       <SearchBar />
       <Tree data={data} />
@@ -200,85 +201,87 @@ function Tree({ data }: FilesProps) {
     },
   );
   return (
-    <>
-      {currentPath.length > 0 ? (
-        <div className="flex gap-1 w-full">
+    <ScrollArea className="grow overflow-auto">
+      <div className="flex flex-col gap-2 py-1">
+        {currentPath.length > 0 ? (
+          <div className="flex gap-1 w-full">
+            <Button
+              variant="ghost"
+              className="grow justify-start gap-1 flex-1 min-w-0"
+              onClick={() => {
+                setCurrentPath(currentPath.slice(0, -1));
+                setCurrentData(() => {
+                  let newData = data;
+                  for (const segment of currentPath.slice(0, -1)) {
+                    newData = newData[segment] as FileSystemItem;
+                  }
+                  return newData;
+                });
+              }}
+            >
+              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+              <span className="text-ellipsis overflow-hidden">
+                {currentPath[currentPath.length - 1]}
+              </span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                setCurrentPath([]);
+                setCurrentData(data);
+              }}
+            >
+              <HugeiconsIcon icon={Home02Icon} className="size-4" />
+            </Button>
+          </div>
+        ) : (
+          <Button variant="ghost" className="w-full justify-start gap-2">
+            <HugeiconsIcon icon={Home02Icon} className="size-4" />
+            <span>Root</span>
+          </Button>
+        )}
+        {folders.map(({ name }) => (
           <Button
+            key={name}
+            title={name}
             variant="ghost"
-            className="grow justify-start gap-1 flex-1 min-w-0"
+            className="w-full justify-start gap-2"
             onClick={() => {
-              setCurrentPath(currentPath.slice(0, -1));
-              setCurrentData(() => {
-                let newData = data;
-                for (const segment of currentPath.slice(0, -1)) {
-                  newData = newData[segment] as FileSystemItem;
-                }
-                return newData;
-              });
+              setCurrentPath((prev) => [...prev, name]);
+              setCurrentData(currentData[name] as FileSystemItem);
             }}
           >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-            <span className="text-ellipsis overflow-hidden">
-              {currentPath[currentPath.length - 1]}
+            <HugeiconsIcon icon={Folder01Icon} className="size-4" />
+            <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+              {name}
+            </span>
+            <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 ml-auto" />
+          </Button>
+        ))}
+        {files.map(({ name }) => (
+          <Button
+            key={name}
+            title={name}
+            data-path={currentPath.concat(name).join("/")}
+            variant="ghost"
+            className={cn(
+              "w-full justify-start gap-2",
+              filePath.join("/") === currentPath.concat(name).join("/") &&
+                "bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30",
+            )}
+            onClick={() => {
+              setTemplate(currentData[name] as string);
+              setFilePath(currentPath.concat(name));
+            }}
+          >
+            <HugeiconsIcon icon={File01Icon} className="size-4" />
+            <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+              {name}
             </span>
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              setCurrentPath([]);
-              setCurrentData(data);
-            }}
-          >
-            <HugeiconsIcon icon={Home02Icon} className="size-4" />
-          </Button>
-        </div>
-      ) : (
-        <Button variant="ghost" className="w-full justify-start gap-2">
-          <HugeiconsIcon icon={Home02Icon} className="size-4" />
-          <span>Root</span>
-        </Button>
-      )}
-      {folders.map(({ name }) => (
-        <Button
-          key={name}
-          title={name}
-          variant="ghost"
-          className="w-full justify-start gap-2"
-          onClick={() => {
-            setCurrentPath((prev) => [...prev, name]);
-            setCurrentData(currentData[name] as FileSystemItem);
-          }}
-        >
-          <HugeiconsIcon icon={Folder01Icon} className="size-4" />
-          <span className="text-ellipsis whitespace-nowrap overflow-hidden">
-            {name}
-          </span>
-          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 ml-auto" />
-        </Button>
-      ))}
-      {files.map(({ name }) => (
-        <Button
-          key={name}
-          title={name}
-          data-path={currentPath.concat(name).join("/")}
-          variant="ghost"
-          className={cn(
-            "w-full justify-start gap-2",
-            filePath.join("/") === currentPath.concat(name).join("/") &&
-              "bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30",
-          )}
-          onClick={() => {
-            setTemplate(currentData[name] as string);
-            setFilePath(currentPath.concat(name));
-          }}
-        >
-          <HugeiconsIcon icon={File01Icon} className="size-4" />
-          <span className="text-ellipsis whitespace-nowrap overflow-hidden">
-            {name}
-          </span>
-        </Button>
-      ))}
-    </>
+        ))}
+      </div>
+    </ScrollArea>
   );
 }
