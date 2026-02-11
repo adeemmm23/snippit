@@ -125,10 +125,10 @@ export default function Editor() {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       {/* Template Editor */}
-      <div className="flex-1 flex flex-col mb-4 min-h-0">
-        <div className="flex gap-2 align-center justify-between mb-2">
+      <div className="mb-4 flex min-h-0 flex-1 flex-col">
+        <div className="align-center mb-2 flex justify-between gap-2">
           <Label className="px-2">Message Template</Label>
           <Button
             variant="ghost"
@@ -140,7 +140,7 @@ export default function Editor() {
             Clear
           </Button>
         </div>
-        <ScrollArea className="flex-1 rounded-md border border-input overflow-auto focus:outline-none focus:ring-2 focus:ring-ring/50 min-h-0 bg-input/10 shadow-xs dark:bg-input/30 transition-all">
+        <ScrollArea className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 min-h-0 flex-1 overflow-auto rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
           <div
             ref={editorRef}
             contentEditable="plaintext-only"
@@ -148,15 +148,15 @@ export default function Editor() {
               const text = e.currentTarget.innerText || "";
               setTemplate(text);
             }}
-            className="font-mono text-base min-h-full p-3"
+            className="min-h-full p-3 font-mono text-base"
             suppressContentEditableWarning
           />
         </ScrollArea>
       </div>
 
       {/* Final Output */}
-      <div className="flex-1 flex flex-col min-h-0">
-        <div className="flex gap-2 align-center justify-between mb-2">
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="align-center mb-2 flex justify-between gap-2">
           <Label className="px-2">Final Output</Label>
           <Button
             variant="ghost"
@@ -168,8 +168,8 @@ export default function Editor() {
             {copied ? "Copied!" : "Copy"}
           </Button>
         </div>
-        <ScrollArea className="flex-1 rounded-md border border-input overflow-auto focus:outline-none focus:ring-2 focus:ring-ring/50 min-h-0 bg-input/10 shadow-xs dark:bg-input/30 transition-all">
-          <div className="text-base leading-relaxed whitespace-pre-wrap font-mono p-3 min-h-full">
+        <ScrollArea className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 min-h-0 flex-1 overflow-auto rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
+          <div className="min-h-full p-3 font-mono text-base leading-relaxed whitespace-pre-wrap">
             {renderFinalOutput()}
           </div>
         </ScrollArea>

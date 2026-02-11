@@ -39,16 +39,16 @@ export default function Variables() {
     return () => document.removeEventListener("keydown", down);
   }, [variables]);
   return (
-    <div className="flex flex-col grow h-full gap-2 min-w-48">
+    <div className="flex h-full min-w-48 grow flex-col gap-2">
       <div className="flex items-center justify-between">
         {Object.keys(variables).length > 0 && (
           <>
-            <Label className="text-lg font-medium px-2">Variables</Label>
+            <Label className="px-2 text-lg font-medium">Variables</Label>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleResetVariables}
-              className="gap-2 h-8"
+              className="h-8 gap-2"
             >
               <HugeiconsIcon icon={Loading03Icon} className="h-4 w-4" />
               Reset
@@ -58,12 +58,12 @@ export default function Variables() {
       </div>
 
       {Object.keys(variables).length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground my-auto">
-          <div className="rounded-sm bg-muted p-2 inline-flex items-center justify-center mb-4">
+        <div className="text-muted-foreground my-auto py-8 text-center">
+          <div className="bg-muted mb-4 inline-flex items-center justify-center rounded-sm p-2">
             <HugeiconsIcon icon={Delete01Icon} className="size-5" />
           </div>
           <p className="text-sm">No variables detected</p>
-          <p className="text-xs mt-2">Add [VariableName] to your template</p>
+          <p className="mt-2 text-xs">Add [VariableName] to your template</p>
           <Button variant="ghost" size="xs" className="mt-4">
             Learn More
           </Button>

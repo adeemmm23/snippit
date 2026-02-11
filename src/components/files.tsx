@@ -37,7 +37,7 @@ interface FilesProps {
 
 export function Files({ data }: FilesProps) {
   return (
-    <div dir="ltr" className="flex flex-col grow h-full gap-2 min-w-48">
+    <div dir="ltr" className="flex h-full min-w-48 grow flex-col gap-2">
       <Header />
       <SearchBar />
       <Tree data={data} />
@@ -48,8 +48,8 @@ export function Files({ data }: FilesProps) {
 function Header() {
   return (
     <div className="flex gap-2">
-      <div className="flex gap-1 items-center select-none px-2 h-9 flex-1 min-w-0">
-        <span className="text-ellipsis whitespace-nowrap overflow-hidden font-medium">
+      <div className="flex h-9 min-w-0 flex-1 items-center gap-1 px-2 select-none">
+        <span className="overflow-hidden font-medium text-ellipsis whitespace-nowrap">
           IT Control Center
         </span>
         <Badge variant="secondary" className="ml-auto">
@@ -109,10 +109,10 @@ function SearchBar() {
           setOpen(false);
         }}
       >
-        <span className="text-ellipsis whitespace-nowrap overflow-hidden grow">
+        <span className="grow overflow-hidden text-ellipsis whitespace-nowrap">
           {file.filename}
         </span>
-        <span className="ml-auto text-xs text-muted-foreground text-ellipsis whitespace-nowrap overflow-hidden flex-1 text-right">
+        <span className="text-muted-foreground ml-auto flex-1 overflow-hidden text-right text-xs text-ellipsis whitespace-nowrap">
           {file.path}
         </span>
       </CommandItem>
@@ -139,7 +139,7 @@ function SearchBar() {
       >
         <div className="flex gap-2">
           <HugeiconsIcon icon={Search01Icon} className="size-5" />
-          <span className="text-sm text-muted-foreground">Find...</span>
+          <span className="text-muted-foreground text-sm">Find...</span>
         </div>
         <KbdGroup className="ml-auto">
           <Kbd>Ctrl</Kbd>
@@ -204,10 +204,10 @@ function Tree({ data }: FilesProps) {
     <ScrollArea className="grow overflow-auto">
       <div className="flex flex-col gap-2 py-1">
         {currentPath.length > 0 ? (
-          <div className="flex gap-1 w-full">
+          <div className="flex w-full gap-1">
             <Button
               variant="ghost"
-              className="grow justify-start gap-1 flex-1 min-w-0"
+              className="min-w-0 flex-1 grow justify-start gap-1"
               onClick={() => {
                 setCurrentPath(currentPath.slice(0, -1));
                 setCurrentData(() => {
@@ -220,7 +220,7 @@ function Tree({ data }: FilesProps) {
               }}
             >
               <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-              <span className="text-ellipsis overflow-hidden">
+              <span className="overflow-hidden text-ellipsis">
                 {currentPath[currentPath.length - 1]}
               </span>
             </Button>
@@ -253,10 +253,10 @@ function Tree({ data }: FilesProps) {
             }}
           >
             <HugeiconsIcon icon={Folder01Icon} className="size-4" />
-            <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
               {name}
             </span>
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 ml-auto" />
+            <HugeiconsIcon icon={ArrowRight01Icon} className="ml-auto size-4" />
           </Button>
         ))}
         {files.map(({ name }) => (
@@ -276,7 +276,7 @@ function Tree({ data }: FilesProps) {
             }}
           >
             <HugeiconsIcon icon={File01Icon} className="size-4" />
-            <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
               {name}
             </span>
           </Button>

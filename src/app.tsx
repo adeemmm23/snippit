@@ -32,7 +32,7 @@ export default function App() {
 
   return (
     <EditorProvider>
-      <main className="bg-background h-screen flex flex-col">
+      <main className="bg-background flex h-screen flex-col">
         <Appbar leftPanelRef={leftPanelRef} rightPanelRef={rightPanelRef} />
         <Separator />
         <ResizablePanelGroup orientation="horizontal">

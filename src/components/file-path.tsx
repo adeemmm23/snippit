@@ -33,7 +33,7 @@ export function FilePath() {
     { fileName: "", folderName: "", rest: [] as string[] },
   );
   return (
-    <Breadcrumb className="h-9 flex items-center px-2">
+    <Breadcrumb className="flex h-9 items-center px-2">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink className="select-none">Root</BreadcrumbLink>
