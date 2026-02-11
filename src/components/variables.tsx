@@ -5,6 +5,7 @@ import { Loading03Icon, Delete01Icon } from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 import { useEffect } from "react";
+import { ScrollArea } from "./ui/scroll-area";
 
 export default function Variables() {
   const { variables, setVariables } = useEditor();
@@ -68,63 +69,65 @@ export default function Variables() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-4">
-          {Object.keys(variables).map((varName) => (
-            <div key={varName}>
-              <Label
-                htmlFor={varName}
-                className="mb-2 flex items-center gap-2 px-2"
-              >
-                {varName}
-              </Label>
-              <InputGroup className="w-full">
-                <InputGroupInput
-                  id={varName}
-                  value={variables[varName]}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      const varKeys = Object.keys(variables);
-                      const currentIndex = varKeys.indexOf(varName);
-                      const nextIndex = (currentIndex + 1) % varKeys.length;
-                      const nextVarName = varKeys[nextIndex];
-                      const nextInput = document.getElementById(
-                        nextVarName,
-                      ) as HTMLInputElement;
-                      if (nextInput) {
-                        nextInput.focus();
+        <ScrollArea className="grow overflow-auto">
+          <div className="flex flex-col gap-4 py-1">
+            {Object.keys(variables).map((varName) => (
+              <div key={varName}>
+                <Label
+                  htmlFor={varName}
+                  className="mb-2 flex items-center gap-2 px-2"
+                >
+                  {varName}
+                </Label>
+                <InputGroup className="w-full">
+                  <InputGroupInput
+                    id={varName}
+                    value={variables[varName]}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const varKeys = Object.keys(variables);
+                        const currentIndex = varKeys.indexOf(varName);
+                        const nextIndex = (currentIndex + 1) % varKeys.length;
+                        const nextVarName = varKeys[nextIndex];
+                        const nextInput = document.getElementById(
+                          nextVarName,
+                        ) as HTMLInputElement;
+                        if (nextInput) {
+                          nextInput.focus();
+                        }
                       }
+                    }}
+                    onChange={(e) =>
+                      setVariables((prev) => ({
+                        ...prev,
+                        [varName]: e.target.value,
+                      }))
                     }
-                  }}
-                  onChange={(e) =>
-                    setVariables((prev) => ({
-                      ...prev,
-                      [varName]: e.target.value,
-                    }))
-                  }
-                  placeholder={`Enter ${varName}...`}
-                />
-                {variables[varName] && (
-                  <InputGroupAddon align="inline-end" className="pr-1.5">
-                    <Button
-                      variant={null}
-                      size="icon-sm"
-                      className="cursor-pointer"
-                      onClick={() =>
-                        setVariables((prev) => ({
-                          ...prev,
-                          [varName]: "",
-                        }))
-                      }
-                    >
-                      <HugeiconsIcon icon={Delete01Icon} className="size-4" />
-                    </Button>
-                  </InputGroupAddon>
-                )}
-              </InputGroup>
-            </div>
-          ))}
-        </div>
+                    placeholder={`Enter ${varName}...`}
+                  />
+                  {variables[varName] && (
+                    <InputGroupAddon align="inline-end" className="pr-1.5">
+                      <Button
+                        variant={null}
+                        size="icon-sm"
+                        className="cursor-pointer"
+                        onClick={() =>
+                          setVariables((prev) => ({
+                            ...prev,
+                            [varName]: "",
+                          }))
+                        }
+                      >
+                        <HugeiconsIcon icon={Delete01Icon} className="size-4" />
+                      </Button>
+                    </InputGroupAddon>
+                  )}
+                </InputGroup>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
       )}
     </div>
   );

@@ -6,6 +6,7 @@ import { Copy01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
 
 import { toast } from "sonner";
+import { ScrollArea } from "./ui/scroll-area";
 
 export default function Editor() {
   const { variables, setVariables, template, setTemplate } = useEditor();
@@ -139,16 +140,18 @@ export default function Editor() {
             Clear
           </Button>
         </div>
-        <div
-          ref={editorRef}
-          contentEditable="plaintext-only"
-          onInput={(e) => {
-            const text = e.currentTarget.innerText || "";
-            setTemplate(text);
-          }}
-          className="flex-1 font-mono p-3 rounded-md border border-input overflow-auto focus:outline-none focus:ring-2 focus:ring-ring/50  min-h-0 text-base bg-input/10 shadow-xs dark:bg-input/30 transition-all"
-          suppressContentEditableWarning
-        />
+        <ScrollArea className="flex-1 rounded-md border border-input overflow-auto focus:outline-none focus:ring-2 focus:ring-ring/50 min-h-0 bg-input/10 shadow-xs dark:bg-input/30 transition-all">
+          <div
+            ref={editorRef}
+            contentEditable="plaintext-only"
+            onInput={(e) => {
+              const text = e.currentTarget.innerText || "";
+              setTemplate(text);
+            }}
+            className="font-mono text-base min-h-full p-3"
+            suppressContentEditableWarning
+          />
+        </ScrollArea>
       </div>
 
       {/* Final Output */}
@@ -165,9 +168,11 @@ export default function Editor() {
             {copied ? "Copied!" : "Copy"}
           </Button>
         </div>
-        <div className="flex-1 p-4 dark:bg-input/30 rounded-md border border-input text-base leading-relaxed whitespace-pre-wrap font-mono shadow-xs overflow-auto min-h-0">
-          {renderFinalOutput()}
-        </div>
+        <ScrollArea className="flex-1 rounded-md border border-input overflow-auto focus:outline-none focus:ring-2 focus:ring-ring/50 min-h-0 bg-input/10 shadow-xs dark:bg-input/30 transition-all">
+          <div className="text-base leading-relaxed whitespace-pre-wrap font-mono p-3 min-h-full">
+            {renderFinalOutput()}
+          </div>
+        </ScrollArea>
       </div>
     </div>
   );
