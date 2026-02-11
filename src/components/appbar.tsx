@@ -63,9 +63,9 @@ export function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
       >
         <HugeiconsIcon icon={File02Icon} className="size-4" />
       </Button>
-      <Separator orientation="vertical" className="h-5 my-auto" />
+      <Separator orientation="vertical" className="my-auto h-5" />
       <FilePath />
-      <Separator orientation="vertical" className="h-5 my-auto ml-auto" />
+      <Separator orientation="vertical" className="my-auto ml-auto h-5" />
       <Button
         variant="ghost"
         onClick={() => {
