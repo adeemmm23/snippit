@@ -268,7 +268,7 @@ function Tree({ data }: FilesProps) {
             className={cn(
               "w-full justify-start gap-2",
               filePath.join("/") === currentPath.concat(name).join("/") &&
-                "bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30",
+                "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
             )}
             onClick={() => {
               setTemplate(currentData[name] as string);

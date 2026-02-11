@@ -106,7 +106,7 @@ export default function Editor() {
 
       // Add the replacement value or variable name in blue
       parts.push(
-        <span key={`value-${index}`} className="text-primary">
+        <span key={`value-${index}`} className="text-primary-foreground">
           {replacement.value}
         </span>,
       );
