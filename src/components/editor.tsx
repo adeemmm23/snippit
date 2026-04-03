@@ -6,7 +6,7 @@ import { Copy01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
 
 import { toast } from "sonner";
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 
 export default function Editor() {
   const { variables, setVariables, template, setTemplate } = useEditor();
@@ -140,18 +140,20 @@ export default function Editor() {
             Clear
           </Button>
         </div>
-        <ScrollArea className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 min-h-0 flex-1 overflow-auto rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
-          <div
-            ref={editorRef}
-            contentEditable="plaintext-only"
-            onInput={(e) => {
-              const text = e.currentTarget.innerText || "";
-              setTemplate(text);
-            }}
-            className="min-h-full p-3 font-mono text-base"
-            suppressContentEditableWarning
-          />
-        </ScrollArea>
+        <div className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 flex min-h-0 flex-1 overflow-hidden rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
+          <ScrollArea className="h-full w-full">
+            <div
+              ref={editorRef}
+              contentEditable="plaintext-only"
+              onInput={(e) => {
+                const text = e.currentTarget.innerText || "";
+                setTemplate(text);
+              }}
+              className="min-h-full p-3 font-mono text-base outline-none"
+              suppressContentEditableWarning
+            />
+          </ScrollArea>
+        </div>
       </div>
 
       {/* Final Output */}
