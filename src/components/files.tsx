@@ -27,7 +27,7 @@ import {
 import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 import { ScrollArea } from "./ui/scroll-area";
 
-type FileSystemItem = {
+export type FileSystemItem = {
   [key: string]: string | FileSystemItem;
 };
 

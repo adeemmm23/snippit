@@ -13,12 +13,14 @@ import { usePanelRef } from "react-resizable-panels";
 import { useEditor } from "@/context/editor/editor-context";
 import { useEffect, useState } from "react";
 import { Separator } from "./ui/separator";
+import { type FileSystemItem } from "@/components/files";
 
 type AppbarProps = {
   leftPanelRef: ReturnType<typeof usePanelRef>;
   rightPanelRef: ReturnType<typeof usePanelRef>;
+  setFiles?: (files: Record<string, FileSystemItem>) => void;
 };
-export function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
+export function Appbar({ leftPanelRef, rightPanelRef, setFiles }: AppbarProps) {
   const { resetFileState } = useEditor();
   const [isWindowSmall, setIsWindowSmall] = useState(false);
 
@@ -69,6 +71,29 @@ export function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
       <Button
         variant="ghost"
         onClick={() => {
+          setFiles?.({
+            "IT Support Snippets": {
+              "Email Templates": {
+                "Password Reset.txt":
+                  "Subject: Password Reset Request\n\nDear [UserName],\n\nWe received a request to reset your password. Please click the link below to reset it:\n\n[ResetLink]\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nIT Support Team",
+              },
+            },
+          });
+
+          // save to local storage
+
+          localStorage.setItem(
+            "files",
+            JSON.stringify({
+              "IT Support Snippets": {
+                "Email Templates": {
+                  "Password Reset.txt":
+                    "Subject: Password Reset Request\n\nDear [UserName],\n\nWe received a request to reset your password. Please click the link below to reset it:\n\n[ResetLink]\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nIT Support Team",
+                },
+              },
+            }),
+          );
+
           toast("Saved successfully", {
             icon: <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />,
             position: "bottom-center",
