@@ -19,16 +19,16 @@ export default function App() {
   const leftPanelRef = usePanelRef();
   const rightPanelRef = usePanelRef();
 
-  useEffect(() => {
-    // add transition to flex property to data-attribute resizable-panel for smooth collapsing
-    const style = document.createElement("style");
-    style.innerHTML = `
-      [data-slot="resizable-panel"] {
-        transition: flex 0.2s ease;
-      }
-    `;
-    document.head.appendChild(style);
-  }, []);
+  // useEffect(() => {
+  //   // add transition to flex property to data-attribute resizable-panel for smooth collapsing
+  //   const style = document.createElement("style");
+  //   style.innerHTML = `
+  //     [data-slot="resizable-panel"] {
+  //       transition: flex 0.2s ease;
+  //     }
+  //   `;
+  //   document.head.appendChild(style);
+  // }, []);
 
   return (
     <EditorProvider>
