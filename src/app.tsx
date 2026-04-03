@@ -46,7 +46,7 @@ export default function App() {
             defaultSize={250}
             minSize={200}
             maxSize={300}
-            className="p-2"
+            className="p-1" // inside there is an extra px-1 that result in an equal padding overall; I'll fix it
             panelRef={rightPanelRef}
             collapsible
           >
