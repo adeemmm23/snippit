@@ -4,9 +4,14 @@ import {
   File01Icon,
   Folder01Icon,
   Search01Icon,
-  Refresh01Icon,
   ArrowLeft01Icon,
   Home02Icon,
+  MoreVerticalIcon,
+  FileAddIcon,
+  FolderAddIcon,
+  InputCursorTextIcon,
+  Delete02Icon,
+  Refresh01Icon,
 } from "@hugeicons/core-free-icons";
 import { Button } from "./ui/button";
 import { Kbd, KbdGroup } from "./ui/kbd";
@@ -24,6 +29,16 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+
 import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 import { ScrollArea } from "./ui/scroll-area";
 
@@ -47,7 +62,7 @@ export function Files({ data }: FilesProps) {
 
 function Header() {
   return (
-    <div className="flex gap-2">
+    <div className="flex">
       <div className="flex h-9 min-w-0 flex-1 items-center gap-1 px-2 select-none">
         <span className="overflow-hidden font-medium text-ellipsis whitespace-nowrap">
           IT Control Center
@@ -56,9 +71,32 @@ function Header() {
           saved
         </Badge>
       </div>
-      <Button variant="ghost" className="size-9">
-        <HugeiconsIcon icon={Refresh01Icon} className="size-4" />
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button variant="ghost" className="size-9">
+            <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <HugeiconsIcon icon={Refresh01Icon} className="size-4" />
+              Refresh
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <HugeiconsIcon icon={FileAddIcon} className="size-4" />
+              New File
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <HugeiconsIcon icon={FolderAddIcon} className="size-4" />
+              New Folder
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
@@ -242,44 +280,99 @@ function Tree({ data }: FilesProps) {
           </Button>
         )}
         {folders.map(({ name }) => (
-          <Button
-            key={name}
-            title={name}
-            variant="ghost"
-            className="w-full justify-start gap-2"
-            onClick={() => {
-              setCurrentPath((prev) => [...prev, name]);
-              setCurrentData(currentData[name] as FileSystemItem);
-            }}
-          >
-            <HugeiconsIcon icon={Folder01Icon} className="size-4" />
-            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-              {name}
-            </span>
-            <HugeiconsIcon icon={ArrowRight01Icon} className="ml-auto size-4" />
-          </Button>
+          <div className="group/folder flex w-full gap-1">
+            <Button
+              key={name}
+              title={name}
+              variant="ghost"
+              className="min-w-0 flex-1 justify-start gap-2"
+              onClick={() => {
+                setCurrentPath((prev) => [...prev, name]);
+                setCurrentData(currentData[name] as FileSystemItem);
+              }}
+            >
+              <HugeiconsIcon icon={Folder01Icon} className="size-4 shrink-0" />
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {name}
+              </span>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="pointer-events-none shrink-0 opacity-0 group-hover/folder:pointer-events-auto group-hover/folder:opacity-100"
+                >
+                  <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <HugeiconsIcon
+                      icon={InputCursorTextIcon}
+                      className="size-4"
+                    />
+                    Rename
+                  </DropdownMenuItem>
+                  <DropdownMenuItem variant="destructive">
+                    <HugeiconsIcon icon={Delete02Icon} className="size-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         ))}
         {files.map(({ name }) => (
-          <Button
-            key={name}
-            title={name}
-            data-path={currentPath.concat(name).join("/")}
-            variant="ghost"
-            className={cn(
-              "w-full justify-start gap-2",
-              filePath.join("/") === currentPath.concat(name).join("/") &&
-                "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
-            )}
-            onClick={() => {
-              setTemplate(currentData[name] as string);
-              setFilePath(currentPath.concat(name));
-            }}
-          >
-            <HugeiconsIcon icon={File01Icon} className="size-4" />
-            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-              {name}
-            </span>
-          </Button>
+          <div className="group/file flex w-full gap-1">
+            <Button
+              key={name}
+              title={name}
+              data-path={currentPath.concat(name).join("/")}
+              variant="ghost"
+              className={cn(
+                "min-w-0 flex-1 justify-start gap-2",
+                filePath.join("/") === currentPath.concat(name).join("/") &&
+                  "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
+              )}
+              onClick={() => {
+                setTemplate(currentData[name] as string);
+                setFilePath(currentPath.concat(name));
+              }}
+            >
+              <HugeiconsIcon icon={File01Icon} className="size-4" />
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {name}
+              </span>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="pointer-events-none shrink-0 opacity-0 group-hover/file:pointer-events-auto group-hover/file:opacity-100"
+                >
+                  <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <HugeiconsIcon
+                      icon={InputCursorTextIcon}
+                      className="size-4"
+                    />
+                    Rename
+                  </DropdownMenuItem>
+                  <DropdownMenuItem variant="destructive">
+                    <HugeiconsIcon icon={Delete02Icon} className="size-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         ))}
       </div>
     </ScrollArea>
