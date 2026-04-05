@@ -6,9 +6,6 @@ import {
   Refresh01Icon,
 } from "@hugeicons/core-free-icons";
 import { Button } from "../ui/button";
-
-import { Badge } from "../ui/badge";
-
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,7 +14,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "../ui/badge";
+
 import { useEditor } from "@/context/editor/editor-context";
+import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 
 export default function Header() {
   const { createFile, createFolder, currentWorkingFolder } = useEditor();
@@ -64,6 +64,17 @@ export default function Header() {
             >
               <HugeiconsIcon icon={FolderAddIcon} className="size-4" />
               New Folder
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                localStorage.setItem(
+                  "files",
+                  JSON.stringify(IT_SUPPORT_SNIPPETS),
+                );
+              }}
+            >
+              <HugeiconsIcon icon={FolderAddIcon} className="size-4" />
+              Dummy
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
