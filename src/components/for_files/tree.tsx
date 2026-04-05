@@ -1,25 +1,9 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  File01Icon,
-  Folder01Icon,
-  ArrowLeft01Icon,
-  Home02Icon,
-  MoreVerticalIcon,
-  InputCursorTextIcon,
-  Delete02Icon,
-} from "@hugeicons/core-free-icons";
+import { ArrowLeft01Icon, Home02Icon } from "@hugeicons/core-free-icons";
 import { Button } from "../ui/button";
-import { useState } from "react";
 import { useEditor } from "@/context/editor/editor-context";
-import { cn } from "@/lib/utils";
 
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+import Node from "./node";
 
 import { ScrollArea } from "../ui/scroll-area";
 import type { FileSystemItem } from "./types";
@@ -30,11 +14,17 @@ export default function Tree() {
     setFilePath,
     filePath,
     files: data,
-    currentWorkingFolder: currentPath,
-    setCurrentWorkingFolder: setCurrentPath,
+    currentWorkingFolder,
+    setCurrentWorkingFolder,
   } = useEditor();
 
-  const [currentData, setCurrentData] = useState<FileSystemItem>(data);
+  const currentData = currentWorkingFolder.reduce((acc, folder) => {
+    const next = acc[folder];
+    if (typeof next === "string") {
+      throw new Error(`Path ${currentWorkingFolder.join("/")} is not a folder`);
+    }
+    return next;
+  }, data);
 
   const { folders, files } = Object.entries(currentData).reduce(
     (acc, [name, content]) => {
@@ -50,36 +40,29 @@ export default function Tree() {
       files: [] as { name: string; content: string }[],
     },
   );
+
   return (
     <ScrollArea className="grow overflow-auto">
       <div className="flex flex-col gap-2 py-1">
-        {currentPath.length > 0 ? (
+        {currentWorkingFolder.length > 0 ? (
           <div className="flex w-full gap-1">
             <Button
               variant="ghost"
               className="min-w-0 flex-1 grow justify-start gap-1"
               onClick={() => {
-                setCurrentPath(currentPath.slice(0, -1));
-                setCurrentData(() => {
-                  let newData = data;
-                  for (const segment of currentPath.slice(0, -1)) {
-                    newData = newData[segment] as FileSystemItem;
-                  }
-                  return newData;
-                });
+                setCurrentWorkingFolder(currentWorkingFolder.slice(0, -1));
               }}
             >
               <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
               <span className="overflow-hidden text-ellipsis">
-                {currentPath[currentPath.length - 1]}
+                {currentWorkingFolder[currentWorkingFolder.length - 1]}
               </span>
             </Button>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => {
-                setCurrentPath([]);
-                setCurrentData(data);
+                setCurrentWorkingFolder([]);
               }}
             >
               <HugeiconsIcon icon={Home02Icon} className="size-4" />
@@ -92,101 +75,30 @@ export default function Tree() {
           </Button>
         )}
         {folders.map(({ name }) => (
-          <Button
+          <Node
             key={name}
-            title={name}
-            variant="ghost"
-            size="default"
-            className="group/folder w-full justify-start gap-2 pr-0"
+            name={name}
+            isFile={false}
+            path={currentWorkingFolder.concat(name)}
             onClick={() => {
-              setCurrentPath((prev) => [...prev, name]);
-              setCurrentData(currentData[name] as FileSystemItem);
+              setCurrentWorkingFolder(currentWorkingFolder.concat(name));
             }}
-          >
-            <HugeiconsIcon icon={Folder01Icon} className="size-4 shrink-0" />
-            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-              {name}
-            </span>
-            <div className="ml-auto flex size-9 items-center justify-center">
-              <DropdownMenu>
-                <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    className="pointer-events-none shrink-0 opacity-0 group-hover/folder:pointer-events-auto group-hover/folder:opacity-100"
-                  >
-                    <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                      <HugeiconsIcon
-                        icon={InputCursorTextIcon}
-                        className="size-4"
-                      />
-                      Rename
-                    </DropdownMenuItem>
-                    <DropdownMenuItem variant="destructive">
-                      <HugeiconsIcon icon={Delete02Icon} className="size-4" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </Button>
+          />
         ))}
         {files.map(({ name }) => (
-          <Button
+          <Node
             key={name}
-            title={name}
-            data-path={currentPath.concat(name).join("/")}
-            variant="ghost"
-            size="default"
-            className={cn(
-              "group/file w-full justify-start gap-2 pr-0",
-              filePath.join("/") === currentPath.concat(name).join("/") &&
-                "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
-            )}
+            name={name}
+            isFile={true}
+            path={currentWorkingFolder.concat(name)}
+            isActive={
+              filePath.join("/") === currentWorkingFolder.concat(name).join("/")
+            }
             onClick={() => {
               setTemplate(currentData[name] as string);
-              setFilePath(currentPath.concat(name));
+              setFilePath(currentWorkingFolder.concat(name));
             }}
-          >
-            <HugeiconsIcon icon={File01Icon} className="size-4" />
-            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-              {name}
-            </span>
-            <div className="ml-auto flex size-9 items-center justify-center">
-              <DropdownMenu>
-                <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    className="pointer-events-none shrink-0 opacity-0 group-hover/file:pointer-events-auto group-hover/file:opacity-100"
-                  >
-                    <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                      <HugeiconsIcon
-                        icon={InputCursorTextIcon}
-                        className="size-4"
-                      />
-                      Rename
-                    </DropdownMenuItem>
-                    <DropdownMenuItem variant="destructive">
-                      <HugeiconsIcon icon={Delete02Icon} className="size-4" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </Button>
+          />
         ))}
       </div>
     </ScrollArea>
