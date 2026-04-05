@@ -70,7 +70,7 @@ export default function Variables() {
         </div>
       ) : (
         <ScrollArea className="grow overflow-auto">
-          <div className="flex flex-col gap-4 py-1">
+          <div className="flex flex-col gap-4 px-1 py-1">
             {Object.keys(variables).map((varName) => (
               <div key={varName}>
                 <Label

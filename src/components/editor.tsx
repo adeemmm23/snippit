@@ -23,21 +23,6 @@ export default function Editor() {
     }
   }, [template]);
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        toast("Template saved!", {
-          icon: <HugeiconsIcon icon={Copy01Icon} className="size-4" />,
-          position: "bottom-center",
-        });
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
   // Handle copy to clipboard
   const handleCopy = async () => {
     const output = generatePreview();
@@ -140,18 +125,20 @@ export default function Editor() {
             Clear
           </Button>
         </div>
-        <ScrollArea className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 min-h-0 flex-1 overflow-auto rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
-          <div
-            ref={editorRef}
-            contentEditable="plaintext-only"
-            onInput={(e) => {
-              const text = e.currentTarget.innerText || "";
-              setTemplate(text);
-            }}
-            className="min-h-full p-3 font-mono text-base"
-            suppressContentEditableWarning
-          />
-        </ScrollArea>
+        <div className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 flex min-h-0 flex-1 overflow-hidden rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
+          <ScrollArea className="h-full w-full">
+            <div
+              ref={editorRef}
+              contentEditable="plaintext-only"
+              onInput={(e) => {
+                const text = e.currentTarget.innerText || "";
+                setTemplate(text);
+              }}
+              className="min-h-full p-3 font-mono text-base outline-none"
+              suppressContentEditableWarning
+            />
+          </ScrollArea>
+        </div>
       </div>
 
       {/* Final Output */}
