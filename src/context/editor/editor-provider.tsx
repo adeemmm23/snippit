@@ -12,7 +12,7 @@ type EditorProviderProps = {
 export function EditorProvider({ children }: EditorProviderProps) {
   const [variables, setVariables] = useState<Record<string, string>>({});
   const [template, setTemplate] = useState("");
-  const [filePath, setFilePath] = useState<string[]>([]);
+  const [activeFilePath, setActiveFilePath] = useState<string[]>([]);
   const [currentWorkingFolder, setCurrentWorkingFolder] = useState<string[]>(
     [],
   );
@@ -121,7 +121,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
   };
 
   const resetFileState = () => {
-    setFilePath([]);
+    setActiveFilePath([]);
     setTemplate("");
   };
 
@@ -148,8 +148,8 @@ export function EditorProvider({ children }: EditorProviderProps) {
     setVariables,
     template,
     setTemplate,
-    filePath,
-    setFilePath,
+    activeFilePath,
+    setActiveFilePath,
     resetFileState,
     files,
     setFiles,

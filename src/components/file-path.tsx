@@ -18,12 +18,12 @@ import { Button } from "@/components/ui/button";
 import { useEditor } from "@/context/editor/editor-context";
 
 export function FilePath() {
-  const { filePath } = useEditor();
-  const { fileName, folderName, rest } = filePath.reduce(
+  const { activeFilePath } = useEditor();
+  const { fileName, folderName, rest } = activeFilePath.reduce(
     (acc, segment, index) => {
-      if (index === filePath.length - 1) {
+      if (index === activeFilePath.length - 1) {
         acc.fileName = segment;
-      } else if (index === filePath.length - 2) {
+      } else if (index === activeFilePath.length - 2) {
         acc.folderName = segment;
       } else {
         acc.rest.push(segment);
@@ -73,7 +73,9 @@ export function FilePath() {
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbPage className="select-none">
-            {fileName != "" ? filePath[filePath.length - 1] : "New Snippet"}
+            {fileName != ""
+              ? activeFilePath[activeFilePath.length - 1]
+              : "New Snippet"}
           </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>

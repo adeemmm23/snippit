@@ -9,8 +9,8 @@ type EditorContextType = {
   setVariables: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   template: string;
   setTemplate: React.Dispatch<React.SetStateAction<string>>;
-  filePath: string[];
-  setFilePath: React.Dispatch<React.SetStateAction<string[]>>;
+  activeFilePath: string[];
+  setActiveFilePath: React.Dispatch<React.SetStateAction<string[]>>;
   currentWorkingFolder: string[];
   setCurrentWorkingFolder: React.Dispatch<React.SetStateAction<string[]>>;
   resetFileState: () => void;

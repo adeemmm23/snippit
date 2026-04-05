@@ -16,11 +16,11 @@ import {
 } from "@/components/ui/command";
 
 import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
-import type { FileSystemItem } from "../files";
+import type { FileSystemItem } from "./types";
 
 export default function SearchBar() {
   const [open, setOpen] = useState(false);
-  const { setTemplate, setFilePath } = useEditor();
+  const { setTemplate, setActiveFilePath } = useEditor();
 
   const flattenFiles = (
     data: FileSystemItem,
@@ -60,7 +60,7 @@ export default function SearchBar() {
         key={index}
         onSelect={() => {
           setTemplate(getFileContent(file.path));
-          setFilePath(file.path.split("/"));
+          setActiveFilePath(file.path.split("/"));
           setOpen(false);
         }}
       >

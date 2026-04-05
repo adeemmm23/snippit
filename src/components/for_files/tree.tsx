@@ -11,8 +11,8 @@ import type { FileSystemItem } from "./types";
 export default function Tree() {
   const {
     setTemplate,
-    setFilePath,
-    filePath,
+    setActiveFilePath,
+    activeFilePath,
     files: data,
     currentWorkingFolder,
     setCurrentWorkingFolder,
@@ -92,11 +92,12 @@ export default function Tree() {
             isFile={true}
             path={currentWorkingFolder.concat(name)}
             isActive={
-              filePath.join("/") === currentWorkingFolder.concat(name).join("/")
+              activeFilePath.join("/") ===
+              currentWorkingFolder.concat(name).join("/")
             }
             onClick={() => {
               setTemplate(currentData[name] as string);
-              setFilePath(currentWorkingFolder.concat(name));
+              setActiveFilePath(currentWorkingFolder.concat(name));
             }}
           />
         ))}
