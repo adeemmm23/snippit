@@ -23,21 +23,6 @@ export default function Editor() {
     }
   }, [template]);
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        toast("Template saved!", {
-          icon: <HugeiconsIcon icon={Copy01Icon} className="size-4" />,
-          position: "bottom-center",
-        });
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
   // Handle copy to clipboard
   const handleCopy = async () => {
     const output = generatePreview();

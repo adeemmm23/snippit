@@ -15,20 +15,19 @@ import {
   CommandList,
 } from "@/components/ui/command";
 
-import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 import type { FileSystemItem } from "./types";
 
 export default function SearchBar() {
   const [open, setOpen] = useState(false);
-  const { setTemplate, setActiveFilePath } = useEditor();
+  const { setTemplate, setActiveFilePath, files } = useEditor();
 
   const flattenFiles = (
-    data: FileSystemItem,
+    data?: FileSystemItem,
     prefix: string = "",
   ): { filename: string; path: string }[] => {
     const result: { filename: string; path: string }[] = [];
 
-    for (const [name, content] of Object.entries(data)) {
+    for (const [name, content] of Object.entries(data ?? files)) {
       const fullPath = prefix ? `${prefix}/${name}` : name;
 
       if (typeof content === "string") {
@@ -43,7 +42,7 @@ export default function SearchBar() {
 
   const getFileContent = (path: string): string => {
     const segments = path.split("/");
-    let current: string | FileSystemItem = IT_SUPPORT_SNIPPETS;
+    let current: string | FileSystemItem = files;
 
     for (const segment of segments) {
       current = (current as FileSystemItem)[segment];
@@ -52,7 +51,7 @@ export default function SearchBar() {
     return current as string;
   };
 
-  const indexedFiles = flattenFiles(IT_SUPPORT_SNIPPETS);
+  const indexedFiles = flattenFiles();
 
   const generatePreview = () => {
     return indexedFiles.map((file, index) => (

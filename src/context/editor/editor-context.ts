@@ -16,6 +16,7 @@ type EditorContextType = {
   resetFileState: () => void;
   files: FileSystemItem;
   setFiles: React.Dispatch<React.SetStateAction<FileSystemItem>>;
+  saveActiveFile: () => boolean;
   // removeFile: (path: string[]) => void;
   // renameFile: (oldPath: string[], newPath: string[]) => void;
   createFile: (path: string[], content: string) => void;

@@ -55,15 +55,6 @@ export function EditorProvider({ children }: EditorProviderProps) {
 
     while (current[finalName] !== undefined) {
       if (isFile) {
-        const nameParts = baseName.split(".");
-        if (nameParts.length > 1) {
-          const extension = nameParts.pop();
-          const nameWithoutExt = nameParts.join(".");
-          finalName = `${nameWithoutExt} ${counter}.${extension}`;
-        } else {
-          finalName = `${baseName} ${counter}`;
-        }
-      } else {
         finalName = `${baseName} ${counter}`;
       }
       counter++;
@@ -120,6 +111,32 @@ export function EditorProvider({ children }: EditorProviderProps) {
     });
   };
 
+  const saveActiveFile = () => {
+    if (activeFilePath.length === 0) return false;
+
+    setFiles((prevFiles) => {
+      const newFiles: FileSystemItem =
+        typeof prevFiles === "string"
+          ? {}
+          : JSON.parse(JSON.stringify(prevFiles));
+      let current: FileSystemItem = newFiles;
+
+      for (let i = 0; i < activeFilePath.length - 1; i++) {
+        const segment = activeFilePath[i];
+        if (!current[segment] || typeof current[segment] === "string") {
+          current[segment] = {};
+        }
+        current = current[segment] as FileSystemItem;
+      }
+
+      const fileName = activeFilePath[activeFilePath.length - 1];
+      current[fileName] = template;
+      saveFilesToStorage(newFiles);
+      return newFiles;
+    });
+    return true;
+  };
+
   const resetFileState = () => {
     setActiveFilePath([]);
     setTemplate("");
@@ -156,6 +173,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
     createFile,
     createFolder,
     currentWorkingFolder,
+    saveActiveFile,
     setCurrentWorkingFolder,
   };
 

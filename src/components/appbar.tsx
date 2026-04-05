@@ -19,7 +19,7 @@ type AppbarProps = {
   rightPanelRef: ReturnType<typeof usePanelRef>;
 };
 export function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
-  const { resetFileState } = useEditor();
+  const { resetFileState, saveActiveFile } = useEditor();
   const [isWindowSmall, setIsWindowSmall] = useState(false);
 
   useEffect(() => {
@@ -38,6 +38,24 @@ export function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
       window.removeEventListener("resize", handleResize);
     };
   }, [leftPanelRef]);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        const isSaved = saveActiveFile();
+        if (isSaved) {
+          toast.success("File saved successfully!");
+        } else {
+          toast.error("No active file to save!");
+        }
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [saveActiveFile]);
+
   return (
     <div className="flex gap-2 px-2 py-2">
       <Button
@@ -68,7 +86,14 @@ export function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
       <Separator orientation="vertical" className="my-auto ml-auto h-5" />
       <Button
         variant="ghost"
-        onClick={() => toast("Save functionality is not implemented yet")}
+        onClick={() => {
+          const isSaved = saveActiveFile();
+          if (isSaved) {
+            toast.success("File saved successfully!");
+          } else {
+            toast.error("No active file to save!");
+          }
+        }}
       >
         <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
       </Button>
