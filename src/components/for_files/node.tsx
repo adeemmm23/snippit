@@ -16,6 +16,8 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { useEditor } from "@/context/editor/editor-context";
+import { useState, useRef, useEffect } from "react";
 
 type NodeProps = {
   name: string;
@@ -32,6 +34,55 @@ export default function Node({
   isActive,
   path,
 }: NodeProps) {
+  const { removeItem, renameItem } = useEditor();
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newName, setNewName] = useState(name);
+  const spanRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (isRenaming && spanRef.current) {
+      spanRef.current.focus();
+      // Select all text
+      const range = document.createRange();
+      range.selectNodeContents(spanRef.current);
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+  }, [isRenaming]);
+
+  const handleRenameStart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsRenaming(true);
+    setNewName(name);
+  };
+
+  const handleRenameEnd = () => {
+    if (newName.trim() && newName !== name) {
+      const newPath = [...path];
+      newPath[newPath.length - 1] = newName.trim();
+      renameItem(path, newPath);
+    }
+    setIsRenaming(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleRenameEnd();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setIsRenaming(false);
+    }
+  };
+
+  const handleInput = (e: React.InputEvent<HTMLSpanElement>) => {
+    const text = e.currentTarget.textContent || "";
+    setNewName(text);
+  };
+
   return (
     <Button
       key={name}
@@ -45,16 +96,32 @@ export default function Node({
           "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
       )}
       onClick={() => {
-        onClick();
+        if (!isRenaming) {
+          onClick();
+        }
       }}
     >
       <HugeiconsIcon
         icon={isFile ? File01Icon : Folder01Icon}
         className="size-4"
       />
-      <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-        {name}
-      </span>
+      {isRenaming ? (
+        <span
+          ref={spanRef}
+          contentEditable="plaintext-only"
+          suppressContentEditableWarning
+          className="bg-primary/10 ring-primary focus:bg-primary/20 flex-1 overflow-hidden rounded px-1 py-0.5 text-start text-ellipsis whitespace-nowrap ring-1 outline-none focus:ring-2"
+          onBlur={handleRenameEnd}
+          onKeyDown={handleKeyDown}
+          onInput={handleInput}
+        >
+          {name}
+        </span>
+      ) : (
+        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+          {name}
+        </span>
+      )}
       <div className="ml-auto flex size-9 items-center justify-center">
         <DropdownMenu>
           <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
@@ -68,11 +135,17 @@ export default function Node({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleRenameStart}>
                 <HugeiconsIcon icon={InputCursorTextIcon} className="size-4" />
                 Rename
               </DropdownMenuItem>
-              <DropdownMenuItem variant="destructive">
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeItem(path);
+                }}
+              >
                 <HugeiconsIcon icon={Delete02Icon} className="size-4" />
                 Delete
               </DropdownMenuItem>

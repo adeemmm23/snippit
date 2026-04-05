@@ -17,6 +17,11 @@ export function EditorProvider({ children }: EditorProviderProps) {
     [],
   );
 
+  const resetFileState = () => {
+    setActiveFilePath([]);
+    setTemplate("");
+  };
+
   const getFilesFromStorage = () => {
     const storedFiles = localStorage.getItem("files");
     if (storedFiles) {
@@ -137,9 +142,71 @@ export function EditorProvider({ children }: EditorProviderProps) {
     return true;
   };
 
-  const resetFileState = () => {
-    setActiveFilePath([]);
-    setTemplate("");
+  const renameItem = (oldPath: string[], newPath: string[]) => {
+    setFiles((prevFiles) => {
+      const newFiles: FileSystemItem =
+        typeof prevFiles === "string"
+          ? {}
+          : JSON.parse(JSON.stringify(prevFiles));
+      let current: FileSystemItem = newFiles;
+
+      for (let i = 0; i < oldPath.length - 1; i++) {
+        const segment = oldPath[i];
+        if (!current[segment] || typeof current[segment] === "string") {
+          return prevFiles; // Old path doesn't exist
+        }
+        current = current[segment] as FileSystemItem;
+      }
+
+      const itemName = oldPath[oldPath.length - 1];
+      const itemContent = current[itemName];
+      if (itemContent === undefined) {
+        return prevFiles; // Old item doesn't exist
+      }
+
+      delete current[itemName];
+
+      current = newFiles;
+      for (let i = 0; i < newPath.length - 1; i++) {
+        const segment = newPath[i];
+        if (!current[segment] || typeof current[segment] === "string") {
+          current[segment] = {};
+        }
+        current = current[segment] as FileSystemItem;
+      }
+
+      const newItemName = newPath[newPath.length - 1];
+      current[newItemName] = itemContent;
+      saveFilesToStorage(newFiles);
+      return newFiles;
+    });
+  };
+
+  const removeItem = (path: string[]) => {
+    setFiles((prevFiles) => {
+      const newFiles: FileSystemItem =
+        typeof prevFiles === "string"
+          ? {}
+          : JSON.parse(JSON.stringify(prevFiles));
+      let current: FileSystemItem = newFiles;
+
+      for (let i = 0; i < path.length - 1; i++) {
+        const segment = path[i];
+        if (!current[segment] || typeof current[segment] === "string") {
+          return prevFiles; // Path doesn't exist
+        }
+        current = current[segment] as FileSystemItem;
+      }
+
+      const itemName = path[path.length - 1];
+      if (current[itemName] === undefined) {
+        return prevFiles; // Item doesn't exist
+      }
+
+      delete current[itemName];
+      saveFilesToStorage(newFiles);
+      return newFiles;
+    });
   };
 
   useEffect(() => {
@@ -175,6 +242,8 @@ export function EditorProvider({ children }: EditorProviderProps) {
     currentWorkingFolder,
     saveActiveFile,
     setCurrentWorkingFolder,
+    removeItem,
+    renameItem,
   };
 
   return (

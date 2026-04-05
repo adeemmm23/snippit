@@ -17,12 +17,10 @@ type EditorContextType = {
   files: FileSystemItem;
   setFiles: React.Dispatch<React.SetStateAction<FileSystemItem>>;
   saveActiveFile: () => boolean;
-  // removeFile: (path: string[]) => void;
-  // renameFile: (oldPath: string[], newPath: string[]) => void;
   createFile: (path: string[], content: string) => void;
   createFolder: (path: string[]) => void;
-  // removeFolder: (path: string[]) => void;
-  // renameFolder: (oldPath: string[], newPath: string[]) => void;
+  removeItem: (path: string[]) => void;
+  renameItem: (oldPath: string[], newPath: string[]) => void;
 };
 
 export const EditorContext = createContext<EditorContextType | undefined>(
