@@ -17,8 +17,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useEditor } from "@/context/editor/editor-context";
 
 export default function Header() {
+  const { createFile, createFolder, currentWorkingFolder } = useEditor();
   return (
     <div className="flex">
       <div className="flex h-9 min-w-0 flex-1 items-center gap-1 px-2 select-none">
@@ -44,11 +46,22 @@ export default function Header() {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                createFile(
+                  [...currentWorkingFolder, "NewFile"],
+                  "Put some content here...",
+                );
+              }}
+            >
               <HugeiconsIcon icon={FileAddIcon} className="size-4" />
               New File
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                createFolder([...currentWorkingFolder, "NewFolder"])
+              }
+            >
               <HugeiconsIcon icon={FolderAddIcon} className="size-4" />
               New Folder
             </DropdownMenuItem>

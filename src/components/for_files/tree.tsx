@@ -22,16 +22,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { ScrollArea } from "../ui/scroll-area";
-import type { FileSystemItem } from "../files";
+import type { FileSystemItem } from "./types";
 
-interface FilesProps {
-  data: FileSystemItem;
-}
+export default function Tree() {
+  const {
+    setTemplate,
+    setFilePath,
+    filePath,
+    files: data,
+    currentWorkingFolder: currentPath,
+    setCurrentWorkingFolder: setCurrentPath,
+  } = useEditor();
 
-export default function Tree({ data }: FilesProps) {
-  const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [currentData, setCurrentData] = useState<FileSystemItem>(data);
-  const { setTemplate, setFilePath, filePath } = useEditor();
 
   const { folders, files } = Object.entries(currentData).reduce(
     (acc, [name, content]) => {
