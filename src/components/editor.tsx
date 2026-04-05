@@ -6,7 +6,7 @@ import { Copy01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
 
 import { toast } from "sonner";
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
+import { ScrollArea } from "./ui/scroll-area";
 
 export default function Editor() {
   const { variables, setVariables, template, setTemplate } = useEditor();
