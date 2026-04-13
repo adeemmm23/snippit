@@ -39,8 +39,12 @@ export default function Tree() {
   const currentItems = getCurrentFolderItems();
 
   // Separate folders and files
-  const folders = currentItems.filter(isFolder);
-  const files = currentItems.filter(isFile);
+  const folders = currentItems
+    .filter(isFolder)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const files = currentItems
+    .filter(isFile)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <ScrollArea className="grow overflow-auto">
