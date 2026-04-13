@@ -1,16 +1,15 @@
+import Editor from "@/components/editor";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import Variables from "@/components/variables";
-import Editor from "@/components/editor";
 import { EditorProvider } from "@/context/editor/editor-provider";
 
 import { Files } from "@/components/files";
-// import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
-import { Toaster } from "@/components/ui/sonner";
 import { Separator } from "@/components/ui/separator";
+import { Toaster } from "@/components/ui/sonner";
 import { usePanelRef } from "react-resizable-panels";
 import { Appbar } from "./components/appbar";
 

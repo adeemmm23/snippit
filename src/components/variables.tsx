@@ -1,10 +1,14 @@
-import { Label } from "./ui/label";
-import { Button } from "./ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Loading03Icon, Delete01Icon } from "@hugeicons/core-free-icons";
 import { useEditor } from "@/context/editor/editor-context";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
+import {
+  Delete01Icon,
+  Loading03Icon,
+  AiMagicIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect } from "react";
+import { Button } from "./ui/button";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
+import { Label } from "./ui/label";
 import { ScrollArea } from "./ui/scroll-area";
 
 export default function Variables() {
@@ -40,7 +44,7 @@ export default function Variables() {
   }, [variables]);
   return (
     <div className="flex h-full min-w-48 grow flex-col gap-2">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between py-2">
         {Object.keys(variables).length > 0 && (
           <>
             <Label className="px-2 text-lg font-medium">Variables</Label>
@@ -63,7 +67,7 @@ export default function Variables() {
             <HugeiconsIcon icon={Delete01Icon} className="size-5" />
           </div>
           <p className="text-sm">No variables detected</p>
-          <p className="mt-2 text-xs">Add [VariableName] to your template</p>
+          <p className="mt-2 text-xs">Add [Something] to your template</p>
           <Button variant="ghost" size="xs" className="mt-4">
             Learn More
           </Button>
@@ -106,6 +110,7 @@ export default function Variables() {
                     }
                     placeholder={`Enter ${varName}...`}
                   />
+
                   {variables[varName] && (
                     <InputGroupAddon align="inline-end" className="pr-1.5">
                       <Button
@@ -123,6 +128,23 @@ export default function Variables() {
                       </Button>
                     </InputGroupAddon>
                   )}
+                  {varName.toLocaleLowerCase().includes("password") && (
+                    <InputGroupAddon align="inline-end" className="pr-1.5">
+                      <Button
+                        variant={null}
+                        size="icon-sm"
+                        className="cursor-pointer"
+                        onClick={() =>
+                          setVariables((prev) => ({
+                            ...prev,
+                            [varName]: generateRandomPassword(),
+                          }))
+                        }
+                      >
+                        <HugeiconsIcon icon={AiMagicIcon} className="size-4" />
+                      </Button>
+                    </InputGroupAddon>
+                  )}
                 </InputGroup>
               </div>
             ))}
@@ -132,3 +154,31 @@ export default function Variables() {
     </div>
   );
 }
+
+// generate random password
+
+const generateRandomPassword = (length: number = 12) => {
+  const lowerCase = "abcdefghijklmnopqrstuvwxyz";
+  const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const digits = "0123456789";
+  const specialChars = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+  // Ensure the password includes at least one character from each set
+  const allChars = lowerCase + upperCase + digits + specialChars;
+  let password = "";
+  password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
+  password += upperCase[Math.floor(Math.random() * upperCase.length)];
+  password += digits[Math.floor(Math.random() * digits.length)];
+  password += specialChars[Math.floor(Math.random() * specialChars.length)];
+
+  // Fill the remaining length with random characters from all sets
+  for (let i = password.length; i < length; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)];
+  }
+
+  // Shuffle the password to avoid predictable patterns
+  return password
+    .split("")
+    .sort(() => Math.random() - 0.5)
+    .join("");
+};
