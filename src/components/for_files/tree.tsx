@@ -7,6 +7,7 @@ import Node from "./node";
 
 import { ScrollArea } from "../ui/scroll-area";
 import type { FileSystemItem } from "./types";
+import { isFile, isFolder } from "./types";
 
 export default function Tree() {
   const {
@@ -18,28 +19,28 @@ export default function Tree() {
     setCurrentWorkingFolder,
   } = useEditor();
 
-  const currentData = currentWorkingFolder.reduce((acc, folder) => {
-    const next = acc[folder];
-    if (typeof next === "string") {
-      throw new Error(`Path ${currentWorkingFolder.join("/")} is not a folder`);
-    }
-    return next;
-  }, data);
+  // Navigate to the current working folder
+  const getCurrentFolderItems = (): FileSystemItem[] => {
+    let current = data;
 
-  const { folders, files } = Object.entries(currentData).reduce(
-    (acc, [name, content]) => {
-      if (typeof content === "string") {
-        acc.files.push({ name, content });
-      } else {
-        acc.folders.push({ name, content });
+    for (const folderName of currentWorkingFolder) {
+      const found = current.find(
+        (item) => isFolder(item) && item.name === folderName,
+      );
+      if (!found || !isFolder(found)) {
+        return [];
       }
-      return acc;
-    },
-    {
-      folders: [] as { name: string; content: FileSystemItem }[],
-      files: [] as { name: string; content: string }[],
-    },
-  );
+      current = found.files;
+    }
+
+    return current;
+  };
+
+  const currentItems = getCurrentFolderItems();
+
+  // Separate folders and files
+  const folders = currentItems.filter(isFolder);
+  const files = currentItems.filter(isFile);
 
   return (
     <ScrollArea className="grow overflow-auto">
@@ -85,7 +86,7 @@ export default function Tree() {
             }}
           />
         ))}
-        {files.map(({ name }) => (
+        {files.map(({ name, content }) => (
           <Node
             key={name}
             name={name}
@@ -96,7 +97,7 @@ export default function Tree() {
               currentWorkingFolder.concat(name).join("/")
             }
             onClick={() => {
-              setTemplate(currentData[name] as string);
+              setTemplate(content);
               setActiveFilePath(currentWorkingFolder.concat(name));
             }}
           />

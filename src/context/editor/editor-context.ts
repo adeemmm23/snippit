@@ -1,8 +1,5 @@
 import { createContext, useContext } from "react";
-
-type FileSystemItem = {
-  [key: string]: string | FileSystemItem;
-};
+import type { FileSystemItem } from "@/components/for_files/types";
 
 type EditorContextType = {
   variables: Record<string, string>;
@@ -14,8 +11,8 @@ type EditorContextType = {
   currentWorkingFolder: string[];
   setCurrentWorkingFolder: React.Dispatch<React.SetStateAction<string[]>>;
   resetFileState: () => void;
-  files: FileSystemItem;
-  setFiles: React.Dispatch<React.SetStateAction<FileSystemItem>>;
+  files: FileSystemItem[];
+  setFiles: React.Dispatch<React.SetStateAction<FileSystemItem[]>>;
   saveActiveFile: () => boolean;
   createFile: (path: string[], content: string) => void;
   createFolder: (path: string[]) => void;

@@ -1,9 +1,11 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { EditorContext } from "./editor-context";
-
-type FileSystemItem = {
-  [key: string]: string | FileSystemItem;
-};
+import type {
+  FileSystemItem,
+  FolderItem,
+  FileItem,
+} from "@/components/for_files/types";
+import { isFile, isFolder } from "@/components/for_files/types";
 
 type EditorProviderProps = {
   children: ReactNode;
@@ -31,10 +33,10 @@ export function EditorProvider({ children }: EditorProviderProps) {
         console.error("Failed to parse stored files:", e);
       }
     }
-    return {};
+    return [];
   };
 
-  const saveFilesToStorage = (files: FileSystemItem) => {
+  const saveFilesToStorage = (files: FileSystemItem[]) => {
     try {
       localStorage.setItem("files", JSON.stringify(files));
     } catch (e) {
@@ -42,26 +44,71 @@ export function EditorProvider({ children }: EditorProviderProps) {
     }
   };
 
-  const [files, setFiles] = useState<FileSystemItem>(() =>
+  const [files, setFiles] = useState<FileSystemItem[]>(() =>
     getFilesFromStorage(),
   );
 
+  // Helper function to find an item by path
+  const findItemByPath = (
+    items: FileSystemItem[],
+    path: string[],
+  ): FileSystemItem | null => {
+    if (path.length === 0) return null;
+
+    let current: FileSystemItem[] = items;
+
+    for (let i = 0; i < path.length - 1; i++) {
+      const segment = path[i];
+      const found = current.find((item) => item.name === segment);
+
+      if (!found || !isFolder(found)) {
+        return null;
+      }
+
+      current = found.files;
+    }
+
+    const lastSegment = path[path.length - 1];
+    return current.find((item) => item.name === lastSegment) || null;
+  };
+
+  // Helper function to get parent folder by path
+  const getParentFolder = (
+    items: FileSystemItem[],
+    path: string[],
+  ): FileSystemItem[] | null => {
+    if (path.length === 0) return items;
+    if (path.length === 1) return items;
+
+    let current: FileSystemItem[] = items;
+
+    for (let i = 0; i < path.length - 1; i++) {
+      const segment = path[i];
+      const found = current.find((item) => item.name === segment);
+
+      if (!found || !isFolder(found)) {
+        return null;
+      }
+
+      current = found.files;
+    }
+
+    return current;
+  };
+
   const getAvailableName = (
-    current: FileSystemItem,
+    items: FileSystemItem[],
     baseName: string,
-    isFile: boolean = false,
   ): string => {
-    if (current[baseName] === undefined) {
+    if (!items.find((item) => item.name === baseName)) {
       return baseName;
     }
 
     let counter = 1;
     let finalName = baseName;
 
-    while (current[finalName] !== undefined) {
-      if (isFile) {
-        finalName = `${baseName} ${counter}`;
-      }
+    while (items.find((item) => item.name === finalName)) {
+      finalName = `${baseName} ${counter}`;
       counter++;
     }
 
@@ -70,23 +117,43 @@ export function EditorProvider({ children }: EditorProviderProps) {
 
   const createFile = (path: string[], content: string) => {
     setFiles((prevFiles) => {
-      const newFiles: FileSystemItem =
-        typeof prevFiles === "string"
-          ? {}
-          : JSON.parse(JSON.stringify(prevFiles));
-      let current: FileSystemItem = newFiles;
+      const newFiles = JSON.parse(JSON.stringify(prevFiles));
+      const parentPath = path.slice(0, -1);
+      const fileName = path[path.length - 1];
 
-      for (let i = 0; i < path.length - 1; i++) {
-        const segment = path[i];
-        if (!current[segment] || typeof current[segment] === "string") {
-          current[segment] = {};
+      let parentItems: FileSystemItem[];
+
+      if (parentPath.length === 0) {
+        parentItems = newFiles;
+      } else {
+        const parentFolder = findItemByPath(newFiles, parentPath);
+        if (!parentFolder || !isFolder(parentFolder)) {
+          // Create parent folders if they don't exist
+          let current: FileSystemItem[] = newFiles;
+          for (const segment of parentPath) {
+            let folder = current.find(
+              (item) => item.name === segment && isFolder(item),
+            );
+            if (!folder) {
+              folder = { type: "folder", name: segment, files: [] };
+              current.push(folder);
+            }
+            current = (folder as FolderItem).files;
+          }
+          parentItems = current;
+        } else {
+          parentItems = parentFolder.files;
         }
-        current = current[segment] as FileSystemItem;
       }
 
-      const fileName = path[path.length - 1];
-      const finalName = getAvailableName(current, fileName, true);
-      current[finalName] = content;
+      const finalName = getAvailableName(parentItems, fileName);
+      const newFile: FileItem = {
+        type: "file",
+        name: finalName,
+        content,
+      };
+      parentItems.push(newFile);
+
       saveFilesToStorage(newFiles);
       return newFiles;
     });
@@ -94,23 +161,43 @@ export function EditorProvider({ children }: EditorProviderProps) {
 
   const createFolder = (path: string[]) => {
     setFiles((prevFiles) => {
-      const newFiles: FileSystemItem =
-        typeof prevFiles === "string"
-          ? {}
-          : JSON.parse(JSON.stringify(prevFiles));
-      let current: FileSystemItem = newFiles;
+      const newFiles = JSON.parse(JSON.stringify(prevFiles));
+      const parentPath = path.slice(0, -1);
+      const folderName = path[path.length - 1];
 
-      for (let i = 0; i < path.length - 1; i++) {
-        const segment = path[i];
-        if (!current[segment] || typeof current[segment] === "string") {
-          current[segment] = {};
+      let parentItems: FileSystemItem[];
+
+      if (parentPath.length === 0) {
+        parentItems = newFiles;
+      } else {
+        const parentFolder = findItemByPath(newFiles, parentPath);
+        if (!parentFolder || !isFolder(parentFolder)) {
+          // Create parent folders if they don't exist
+          let current: FileSystemItem[] = newFiles;
+          for (const segment of parentPath) {
+            let folder = current.find(
+              (item) => item.name === segment && isFolder(item),
+            );
+            if (!folder) {
+              folder = { type: "folder", name: segment, files: [] };
+              current.push(folder);
+            }
+            current = (folder as FolderItem).files;
+          }
+          parentItems = current;
+        } else {
+          parentItems = parentFolder.files;
         }
-        current = current[segment] as FileSystemItem;
       }
 
-      const folderName = path[path.length - 1];
-      const finalName = getAvailableName(current, folderName, false);
-      current[finalName] = {};
+      const finalName = getAvailableName(parentItems, folderName);
+      const newFolder: FolderItem = {
+        type: "folder",
+        name: finalName,
+        files: [],
+      };
+      parentItems.push(newFolder);
+
       saveFilesToStorage(newFiles);
       return newFiles;
     });
@@ -120,22 +207,14 @@ export function EditorProvider({ children }: EditorProviderProps) {
     if (activeFilePath.length === 0) return false;
 
     setFiles((prevFiles) => {
-      const newFiles: FileSystemItem =
-        typeof prevFiles === "string"
-          ? {}
-          : JSON.parse(JSON.stringify(prevFiles));
-      let current: FileSystemItem = newFiles;
+      const newFiles = JSON.parse(JSON.stringify(prevFiles));
+      const item = findItemByPath(newFiles, activeFilePath);
 
-      for (let i = 0; i < activeFilePath.length - 1; i++) {
-        const segment = activeFilePath[i];
-        if (!current[segment] || typeof current[segment] === "string") {
-          current[segment] = {};
-        }
-        current = current[segment] as FileSystemItem;
+      if (!item || !isFile(item)) {
+        return prevFiles;
       }
 
-      const fileName = activeFilePath[activeFilePath.length - 1];
-      current[fileName] = template;
+      item.content = template;
       saveFilesToStorage(newFiles);
       return newFiles;
     });
@@ -144,39 +223,37 @@ export function EditorProvider({ children }: EditorProviderProps) {
 
   const renameItem = (oldPath: string[], newPath: string[]) => {
     setFiles((prevFiles) => {
-      const newFiles: FileSystemItem =
-        typeof prevFiles === "string"
-          ? {}
-          : JSON.parse(JSON.stringify(prevFiles));
-      let current: FileSystemItem = newFiles;
+      const newFiles = JSON.parse(JSON.stringify(prevFiles));
+      const item = findItemByPath(newFiles, oldPath);
 
-      for (let i = 0; i < oldPath.length - 1; i++) {
-        const segment = oldPath[i];
-        if (!current[segment] || typeof current[segment] === "string") {
-          return prevFiles; // Old path doesn't exist
-        }
-        current = current[segment] as FileSystemItem;
+      if (!item) {
+        return prevFiles;
       }
 
-      const itemName = oldPath[oldPath.length - 1];
-      const itemContent = current[itemName];
-      if (itemContent === undefined) {
-        return prevFiles; // Old item doesn't exist
+      const parentPath = oldPath.slice(0, -1);
+      const parentItems =
+        parentPath.length === 0
+          ? newFiles
+          : getParentFolder(newFiles, parentPath);
+
+      if (!parentItems) {
+        return prevFiles;
       }
 
-      delete current[itemName];
-
-      current = newFiles;
-      for (let i = 0; i < newPath.length - 1; i++) {
-        const segment = newPath[i];
-        if (!current[segment] || typeof current[segment] === "string") {
-          current[segment] = {};
-        }
-        current = current[segment] as FileSystemItem;
+      const itemIndex = parentItems.findIndex(
+        (i: FileSystemItem) => i.name === oldPath[oldPath.length - 1],
+      );
+      if (itemIndex === -1) {
+        return prevFiles;
       }
 
-      const newItemName = newPath[newPath.length - 1];
-      current[newItemName] = itemContent;
+      const newName = newPath[newPath.length - 1];
+      const finalName = getAvailableName(
+        parentItems.filter((_: FileSystemItem, i: number) => i !== itemIndex),
+        newName,
+      );
+
+      item.name = finalName;
       saveFilesToStorage(newFiles);
       return newFiles;
     });
@@ -184,26 +261,28 @@ export function EditorProvider({ children }: EditorProviderProps) {
 
   const removeItem = (path: string[]) => {
     setFiles((prevFiles) => {
-      const newFiles: FileSystemItem =
-        typeof prevFiles === "string"
-          ? {}
-          : JSON.parse(JSON.stringify(prevFiles));
-      let current: FileSystemItem = newFiles;
+      const newFiles = JSON.parse(JSON.stringify(prevFiles));
+      const parentPath = path.slice(0, -1);
 
-      for (let i = 0; i < path.length - 1; i++) {
-        const segment = path[i];
-        if (!current[segment] || typeof current[segment] === "string") {
-          return prevFiles; // Path doesn't exist
-        }
-        current = current[segment] as FileSystemItem;
+      const parentItems =
+        parentPath.length === 0
+          ? newFiles
+          : getParentFolder(newFiles, parentPath);
+
+      if (!parentItems) {
+        return prevFiles;
       }
 
       const itemName = path[path.length - 1];
-      if (current[itemName] === undefined) {
-        return prevFiles; // Item doesn't exist
+      const itemIndex = parentItems.findIndex(
+        (item: FileSystemItem) => item.name === itemName,
+      );
+
+      if (itemIndex === -1) {
+        return prevFiles;
       }
 
-      delete current[itemName];
+      parentItems.splice(itemIndex, 1);
       saveFilesToStorage(newFiles);
       return newFiles;
     });

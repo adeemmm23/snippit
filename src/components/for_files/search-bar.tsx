@@ -16,39 +16,33 @@ import {
 } from "@/components/ui/command";
 
 import type { FileSystemItem } from "./types";
+import { isFile, isFolder } from "./types";
 
 export default function SearchBar() {
   const [open, setOpen] = useState(false);
   const { setTemplate, setActiveFilePath, files } = useEditor();
 
   const flattenFiles = (
-    data?: FileSystemItem,
+    items: FileSystemItem[] = files,
     prefix: string = "",
-  ): { filename: string; path: string }[] => {
-    const result: { filename: string; path: string }[] = [];
+  ): { filename: string; path: string; content: string }[] => {
+    const result: { filename: string; path: string; content: string }[] = [];
 
-    for (const [name, content] of Object.entries(data ?? files)) {
-      const fullPath = prefix ? `${prefix}/${name}` : name;
+    for (const item of items) {
+      const fullPath = prefix ? `${prefix}/${item.name}` : item.name;
 
-      if (typeof content === "string") {
-        result.push({ filename: name, path: fullPath });
-      } else {
-        result.push(...flattenFiles(content, fullPath));
+      if (isFile(item)) {
+        result.push({
+          filename: item.name,
+          path: fullPath,
+          content: item.content,
+        });
+      } else if (isFolder(item)) {
+        result.push(...flattenFiles(item.files, fullPath));
       }
     }
 
     return result;
-  };
-
-  const getFileContent = (path: string): string => {
-    const segments = path.split("/");
-    let current: string | FileSystemItem = files;
-
-    for (const segment of segments) {
-      current = (current as FileSystemItem)[segment];
-    }
-
-    return current as string;
   };
 
   const indexedFiles = flattenFiles();
@@ -58,7 +52,7 @@ export default function SearchBar() {
       <CommandItem
         key={index}
         onSelect={() => {
-          setTemplate(getFileContent(file.path));
+          setTemplate(file.content);
           setActiveFilePath(file.path.split("/"));
           setOpen(false);
         }}
@@ -84,6 +78,7 @@ export default function SearchBar() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
+
   return (
     <>
       <Button
@@ -106,28 +101,7 @@ export default function SearchBar() {
           <CommandInput placeholder="Find..." />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Latest">
-              {/* <CommandItem>
-                <span>WiFi Troubleshooting</span>
-                <span className="ml-auto text-xs text-muted-foreground">
-                  ./Security/WiFi Troubleshooting
-                </span>
-              </CommandItem>
-              <CommandItem>
-                <span>Password Reset</span>
-                <span className="ml-auto text-xs text-muted-foreground">
-                  ./User Management/Password Reset
-                </span>
-              </CommandItem>
-              <CommandItem>
-                <span>Software Installation</span>
-                <span className="ml-auto text-xs text-muted-foreground">
-                  ./Software/Software Installation
-                </span>
-              </CommandItem> */}
-              {/* Dynamically generate CommandItems from indexedFiles */}
-              {generatePreview()}
-            </CommandGroup>
+            <CommandGroup heading="Latest">{generatePreview()}</CommandGroup>
           </CommandList>
         </Command>
       </CommandDialog>
