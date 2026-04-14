@@ -2,7 +2,7 @@ import { useEditor } from "@/context/editor/editor-context";
 import {
   Delete01Icon,
   Loading03Icon,
-  AiMagicIcon,
+  RefreshDotIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect } from "react";
@@ -153,7 +153,10 @@ export default function Variables() {
                           }))
                         }
                       >
-                        <HugeiconsIcon icon={AiMagicIcon} className="size-4" />
+                        <HugeiconsIcon
+                          icon={RefreshDotIcon}
+                          className="size-4"
+                        />
                       </Button>
                     </InputGroupAddon>
                   )}
