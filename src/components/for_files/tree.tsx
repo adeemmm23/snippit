@@ -1,5 +1,9 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowLeft01Icon, Home02Icon } from "@hugeicons/core-free-icons";
+import {
+  ArrowLeft01Icon,
+  FileEmpty01Icon,
+  Home02Icon,
+} from "@hugeicons/core-free-icons";
 import { Button } from "../ui/button";
 import { useEditor } from "@/context/editor/editor-context";
 
@@ -48,7 +52,7 @@ export default function Tree() {
 
   return (
     <ScrollArea className="grow overflow-auto">
-      <div className="flex flex-col gap-2 py-1">
+      <div className="flex h-full flex-col gap-2 py-1">
         {currentWorkingFolder.length > 0 ? (
           <div className="flex w-full gap-1">
             <Button
@@ -106,6 +110,15 @@ export default function Tree() {
             }}
           />
         ))}
+        {currentItems.length === 0 && (
+          <div className="text-muted-foreground my-auto py-8 text-center">
+            <div className="bg-muted mb-4 inline-flex items-center justify-center rounded-sm p-2">
+              <HugeiconsIcon icon={FileEmpty01Icon} className="size-5" />
+            </div>
+            <p className="text-sm">Folder is empty</p>
+            <p className="mt-2 text-xs">Try adding some files</p>
+          </div>
+        )}
       </div>
     </ScrollArea>
   );
