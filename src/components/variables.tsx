@@ -25,8 +25,20 @@ export default function Variables() {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
+      if (e.key === "l" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleResetVariables();
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [handleResetVariables]);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
       // enter + meta/ctrl to focus first variable input
-      if (e.key === "m" && (e.metaKey || e.ctrlKey)) {
+      if (e.code === "Enter" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         // focus first input
         const firstVarName = Object.keys(variables)[0];

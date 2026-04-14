@@ -35,6 +35,19 @@ export default function Editor() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      // ctrl + space
+      if (e.code === "Space" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleCopy();
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [handleCopy]);
+
   // Handle clear template
   const handleClear = () => {
     setTemplate("");
