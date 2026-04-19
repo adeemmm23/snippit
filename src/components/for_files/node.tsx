@@ -79,7 +79,7 @@ export default function Node({
   };
 
   const handleInput = (e: React.InputEvent<HTMLSpanElement>) => {
-    const text = e.currentTarget.textContent || "";
+    const text = e.currentTarget.textContent.trim() || "";
     setNewName(text);
   };
 
@@ -110,7 +110,7 @@ export default function Node({
           ref={spanRef}
           contentEditable="plaintext-only"
           suppressContentEditableWarning
-          className="bg-primary/10 ring-primary focus:bg-primary/20 flex-1 overflow-hidden rounded px-1 py-0.5 text-start text-ellipsis whitespace-nowrap ring-1 outline-none focus:ring-2"
+          className="bg-primary/10 focus:bg-primary/20 flex-1 cursor-text overflow-hidden rounded px-0.5 text-start text-ellipsis whitespace-nowrap outline-none"
           onBlur={handleRenameEnd}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
@@ -118,7 +118,7 @@ export default function Node({
           {name}
         </span>
       ) : (
-        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+        <span className="overflow-hidden px-0.5 text-ellipsis whitespace-nowrap">
           {name}
         </span>
       )}
