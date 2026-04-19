@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { useEditor } from "@/context/editor/editor-context";
 
 export function FilePath() {
-  const { activeFilePath } = useEditor();
+  const { activeFilePath, setCurrentWorkingFolder } = useEditor();
   const { fileName, folderName, rest } = activeFilePath.reduce(
     (acc, segment, index) => {
       if (index === activeFilePath.length - 1) {
@@ -36,7 +36,12 @@ export function FilePath() {
     <Breadcrumb className="flex h-9 items-center px-2">
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink className="select-none">Root</BreadcrumbLink>
+          <BreadcrumbLink
+            onClick={() => setCurrentWorkingFolder([])}
+            className="select-none"
+          >
+            Root
+          </BreadcrumbLink>
         </BreadcrumbItem>
         {rest.length != 0 && (
           <>
@@ -52,7 +57,17 @@ export function FilePath() {
                 <DropdownMenuContent align="start" className="w-50">
                   <DropdownMenuGroup>
                     {rest.map((segment, index) => (
-                      <DropdownMenuItem key={index}>{segment}</DropdownMenuItem>
+                      <DropdownMenuItem key={index}>
+                        <BreadcrumbLink
+                          onClick={() =>
+                            setCurrentWorkingFolder(
+                              activeFilePath.slice(0, index - rest.length - 1),
+                            )
+                          }
+                        >
+                          {segment}
+                        </BreadcrumbLink>
+                      </DropdownMenuItem>
                     ))}
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
@@ -64,7 +79,12 @@ export function FilePath() {
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink className="select-none">
+              <BreadcrumbLink
+                onClick={() =>
+                  setCurrentWorkingFolder(activeFilePath.slice(0, -1))
+                }
+                className="select-none"
+              >
                 {folderName}
               </BreadcrumbLink>
             </BreadcrumbItem>
