@@ -3,13 +3,29 @@ import {
   Delete01Icon,
   Loading03Icon,
   RefreshDotIcon,
+  Calendar01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "./ui/input-group";
 import { Label } from "./ui/label";
 import { ScrollArea } from "./ui/scroll-area";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { type DateRange } from "react-day-picker";
+import DateAddon from "./for_variables/date-addon";
+import DurationAddon from "./for_variables/duration-addon";
+import PasswordAddon from "./for_variables/password-addon";
 
 export default function Variables() {
   const { variables, setVariables } = useEditor();
@@ -124,11 +140,10 @@ export default function Variables() {
                   />
 
                   {variables[varName] && (
-                    <InputGroupAddon align="inline-end" className="pr-1.5">
-                      <Button
-                        variant={null}
-                        size="icon-sm"
-                        className="cursor-pointer"
+                    <InputGroupAddon align="inline-end">
+                      <InputGroupButton
+                        variant="ghost"
+                        size="icon-xs"
                         onClick={() =>
                           setVariables((prev) => ({
                             ...prev,
@@ -137,28 +152,38 @@ export default function Variables() {
                         }
                       >
                         <HugeiconsIcon icon={Delete01Icon} className="size-4" />
-                      </Button>
+                      </InputGroupButton>
                     </InputGroupAddon>
                   )}
                   {varName.toLocaleLowerCase().includes("password") && (
-                    <InputGroupAddon align="inline-end" className="pr-1.5">
-                      <Button
-                        variant={null}
-                        size="icon-sm"
-                        className="cursor-pointer"
-                        onClick={() =>
-                          setVariables((prev) => ({
-                            ...prev,
-                            [varName]: generateRandomPassword(),
-                          }))
-                        }
-                      >
-                        <HugeiconsIcon
-                          icon={RefreshDotIcon}
-                          className="size-4"
-                        />
-                      </Button>
-                    </InputGroupAddon>
+                    <PasswordAddon
+                      onGenerate={(generatedPassword) => {
+                        setVariables((prev) => ({
+                          ...prev,
+                          [varName]: generatedPassword,
+                        }));
+                      }}
+                    />
+                  )}
+                  {varName.toLocaleLowerCase().includes("date") && (
+                    <DateAddon
+                      onSelect={(formatedDate) => {
+                        setVariables((prev) => ({
+                          ...prev,
+                          [varName]: formatedDate,
+                        }));
+                      }}
+                    />
+                  )}
+                  {varName.toLocaleLowerCase().includes("duration") && (
+                    <DurationAddon
+                      onSelect={(formatedDuration) => {
+                        setVariables((prev) => ({
+                          ...prev,
+                          [varName]: formatedDuration,
+                        }));
+                      }}
+                    />
                   )}
                 </InputGroup>
               </div>
@@ -169,31 +194,3 @@ export default function Variables() {
     </div>
   );
 }
-
-// generate random password
-
-const generateRandomPassword = (length: number = 12) => {
-  const lowerCase = "abcdefghijklmnopqrstuvwxyz";
-  const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const digits = "0123456789";
-  const specialChars = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
-
-  // Ensure the password includes at least one character from each set
-  const allChars = lowerCase + upperCase + digits + specialChars;
-  let password = "";
-  password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
-  password += upperCase[Math.floor(Math.random() * upperCase.length)];
-  password += digits[Math.floor(Math.random() * digits.length)];
-  password += specialChars[Math.floor(Math.random() * specialChars.length)];
-
-  // Fill the remaining length with random characters from all sets
-  for (let i = password.length; i < length; i++) {
-    password += allChars[Math.floor(Math.random() * allChars.length)];
-  }
-
-  // Shuffle the password to avoid predictable patterns
-  return password
-    .split("")
-    .sort(() => Math.random() - 0.5)
-    .join("");
-};
