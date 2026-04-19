@@ -24,23 +24,21 @@ export default function Editor() {
   }, [template]);
 
   // Handle copy to clipboard
-  const handleCopy = async () => {
+  const handleCopy = async (isShortcut: boolean | undefined = false) => {
     const output = generatePreview();
     await navigator.clipboard.writeText(output);
-    setCopied(true);
-    toast("Copied successfully", {
+    !isShortcut && setCopied(true);
+    toast.success("Copied successfully", {
       icon: <HugeiconsIcon icon={Copy01Icon} className="size-4" />,
-      position: "bottom-center",
     });
-    setTimeout(() => setCopied(false), 2000);
+    !isShortcut && setTimeout(() => setCopied(false), 2000);
   };
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      // ctrl + space
       if (e.code === "Space" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        handleCopy();
+        handleCopy(true);
       }
     };
 
@@ -161,7 +159,7 @@ export default function Editor() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={handleCopy}
+            onClick={() => handleCopy()}
             className="gap-2"
           >
             <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
