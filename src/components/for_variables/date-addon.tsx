@@ -15,7 +15,7 @@ export default function DateAddon({ onSelect }: DateAddonProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [month, setMonth] = useState<Date | undefined>(date);
   return (
-    <InputGroupAddon align="inline-end" className="pr-1.5">
+    <InputGroupAddon align="inline-end">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger>
           <InputGroupButton
