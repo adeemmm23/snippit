@@ -1,12 +1,7 @@
 import { useEditor } from "@/context/editor/editor-context";
-import {
-  Delete01Icon,
-  Loading03Icon,
-  RefreshDotIcon,
-  Calendar01Icon,
-} from "@hugeicons/core-free-icons";
+import { Delete01Icon, Loading03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "./ui/button";
 import {
   InputGroup,
@@ -16,13 +11,7 @@ import {
 } from "./ui/input-group";
 import { Label } from "./ui/label";
 import { ScrollArea } from "./ui/scroll-area";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { type DateRange } from "react-day-picker";
+
 import DateAddon from "./for_variables/date-addon";
 import DurationAddon from "./for_variables/duration-addon";
 import PasswordAddon from "./for_variables/password-addon";
