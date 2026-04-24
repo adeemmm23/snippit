@@ -1,19 +1,21 @@
+import { usePanelRef } from "react-resizable-panels";
+
+import { Appbar } from "@/components/appbar";
 import Editor from "@/components/editor";
+import { Files } from "@/components/files";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Separator } from "@/components/ui/separator";
+import { Toaster } from "@/components/ui/sonner";
 import Variables from "@/components/variables";
 import { EditorProvider } from "@/context/editor/editor-provider";
 
-import { Files } from "@/components/files";
-import { Separator } from "@/components/ui/separator";
-import { Toaster } from "@/components/ui/sonner";
-import { usePanelRef } from "react-resizable-panels";
-import { Appbar } from "./components/appbar";
 
 export default function App() {
+  // Used to toggle panels visibility
   const leftPanelRef = usePanelRef();
   const rightPanelRef = usePanelRef();
 
@@ -45,7 +47,7 @@ export default function App() {
             defaultSize={250}
             minSize={200}
             maxSize={300}
-            className="p-1" // inside there is an extra px-1 that result in an equal padding overall; I'll fix it
+            className="p-1" // TODO: inside there is an extra px-1 that result in an equal padding overall; I'll fix it
             panelRef={rightPanelRef}
             collapsible
           >

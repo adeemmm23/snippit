@@ -1,5 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
+
 import { EditorContext } from "./editor-context";
+
 import type {
   FileSystemItem,
   FolderItem,
@@ -303,7 +305,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
     });
 
     setVariables(newVariables);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [template]);
 
   const value = {
