@@ -14,45 +14,6 @@ export default function Editor() {
   const [copied, setCopied] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
 
-  // Sync the contentEditable div with the template state
-  useEffect(() => {
-    if (editorRef.current) {
-      const currentText = editorRef.current.innerText || "";
-      if (currentText !== template) {
-        editorRef.current.innerText = template;
-      }
-    }
-  }, [template]);
-
-  // Handle copy to clipboard
-  const handleCopy = async (isShortcut: boolean | undefined = false) => {
-    const output = generatePreview();
-    await navigator.clipboard.writeText(output);
-    !isShortcut && setCopied(true);
-    toast.success("Copied successfully", {
-      icon: <HugeiconsIcon icon={Copy01Icon} className="size-4" />,
-    });
-    !isShortcut && setTimeout(() => setCopied(false), 2000);
-  };
-
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.code === "Space" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        handleCopy(true);
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, [handleCopy]);
-
-  // Handle clear template
-  const handleClear = () => {
-    setTemplate("");
-    setVariables({});
-  };
-
   // Replace variables in template with their values
   const generatePreview = () => {
     let preview = template;
@@ -62,6 +23,35 @@ export default function Editor() {
     });
     return preview;
   };
+
+
+
+  // Handle copy to clipboard
+  const handleCopy = async (isShortcut: boolean | undefined = false) => {
+    const output = generatePreview();
+    await navigator.clipboard.writeText(output);
+
+    if (!isShortcut) {
+      setCopied(true);
+    }
+
+    toast.success("Copied successfully", {
+      icon: <HugeiconsIcon icon={Copy01Icon} className="size-4" />,
+    });
+
+    if (!isShortcut) {
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+
+  // Handle clear template
+  const handleClear = () => {
+    setTemplate("");
+    setVariables({});
+  };
+
+
   // Render final output with blue highlighted values
   const renderFinalOutput = () => {
     const parts = [];
@@ -120,6 +110,29 @@ export default function Editor() {
 
     return parts.length > 0 ? parts : generatePreview();
   };
+
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.code === "Space" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleCopy(true);
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [handleCopy]);
+
+  // Sync the contentEditable div with the template state
+  useEffect(() => {
+    if (editorRef.current) {
+      const currentText = editorRef.current.innerText || "";
+      if (currentText !== template) {
+        editorRef.current.innerText = template;
+      }
+    }
+  }, [template]);
 
   return (
     <div className="flex h-full flex-col">
