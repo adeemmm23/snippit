@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEditor } from "@/context/editor/editor-context";
 
-export function FilePath() {
+export default function FilePath() {
   const { activeFilePath, setCurrentWorkingFolder } = useEditor();
   const { fileName, folderName, rest } = activeFilePath.reduce(
     (acc, segment, index) => {

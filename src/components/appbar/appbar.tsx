@@ -6,19 +6,21 @@ import {
   LayoutAlignRightIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { toast } from "sonner";
-import { FilePath } from "./file-path";
-import { Button } from "./ui/button";
-import { usePanelRef } from "react-resizable-panels";
-import { useEditor } from "@/context/editor/editor-context";
 import { useEffect, useState } from "react";
-import { Separator } from "./ui/separator";
+import { usePanelRef } from "react-resizable-panels";
+import { toast } from "sonner";
+
+import FilePath from "./file-path";
+
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useEditor } from "@/context/editor/editor-context";
 
 type AppbarProps = {
   leftPanelRef: ReturnType<typeof usePanelRef>;
   rightPanelRef: ReturnType<typeof usePanelRef>;
 };
-export function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
+export default function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
   const { resetFileState, saveActiveFile } = useEditor();
   const [isWindowSmall, setIsWindowSmall] = useState(false);
 

@@ -1,6 +1,6 @@
 import { usePanelRef } from "react-resizable-panels";
 
-import { Appbar } from "@/components/appbar";
+import Appbar from "@/components/appbar";
 import Editor from "@/components/editor";
 import Files from "@/components/files";
 import {
@@ -12,7 +12,6 @@ import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/sonner";
 import Variables from "@/components/variables";
 import { EditorProvider } from "@/context/editor/editor-provider";
-
 
 export default function App() {
   // Used to toggle panels visibility
