@@ -1,20 +1,21 @@
-import { useEditor } from "@/context/editor/editor-context";
 import { Delete01Icon, Loading03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect } from "react";
-import { Button } from "./ui/button";
+
+import DateAddon from "./date-addon";
+import DurationAddon from "./duration-addon";
+import PasswordAddon from "./password-addon";
+
+import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "./ui/input-group";
-import { Label } from "./ui/label";
-import { ScrollArea } from "./ui/scroll-area";
-
-import DateAddon from "./for_variables/date-addon";
-import DurationAddon from "./for_variables/duration-addon";
-import PasswordAddon from "./for_variables/password-addon";
+} from "@/components/ui/input-group";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEditor } from "@/context/editor/editor-context";
 
 export default function Variables() {
   const { variables, setVariables } = useEditor();

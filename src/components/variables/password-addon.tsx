@@ -1,6 +1,7 @@
-import { HugeiconsIcon } from "@hugeicons/react";
-import { InputGroupAddon, InputGroupButton } from "../ui/input-group";
 import { RefreshDotIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+
+import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group";
 
 type PasswordAddonProps = {
   onGenerate: (generatedPassword: string) => void;
