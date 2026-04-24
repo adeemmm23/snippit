@@ -1,4 +1,3 @@
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
   File01Icon,
   Folder01Icon,
@@ -6,9 +5,10 @@ import {
   InputCursorTextIcon,
   Delete02Icon,
 } from "@hugeicons/core-free-icons";
-import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { useState, useRef, useEffect } from "react";
 
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,7 +17,9 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { useEditor } from "@/context/editor/editor-context";
-import { useState, useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
+
+
 
 type NodeProps = {
   name: string;
@@ -93,7 +95,7 @@ export default function Node({
       className={cn(
         "group/file w-full justify-start gap-2 pr-0",
         isActive &&
-          "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
+        "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
       )}
       onClick={() => {
         if (!isRenaming) {

@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { FileSystemItem } from "@/components/for_files/types";
+import type { FileSystemItem } from "@/components/files/types";
 
 type EditorContextType = {
   variables: Record<string, string>;

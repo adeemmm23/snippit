@@ -1,17 +1,19 @@
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
   FileEmpty01Icon,
   Home02Icon,
 } from "@hugeicons/core-free-icons";
-import { Button } from "../ui/button";
-import { useEditor } from "@/context/editor/editor-context";
+import { HugeiconsIcon } from "@hugeicons/react";
+
+
 
 import Node from "./node";
-
-import { ScrollArea } from "../ui/scroll-area";
 import type { FileSystemItem } from "./types";
 import { isFile, isFolder } from "./types";
+
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEditor } from "@/context/editor/editor-context";
 
 export default function Tree() {
   const {

@@ -1,11 +1,13 @@
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
   MoreVerticalIcon,
   FileAddIcon,
   FolderAddIcon,
   Refresh01Icon,
 } from "@hugeicons/core-free-icons";
-import { Button } from "../ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -14,8 +16,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "../ui/badge";
-
 import { useEditor } from "@/context/editor/editor-context";
 import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 

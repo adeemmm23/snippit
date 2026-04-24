@@ -6,8 +6,8 @@ import type {
   FileSystemItem,
   FolderItem,
   FileItem,
-} from "@/components/for_files/types";
-import { isFile, isFolder } from "@/components/for_files/types";
+} from "@/components/files/types";
+import { isFile, isFolder } from "@/components/files/types";
 
 type EditorProviderProps = {
   children: ReactNode;

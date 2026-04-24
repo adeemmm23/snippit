@@ -2,7 +2,7 @@ import { usePanelRef } from "react-resizable-panels";
 
 import { Appbar } from "@/components/appbar";
 import Editor from "@/components/editor";
-import { Files } from "@/components/files";
+import Files from "@/components/files";
 import {
   ResizableHandle,
   ResizablePanel,
