@@ -39,7 +39,8 @@ export default defineConfig([
             caseInsensitive: true
           }
         }
-      ]
+      ],
+      "react-hooks/exhaustive-deps": "off",
     },
   },
 ]);

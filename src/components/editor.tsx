@@ -1,12 +1,13 @@
-import { useState, useRef, useEffect } from "react";
-import { Label } from "./ui/label";
-import { Button } from "./ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Copy01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
-import { useEditor } from "@/context/editor/editor-context";
-
+import { HugeiconsIcon } from "@hugeicons/react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
 import { ScrollArea } from "./ui/scroll-area";
+
+import { useEditor } from "@/context/editor/editor-context";
 
 export default function Editor() {
   const { variables, setVariables, template, setTemplate } = useEditor();
