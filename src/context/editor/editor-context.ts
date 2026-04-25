@@ -2,11 +2,20 @@ import { createContext, useContext } from "react";
 
 import type { FileSystemItem } from "@/components/files/types";
 
+export type TemplatePart = {
+  text: string;
+  isVariable: boolean;
+  variableName?: string;
+  value?: string;
+};
+
 type EditorContextType = {
   variables: Record<string, string>;
   setVariables: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   template: string;
   setTemplate: React.Dispatch<React.SetStateAction<string>>;
+  parts: TemplatePart[];
+  setParts: React.Dispatch<React.SetStateAction<TemplatePart[]>>;
   activeFilePath: string[];
   setActiveFilePath: React.Dispatch<React.SetStateAction<string[]>>;
   currentWorkingFolder: string[];

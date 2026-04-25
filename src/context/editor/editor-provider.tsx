@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 
-import { EditorContext } from "./editor-context";
+import { EditorContext, type TemplatePart } from "./editor-context";
 
 import type {
   FileSystemItem,
@@ -20,6 +20,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
   const [currentWorkingFolder, setCurrentWorkingFolder] = useState<string[]>(
     [],
   );
+  const [parts, setParts] = useState<TemplatePart[]>([]);
 
   const resetFileState = () => {
     setActiveFilePath([]);
@@ -290,12 +291,14 @@ export function EditorProvider({ children }: EditorProviderProps) {
     });
   };
 
+  const regex = /\{([a-zA-Z0-9_]+)\}/g;
+
   useEffect(() => {
-    const regex = /\[([^\]]+)\]/g;
-    const matches = template.matchAll(regex);
     const foundVars = new Set<string>();
 
-    for (const match of matches) {
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(template)) !== null) {
       foundVars.add(match[1]);
     }
 
@@ -305,14 +308,60 @@ export function EditorProvider({ children }: EditorProviderProps) {
     });
 
     setVariables(newVariables);
-
   }, [template]);
+
+  useEffect(() => {
+    const newParts: TemplatePart[] = [];
+
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    // Use exec in a loop instead of matchAll - slightly faster
+    while ((match = regex.exec(template)) !== null) {
+      // Add text before the variable
+      if (match.index > lastIndex) {
+        newParts.push({
+          text: template.slice(lastIndex, match.index),
+          isVariable: false,
+        });
+      }
+
+      const varName = match[1];
+
+      // Add the variable with its value
+      newParts.push({
+        text: match[0],
+        isVariable: true,
+        variableName: varName,
+        value: variables[varName] || "",
+      });
+
+      lastIndex = regex.lastIndex;
+    }
+
+    // Add remaining text
+    if (lastIndex < template.length) {
+      newParts.push({
+        text: template.slice(lastIndex),
+        isVariable: false,
+      });
+    } else if (newParts.length === 0 && template) {
+      newParts.push({
+        text: template,
+        isVariable: false,
+      });
+    }
+
+    setParts(newParts);
+  }, [template, variables]);
 
   const value = {
     variables,
     setVariables,
     template,
     setTemplate,
+    parts,
+    setParts,
     activeFilePath,
     setActiveFilePath,
     resetFileState,
