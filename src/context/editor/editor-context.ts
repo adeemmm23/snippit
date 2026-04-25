@@ -1,24 +1,18 @@
 import { createContext, useContext } from "react";
 
-import type { FileSystemItem } from "@/components/files/types";
+export type TemplatePart = {
+  text: string;
+  isVariable: boolean;
+  variableName?: string;
+};
 
 type EditorContextType = {
   variables: Record<string, string>;
-  setVariables: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  setVariable: (name: string, value: string) => void;
+  resetVariables: () => void;
   template: string;
-  setTemplate: React.Dispatch<React.SetStateAction<string>>;
-  activeFilePath: string[];
-  setActiveFilePath: React.Dispatch<React.SetStateAction<string[]>>;
-  currentWorkingFolder: string[];
-  setCurrentWorkingFolder: React.Dispatch<React.SetStateAction<string[]>>;
-  resetFileState: () => void;
-  files: FileSystemItem[];
-  setFiles: React.Dispatch<React.SetStateAction<FileSystemItem[]>>;
-  saveActiveFile: () => boolean;
-  createFile: (path: string[], content: string) => void;
-  createFolder: (path: string[]) => void;
-  removeItem: (path: string[]) => void;
-  renameItem: (oldPath: string[], newPath: string[]) => void;
+  setTemplate: (template: string) => void;
+  parts: TemplatePart[];
 };
 
 export const EditorContext = createContext<EditorContextType | undefined>(

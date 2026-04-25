@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import type { FileSystemItem } from "./types";
 import { isFile, isFolder } from "./types";
 
-
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -18,12 +17,12 @@ import {
 } from "@/components/ui/command";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { useEditor } from "@/context/editor/editor-context";
-
-
+import { useFiles } from "@/context/files/files-context";
 
 export default function SearchBar() {
   const [open, setOpen] = useState(false);
-  const { setTemplate, setActiveFilePath, files } = useEditor();
+  const { setActiveFilePath, files } = useFiles();
+  const { setTemplate } = useEditor();
 
   const flattenFiles = (
     items: FileSystemItem[] = files,

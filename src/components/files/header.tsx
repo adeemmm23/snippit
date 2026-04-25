@@ -1,7 +1,7 @@
 import {
-  MoreVerticalIcon,
   FileAddIcon,
   FolderAddIcon,
+  MoreVerticalIcon,
   Refresh01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -10,17 +10,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEditor } from "@/context/editor/editor-context";
+import { useFiles } from "@/context/files/files-context";
 import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 
 export default function Header() {
-  const { createFile, createFolder, currentWorkingFolder } = useEditor();
+  const { createItem, currentWorkingFolder } = useFiles();
   return (
     <div className="flex">
       <div className="flex h-9 min-w-0 flex-1 items-center gap-1 px-2 select-none">
@@ -32,11 +32,13 @@ export default function Header() {
         </Badge>
       </div>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button variant="ghost" className="size-9">
-            <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" className="size-9">
+              <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+            </Button>
+          }
+        />
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
             <DropdownMenuItem>
@@ -48,10 +50,7 @@ export default function Header() {
           <DropdownMenuGroup>
             <DropdownMenuItem
               onClick={() => {
-                createFile(
-                  [...currentWorkingFolder, "NewFile"],
-                  "Put some content here...",
-                );
+                createItem([...currentWorkingFolder, "NewFile"], "file");
               }}
             >
               <HugeiconsIcon icon={FileAddIcon} className="size-4" />
@@ -59,7 +58,7 @@ export default function Header() {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
-                createFolder([...currentWorkingFolder, "NewFolder"])
+                createItem([...currentWorkingFolder, "NewFolder"], "folder")
               }
             >
               <HugeiconsIcon icon={FolderAddIcon} className="size-4" />

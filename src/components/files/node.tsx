@@ -1,25 +1,23 @@
 import {
+  Delete02Icon,
   File01Icon,
   Folder01Icon,
-  MoreVerticalIcon,
   InputCursorTextIcon,
-  Delete02Icon,
+  MoreVerticalIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEditor } from "@/context/editor/editor-context";
+import { useFiles } from "@/context/files/files-context";
 import { cn } from "@/lib/utils";
-
-
 
 type NodeProps = {
   name: string;
@@ -36,7 +34,7 @@ export default function Node({
   isActive,
   path,
 }: NodeProps) {
-  const { removeItem, renameItem } = useEditor();
+  const { removeItem, renameItem } = useFiles();
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(name);
   const spanRef = useRef<HTMLSpanElement>(null);
@@ -86,16 +84,16 @@ export default function Node({
   };
 
   return (
-    <Button
+    <div
+      role="button"
+      tabIndex={0}
       key={name}
       title={name}
       data-path={path.join("/")}
-      variant="ghost"
-      size="default"
       className={cn(
-        "group/file w-full justify-start gap-2 pr-0",
+        "group/file focus-visible:border-ring focus-visible:ring-ring/50 group/button hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 flex h-9 w-full shrink-0 items-center justify-start gap-2 rounded-md border border-transparent px-2.5 pr-0 text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-[3px]",
         isActive &&
-        "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
+          "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
       )}
       onClick={() => {
         if (!isRenaming) {
@@ -126,15 +124,18 @@ export default function Node({
       )}
       <div className="ml-auto flex size-9 items-center justify-center">
         <DropdownMenu>
-          <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              className="pointer-events-none shrink-0 opacity-0 group-hover/file:pointer-events-auto group-hover/file:opacity-100"
-            >
-              <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            onClick={(e) => e.stopPropagation()}
+            render={
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                className="pointer-events-none shrink-0 opacity-0 group-hover/file:pointer-events-auto group-hover/file:opacity-100"
+              >
+                <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+              </Button>
+            }
+          />
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={handleRenameStart}>
@@ -155,6 +156,6 @@ export default function Node({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </Button>
+    </div>
   );
 }

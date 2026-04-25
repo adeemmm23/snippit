@@ -1,9 +1,9 @@
 import {
-  LayoutAlignLeftIcon,
   File02Icon,
   FloppyDiskIcon,
-  Settings01Icon,
+  LayoutAlignLeftIcon,
   LayoutAlignRightIcon,
+  Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useState } from "react";
@@ -15,13 +15,15 @@ import FilePath from "./file-path";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useEditor } from "@/context/editor/editor-context";
+import { useFiles } from "@/context/files/files-context";
 
 type AppbarProps = {
   leftPanelRef: ReturnType<typeof usePanelRef>;
   rightPanelRef: ReturnType<typeof usePanelRef>;
 };
 export default function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
-  const { resetFileState, saveActiveFile } = useEditor();
+  const { saveActiveFile, setActiveFilePath } = useFiles();
+  const { setTemplate } = useEditor();
   const [isWindowSmall, setIsWindowSmall] = useState(false);
 
   useEffect(() => {
@@ -78,7 +80,8 @@ export default function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
       <Button
         variant="ghost"
         onClick={() => {
-          resetFileState();
+          setTemplate("");
+          setActiveFilePath([]);
         }}
       >
         <HugeiconsIcon icon={File02Icon} className="size-4" />

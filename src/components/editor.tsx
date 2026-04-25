@@ -3,32 +3,19 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { ScrollArea } from "./ui/scroll-area";
-
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditor } from "@/context/editor/editor-context";
 
 export default function Editor() {
-  const { variables, setVariables, template, setTemplate } = useEditor();
+  const { template, setTemplate, parts } = useEditor();
   const [copied, setCopied] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
 
-  // Replace variables in template with their values
-  const generatePreview = () => {
-    let preview = template;
-    Object.entries(variables).forEach(([name, value]) => {
-      const regex = new RegExp(`\\[${name}\\]`, "g");
-      preview = preview.replace(regex, value || `[${name}]`);
-    });
-    return preview;
-  };
-
-
-
   // Handle copy to clipboard
   const handleCopy = async (isShortcut: boolean | undefined = false) => {
-    const output = generatePreview();
+    const output = parts.map((part) => part.text).join("");
     await navigator.clipboard.writeText(output);
 
     if (!isShortcut) {
@@ -44,73 +31,9 @@ export default function Editor() {
     }
   };
 
-
-  // Handle clear template
   const handleClear = () => {
     setTemplate("");
-    setVariables({});
   };
-
-
-  // Render final output with blue highlighted values
-  const renderFinalOutput = () => {
-    const parts = [];
-    const replacements: Array<{
-      start: number;
-      end: number;
-      value: string;
-      isFilled: boolean;
-    }> = [];
-
-    // Find all variables and their positions
-    Object.entries(variables).forEach(([name, value]) => {
-      const regex = new RegExp(`\\[${name}\\]`, "g");
-      let match;
-      while ((match = regex.exec(template)) !== null) {
-        replacements.push({
-          start: match.index,
-          end: match.index + match[0].length,
-          value: value || `[${name}]`,
-          isFilled: !!value,
-        });
-      }
-    });
-
-    // Sort replacements by position
-    replacements.sort((a, b) => a.start - b.start);
-
-    // Build the output with highlighted values
-    let lastIndex = 0;
-    replacements.forEach((replacement, index) => {
-      // Add text before the replacement
-      if (replacement.start > lastIndex) {
-        parts.push(
-          <span key={`text-${index}`}>
-            {template.substring(lastIndex, replacement.start)}
-          </span>,
-        );
-      }
-
-      // Add the replacement value or variable name in blue
-      parts.push(
-        <span key={`value-${index}`} className="text-primary-foreground">
-          {replacement.value}
-        </span>,
-      );
-
-      lastIndex = replacement.end;
-    });
-
-    // Add remaining text
-    if (lastIndex < template.length) {
-      parts.push(
-        <span key={`text-remaining`}>{template.substring(lastIndex)}</span>,
-      );
-    }
-
-    return parts.length > 0 ? parts : generatePreview();
-  };
-
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -182,7 +105,14 @@ export default function Editor() {
         </div>
         <ScrollArea className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 min-h-0 flex-1 overflow-auto rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
           <div className="min-h-full p-3 font-mono text-base whitespace-pre-wrap">
-            {renderFinalOutput()}
+            {parts.map((part, index) => (
+              <span
+                key={index}
+                className={part.isVariable ? "text-primary-foreground" : ""}
+              >
+                {part.text}
+              </span>
+            ))}
           </div>
         </ScrollArea>
       </div>
