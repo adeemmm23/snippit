@@ -1,7 +1,10 @@
 import { Copy01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+
+import { Input } from "./input";
+import { Output } from "./output";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -9,9 +12,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditor } from "@/context/editor/editor-context";
 
 export default function Editor() {
-  const { template, setTemplate, parts } = useEditor();
+  const { setTemplate, parts } = useEditor();
   const [copied, setCopied] = useState(false);
-  const editorRef = useRef<HTMLDivElement>(null);
 
   // Handle copy to clipboard
   const handleCopy = async (isShortcut: boolean | undefined = false) => {
@@ -47,16 +49,6 @@ export default function Editor() {
     return () => document.removeEventListener("keydown", down);
   }, [handleCopy]);
 
-  // Sync the contentEditable div with the template state
-  useEffect(() => {
-    if (editorRef.current) {
-      const currentText = editorRef.current.innerText || "";
-      if (currentText !== template) {
-        editorRef.current.innerText = template;
-      }
-    }
-  }, [template]);
-
   return (
     <div className="flex h-full flex-col">
       {/* Template Editor */}
@@ -75,16 +67,7 @@ export default function Editor() {
         </div>
         <div className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 flex min-h-0 flex-1 overflow-hidden rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
           <ScrollArea className="h-full w-full">
-            <div
-              ref={editorRef}
-              contentEditable="plaintext-only"
-              onInput={(e) => {
-                const text = e.currentTarget.innerText || "";
-                setTemplate(text);
-              }}
-              className="min-h-full p-3 font-mono text-base outline-none"
-              suppressContentEditableWarning
-            />
+            <Input />
           </ScrollArea>
         </div>
       </div>
@@ -104,16 +87,7 @@ export default function Editor() {
           </Button>
         </div>
         <ScrollArea className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 min-h-0 flex-1 overflow-auto rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
-          <div className="min-h-full p-3 font-mono text-base whitespace-pre-wrap">
-            {parts.map((part, index) => (
-              <span
-                key={index}
-                className={part.isVariable ? "text-primary-foreground" : ""}
-              >
-                {part.text}
-              </span>
-            ))}
-          </div>
+          <Output />
         </ScrollArea>
       </div>
     </div>
