@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditor } from "@/context/editor/editor-context";
 
 export default function Editor() {
-  const { setVariables, template, setTemplate, parts } = useEditor();
+  const { template, setTemplate, parts } = useEditor();
   const [copied, setCopied] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -31,10 +31,8 @@ export default function Editor() {
     }
   };
 
-  // Handle clear template
   const handleClear = () => {
     setTemplate("");
-    setVariables({});
   };
 
   useEffect(() => {

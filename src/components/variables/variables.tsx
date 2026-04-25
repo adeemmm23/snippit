@@ -18,28 +18,19 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditor } from "@/context/editor/editor-context";
 
 export default function Variables() {
-  const { variables, setVariables } = useEditor();
-
-  // Handle reset variables
-  const handleResetVariables = () => {
-    const resetVars: Record<string, string> = {};
-    Object.keys(variables).forEach((key) => {
-      resetVars[key] = "";
-    });
-    setVariables(resetVars);
-  };
+  const { variables, setVariable, resetVariables } = useEditor();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "l" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        handleResetVariables();
+        resetVariables();
       }
     };
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, [handleResetVariables]);
+  }, [resetVariables]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -69,7 +60,7 @@ export default function Variables() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleResetVariables}
+              onClick={() => resetVariables()}
               className="h-8 gap-2"
             >
               <HugeiconsIcon icon={Loading03Icon} className="h-4 w-4" />
@@ -120,12 +111,7 @@ export default function Variables() {
                         }
                       }
                     }}
-                    onChange={(e) =>
-                      setVariables((prev) => ({
-                        ...prev,
-                        [varName]: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => setVariable(varName, e.target.value)}
                     placeholder={`Enter ${varName}...`}
                   />
 
@@ -134,12 +120,7 @@ export default function Variables() {
                       <InputGroupButton
                         variant="ghost"
                         size="icon-xs"
-                        onClick={() =>
-                          setVariables((prev) => ({
-                            ...prev,
-                            [varName]: "",
-                          }))
-                        }
+                        onClick={() => setVariable(varName, "")}
                       >
                         <HugeiconsIcon icon={Delete01Icon} className="size-4" />
                       </InputGroupButton>
@@ -148,30 +129,21 @@ export default function Variables() {
                   {varName.toLocaleLowerCase().includes("password") && (
                     <PasswordAddon
                       onGenerate={(generatedPassword) => {
-                        setVariables((prev) => ({
-                          ...prev,
-                          [varName]: generatedPassword,
-                        }));
+                        setVariable(varName, generatedPassword);
                       }}
                     />
                   )}
                   {varName.toLocaleLowerCase().includes("date") && (
                     <DateAddon
                       onSelect={(formatedDate) => {
-                        setVariables((prev) => ({
-                          ...prev,
-                          [varName]: formatedDate,
-                        }));
+                        setVariable(varName, formatedDate);
                       }}
                     />
                   )}
                   {varName.toLocaleLowerCase().includes("duration") && (
                     <DurationAddon
                       onSelect={(formatedDuration) => {
-                        setVariables((prev) => ({
-                          ...prev,
-                          [varName]: formatedDuration,
-                        }));
+                        setVariable(varName, formatedDuration);
                       }}
                     />
                   )}

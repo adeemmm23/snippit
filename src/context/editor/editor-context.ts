@@ -10,7 +10,8 @@ export type TemplatePart = {
 
 type EditorContextType = {
   variables: Record<string, string>;
-  setVariables: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  setVariable: (name: string, value: string) => void;
+  resetVariables: () => void;
   template: string;
   setTemplate: React.Dispatch<React.SetStateAction<string>>;
   parts: TemplatePart[];

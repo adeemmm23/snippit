@@ -3,9 +3,9 @@ import { useEffect, useState, type ReactNode } from "react";
 import { EditorContext, type TemplatePart } from "./editor-context";
 
 import type {
+  FileItem,
   FileSystemItem,
   FolderItem,
-  FileItem,
 } from "@/components/files/types";
 import { isFile, isFolder } from "@/components/files/types";
 
@@ -21,6 +21,21 @@ export function EditorProvider({ children }: EditorProviderProps) {
     [],
   );
   const [parts, setParts] = useState<TemplatePart[]>([]);
+
+  const setVariable = (name: string, value: string) => {
+    setVariables((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const resetVariables = () => {
+    const newVariables: Record<string, string> = {};
+    Object.keys(variables).forEach((key) => {
+      newVariables[key] = "";
+    });
+    setVariables(newVariables);
+  };
 
   const resetFileState = () => {
     setActiveFilePath([]);
@@ -342,7 +357,8 @@ export function EditorProvider({ children }: EditorProviderProps) {
 
   const value = {
     variables,
-    setVariables,
+    setVariable,
+    resetVariables,
     template,
     setTemplate,
     parts,
