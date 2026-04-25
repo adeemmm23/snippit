@@ -2,6 +2,8 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { EditorContext, type TemplatePart } from "./editor-context";
 
+import { VARIABLE_REGEX } from "@/lib/const";
+
 type EditorProviderProps = {
   children: ReactNode;
 };
@@ -27,7 +29,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
   };
 
   useEffect(() => {
-    const regex = /\{([a-zA-Z0-9_]+)\}/g;
+    const regex = VARIABLE_REGEX;
     const foundVars = new Set<string>();
     const newVariables: Record<string, string> = {};
     const newParts: TemplatePart[] = [];

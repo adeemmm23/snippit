@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useFiles } from "@/context/files/files-context";
-import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
+import { IT_SUPPORT_SNIPPETS } from "@/lib/test";
 
 export default function Header() {
   const { createItem, currentWorkingFolder } = useFiles();
