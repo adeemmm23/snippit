@@ -48,12 +48,14 @@ export default function FilePath() {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Button size="icon-sm" variant="ghost">
-                    <BreadcrumbEllipsis />
-                    <span className="sr-only">Toggle menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
+                <DropdownMenuTrigger
+                  render={
+                    <Button size="icon-sm" variant="ghost">
+                      <BreadcrumbEllipsis />
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  }
+                />
                 <DropdownMenuContent align="start" className="w-50">
                   <DropdownMenuGroup>
                     {rest.map((segment, index) => (

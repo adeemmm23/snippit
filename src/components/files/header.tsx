@@ -32,11 +32,13 @@ export default function Header() {
         </Badge>
       </div>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button variant="ghost" className="size-9">
-            <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" className="size-9">
+              <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+            </Button>
+          }
+        />
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
             <DropdownMenuItem>
