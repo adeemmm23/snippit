@@ -18,7 +18,6 @@ export function Output() {
   const { parts } = useEditor();
   const [copied, setCopied] = useState(false);
 
-  // Handle copy to clipboard
   const handleCopy = async (isShortcut: boolean | undefined = false) => {
     const output = parts.map((part) => part.text).join("");
     await navigator.clipboard.writeText(output);
@@ -36,6 +35,7 @@ export function Output() {
     }
   };
 
+  // TODO: move copy to its own component
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.code === "Space" && (e.metaKey || e.ctrlKey)) {
@@ -47,6 +47,7 @@ export function Output() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, [handleCopy]);
+
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
       <Tooltip>
