@@ -1,10 +1,16 @@
-import { Delete01Icon, Loading03Icon } from "@hugeicons/core-free-icons";
+import {
+  Delete01Icon,
+  Loading03Icon,
+  InformationCircleIcon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect } from "react";
 
 import DateAddon from "./date-addon";
 import DurationAddon from "./duration-addon";
 import PasswordAddon from "./password-addon";
+import { Kbd, KbdGroup } from "../ui/kbd";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -57,15 +63,49 @@ export default function Variables() {
         {Object.keys(variables).length > 0 && (
           <>
             <Label className="px-2 text-lg font-medium">Variables</Label>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => resetVariables()}
-              className="h-8 gap-2"
-            >
-              <HugeiconsIcon icon={Loading03Icon} className="h-4 w-4" />
-              Reset
-            </Button>
+            <div className="flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => resetVariables()}
+                    >
+                      <HugeiconsIcon icon={Loading03Icon} className="h-4 w-4" />
+                    </Button>
+                  }
+                />
+                <TooltipContent side="left">
+                  Reset variables
+                  <KbdGroup>
+                    <Kbd>Ctrl</Kbd>
+                    <span>+</span>
+                    <Kbd>L</Kbd>
+                  </KbdGroup>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button variant="ghost" size="icon" onClick={() => {}}>
+                      <HugeiconsIcon
+                        icon={InformationCircleIcon}
+                        className="h-4 w-4"
+                      />
+                    </Button>
+                  }
+                />
+                <TooltipContent side="left">
+                  Select first variable
+                  <KbdGroup>
+                    <Kbd>Ctrl</Kbd>
+                    <span>+</span>
+                    <Kbd>Enter</Kbd>
+                  </KbdGroup>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </>
         )}
       </div>
