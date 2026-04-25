@@ -291,34 +291,16 @@ export function EditorProvider({ children }: EditorProviderProps) {
     });
   };
 
-  const regex = /\{([a-zA-Z0-9_]+)\}/g;
-
   useEffect(() => {
+    const regex = /\{([a-zA-Z0-9_]+)\}/g;
     const foundVars = new Set<string>();
-
-    let match: RegExpExecArray | null;
-
-    while ((match = regex.exec(template)) !== null) {
-      foundVars.add(match[1]);
-    }
-
     const newVariables: Record<string, string> = {};
-    foundVars.forEach((varName) => {
-      newVariables[varName] = variables[varName] || "";
-    });
-
-    setVariables(newVariables);
-  }, [template]);
-
-  useEffect(() => {
     const newParts: TemplatePart[] = [];
 
     let lastIndex = 0;
     let match: RegExpExecArray | null;
 
-    // Use exec in a loop instead of matchAll - slightly faster
     while ((match = regex.exec(template)) !== null) {
-      // Add text before the variable
       if (match.index > lastIndex) {
         newParts.push({
           text: template.slice(lastIndex, match.index),
@@ -327,32 +309,35 @@ export function EditorProvider({ children }: EditorProviderProps) {
       }
 
       const varName = match[1];
+      foundVars.add(varName);
 
-      // Add the variable with its value
+      const value = variables[varName] || "";
+      newVariables[varName] = value;
+
       newParts.push({
         text: match[0],
         isVariable: true,
         variableName: varName,
-        value: variables[varName] || "",
+        value,
       });
 
       lastIndex = regex.lastIndex;
     }
 
-    // Add remaining text
     if (lastIndex < template.length) {
       newParts.push({
         text: template.slice(lastIndex),
         isVariable: false,
       });
-    } else if (newParts.length === 0 && template) {
-      newParts.push({
-        text: template,
-        isVariable: false,
-      });
     }
 
     setParts(newParts);
+
+    const same = JSON.stringify(newVariables) === JSON.stringify(variables);
+
+    if (!same) {
+      setVariables(newVariables);
+    }
   }, [template, variables]);
 
   const value = {
