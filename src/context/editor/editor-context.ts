@@ -13,7 +13,7 @@ type EditorContextType = {
   setVariable: (name: string, value: string) => void;
   resetVariables: () => void;
   template: string;
-  setTemplate: React.Dispatch<React.SetStateAction<string>>;
+  setTemplate: (template: string) => void;
   parts: TemplatePart[];
   activeFilePath: string[];
   setActiveFilePath: React.Dispatch<React.SetStateAction<string[]>>;
