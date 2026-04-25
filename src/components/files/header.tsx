@@ -1,7 +1,7 @@
 import {
-  MoreVerticalIcon,
   FileAddIcon,
   FolderAddIcon,
+  MoreVerticalIcon,
   Refresh01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -10,17 +10,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEditor } from "@/context/editor/editor-context";
+import { useFiles } from "@/context/files/files-context";
 import { IT_SUPPORT_SNIPPETS } from "@/lib/const";
 
 export default function Header() {
-  const { createFile, createFolder, currentWorkingFolder } = useEditor();
+  const { createFile, createFolder, currentWorkingFolder } = useFiles();
   return (
     <div className="flex">
       <div className="flex h-9 min-w-0 flex-1 items-center gap-1 px-2 select-none">

@@ -5,8 +5,6 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-
-
 import Node from "./node";
 import type { FileSystemItem } from "./types";
 import { isFile, isFolder } from "./types";
@@ -14,16 +12,18 @@ import { isFile, isFolder } from "./types";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditor } from "@/context/editor/editor-context";
+import { useFiles } from "@/context/files/files-context";
 
 export default function Tree() {
+  const { setTemplate } = useEditor();
+
   const {
-    setTemplate,
     setActiveFilePath,
     activeFilePath,
     files: data,
     currentWorkingFolder,
     setCurrentWorkingFolder,
-  } = useEditor();
+  } = useFiles();
 
   // Navigate to the current working folder
   const getCurrentFolderItems = (): FileSystemItem[] => {

@@ -1,7 +1,5 @@
 import { createContext, useContext } from "react";
 
-import type { FileSystemItem } from "@/components/files/types";
-
 export type TemplatePart = {
   text: string;
   isVariable: boolean;
@@ -15,18 +13,6 @@ type EditorContextType = {
   template: string;
   setTemplate: (template: string) => void;
   parts: TemplatePart[];
-  activeFilePath: string[];
-  setActiveFilePath: React.Dispatch<React.SetStateAction<string[]>>;
-  currentWorkingFolder: string[];
-  setCurrentWorkingFolder: React.Dispatch<React.SetStateAction<string[]>>;
-  resetFileState: () => void;
-  files: FileSystemItem[];
-  setFiles: React.Dispatch<React.SetStateAction<FileSystemItem[]>>;
-  saveActiveFile: () => boolean;
-  createFile: (path: string[], content: string) => void;
-  createFolder: (path: string[]) => void;
-  removeItem: (path: string[]) => void;
-  renameItem: (oldPath: string[], newPath: string[]) => void;
 };
 
 export const EditorContext = createContext<EditorContextType | undefined>(
