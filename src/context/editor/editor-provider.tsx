@@ -315,10 +315,9 @@ export function EditorProvider({ children }: EditorProviderProps) {
       newVariables[varName] = value;
 
       newParts.push({
-        text: match[0],
+        text: value == "" ? `{${varName}}` : value,
         isVariable: true,
         variableName: varName,
-        value,
       });
 
       lastIndex = regex.lastIndex;
@@ -331,6 +330,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
       });
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setParts(newParts);
 
     const same = JSON.stringify(newVariables) === JSON.stringify(variables);
@@ -346,7 +346,6 @@ export function EditorProvider({ children }: EditorProviderProps) {
     template,
     setTemplate,
     parts,
-    setParts,
     activeFilePath,
     setActiveFilePath,
     resetFileState,

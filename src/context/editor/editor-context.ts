@@ -6,7 +6,6 @@ export type TemplatePart = {
   text: string;
   isVariable: boolean;
   variableName?: string;
-  value?: string;
 };
 
 type EditorContextType = {
@@ -15,7 +14,6 @@ type EditorContextType = {
   template: string;
   setTemplate: React.Dispatch<React.SetStateAction<string>>;
   parts: TemplatePart[];
-  setParts: React.Dispatch<React.SetStateAction<TemplatePart[]>>;
   activeFilePath: string[];
   setActiveFilePath: React.Dispatch<React.SetStateAction<string[]>>;
   currentWorkingFolder: string[];

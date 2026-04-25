@@ -15,7 +15,7 @@ export default function Editor() {
 
   // Handle copy to clipboard
   const handleCopy = async (isShortcut: boolean | undefined = false) => {
-    const output = "working on this";
+    const output = parts.map((part) => part.text).join("");
     await navigator.clipboard.writeText(output);
 
     if (!isShortcut) {
@@ -107,18 +107,14 @@ export default function Editor() {
         </div>
         <ScrollArea className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 min-h-0 flex-1 overflow-auto rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
           <div className="min-h-full p-3 font-mono text-base whitespace-pre-wrap">
-            {parts.map((part, index) =>
-              part.isVariable ? (
-                <span
-                  key={index}
-                  className="text-primary-foreground font-semibold"
-                >
-                  {part.value || `{${part.variableName}}`}
-                </span>
-              ) : (
-                <span key={index}>{part.text}</span>
-              ),
-            )}
+            {parts.map((part, index) => (
+              <span
+                key={index}
+                className={part.isVariable ? "text-primary-foreground" : ""}
+              >
+                {part.text}
+              </span>
+            ))}
           </div>
         </ScrollArea>
       </div>
