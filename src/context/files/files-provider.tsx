@@ -3,11 +3,7 @@ import { useState, type ReactNode } from "react";
 import { FilesContext } from "./files-context";
 import { useEditor } from "../editor/editor-context";
 
-import type {
-  FileItem,
-  FileSystemItem,
-  FolderItem,
-} from "@/components/files/types";
+import type { FileSystemItem, FolderItem } from "@/components/files/types";
 import { isFile, isFolder } from "@/components/files/types";
 
 type FilesProviderProps = {
@@ -112,11 +108,15 @@ export function FilesProvider({ children }: FilesProviderProps) {
     return finalName;
   };
 
-  const createFile = (path: string[], content: string) => {
+  const createItem = (
+    path: string[],
+    type: "file" | "folder",
+    content?: string,
+  ) => {
     setFiles((prevFiles) => {
       const newFiles = JSON.parse(JSON.stringify(prevFiles));
       const parentPath = path.slice(0, -1);
-      const fileName = path[path.length - 1];
+      const itemName = path[path.length - 1];
 
       let parentItems: FileSystemItem[];
 
@@ -143,57 +143,24 @@ export function FilesProvider({ children }: FilesProviderProps) {
         }
       }
 
-      const finalName = getAvailableName(parentItems, fileName);
-      const newFile: FileItem = {
-        type: "file",
-        name: finalName,
-        content,
-      };
-      parentItems.push(newFile);
+      const finalName = getAvailableName(parentItems, itemName);
+      let newItem: FileSystemItem;
 
-      saveFilesToStorage(newFiles);
-      return newFiles;
-    });
-  };
-
-  const createFolder = (path: string[]) => {
-    setFiles((prevFiles) => {
-      const newFiles = JSON.parse(JSON.stringify(prevFiles));
-      const parentPath = path.slice(0, -1);
-      const folderName = path[path.length - 1];
-
-      let parentItems: FileSystemItem[];
-
-      if (parentPath.length === 0) {
-        parentItems = newFiles;
+      if (type === "file") {
+        newItem = {
+          type: "file",
+          name: finalName,
+          content: content || "",
+        };
       } else {
-        const parentFolder = findItemByPath(newFiles, parentPath);
-        if (!parentFolder || !isFolder(parentFolder)) {
-          // Create parent folders if they don't exist
-          let current: FileSystemItem[] = newFiles;
-          for (const segment of parentPath) {
-            let folder = current.find(
-              (item) => item.name === segment && isFolder(item),
-            );
-            if (!folder) {
-              folder = { type: "folder", name: segment, files: [] };
-              current.push(folder);
-            }
-            current = (folder as FolderItem).files;
-          }
-          parentItems = current;
-        } else {
-          parentItems = parentFolder.files;
-        }
+        newItem = {
+          type: "folder",
+          name: finalName,
+          files: [],
+        };
       }
 
-      const finalName = getAvailableName(parentItems, folderName);
-      const newFolder: FolderItem = {
-        type: "folder",
-        name: finalName,
-        files: [],
-      };
-      parentItems.push(newFolder);
+      parentItems.push(newItem);
 
       saveFilesToStorage(newFiles);
       return newFiles;
@@ -290,8 +257,7 @@ export function FilesProvider({ children }: FilesProviderProps) {
     setActiveFilePath,
     files,
     setFiles,
-    createFile,
-    createFolder,
+    createItem,
     currentWorkingFolder,
     saveActiveFile,
     setCurrentWorkingFolder,
