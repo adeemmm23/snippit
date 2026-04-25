@@ -29,7 +29,7 @@ export function Input() {
   }, [template]);
 
   return (
-    <div className="relative mb-4 flex min-h-0 flex-1 flex-col">
+    <div className="relative flex min-h-0 flex-1 flex-col">
       <Tooltip>
         <TooltipTrigger
           render={
@@ -47,6 +47,11 @@ export function Input() {
           <p>Clear text zone</p>
         </TooltipContent>
       </Tooltip>
+      {/*{template.trim().length === 0 && (
+        <span className="pointer-events-none absolute top-1/2 left-1/2 -translate-1/2 font-mono text-base opacity-50 select-none">
+          Template
+        </span>
+      )}*/}
       <div className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 flex min-h-0 flex-1 overflow-hidden rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
         <ScrollArea className="h-full w-full">
           <div
