@@ -29,7 +29,7 @@ export function Input() {
   }, [template]);
 
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col">
+    <div className="relative flex h-full min-h-0 flex-col">
       <Tooltip>
         <TooltipTrigger
           render={
