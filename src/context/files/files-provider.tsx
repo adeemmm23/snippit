@@ -223,6 +223,7 @@ export function FilesProvider({ children }: FilesProviderProps) {
     });
   };
 
+  // TODO: this doesn't work deep, need some refactoring
   const removeItem = (path: string[]) => {
     setFiles((prevFiles) => {
       const newFiles = JSON.parse(JSON.stringify(prevFiles));
