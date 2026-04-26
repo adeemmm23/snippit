@@ -13,7 +13,13 @@ import { toast } from "sonner";
 import FilePath from "./file-path";
 
 import { Button } from "@/components/ui/button";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useEditor } from "@/context/editor/editor-context";
 import { useFiles } from "@/context/files/files-context";
 
@@ -62,64 +68,118 @@ export default function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
 
   return (
     <div className="flex gap-2 px-2 py-2">
-      <Button
-        variant="ghost"
-        onClick={() => {
-          if (leftPanelRef.current?.isCollapsed()) {
-            if (isWindowSmall) {
-              rightPanelRef.current?.collapse();
-            }
-            leftPanelRef.current?.expand();
-          } else {
-            leftPanelRef.current?.collapse();
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                if (leftPanelRef.current?.isCollapsed()) {
+                  if (isWindowSmall) {
+                    rightPanelRef.current?.collapse();
+                  }
+                  leftPanelRef.current?.expand();
+                } else {
+                  leftPanelRef.current?.collapse();
+                }
+              }}
+            >
+              <HugeiconsIcon icon={LayoutAlignLeftIcon} className="size-4" />
+            </Button>
           }
-        }}
-      >
-        <HugeiconsIcon icon={LayoutAlignLeftIcon} className="size-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        onClick={() => {
-          setTemplate("");
-          setActiveFilePath([]);
-        }}
-      >
-        <HugeiconsIcon icon={File02Icon} className="size-4" />
-      </Button>
+        />
+        <TooltipContent side="bottom">
+          <p>Toggle left panel</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                setTemplate("");
+                setActiveFilePath([]);
+              }}
+            >
+              <HugeiconsIcon icon={File02Icon} className="size-4" />
+            </Button>
+          }
+        />
+        <TooltipContent side="bottom">
+          <p>Open temporary file</p>
+        </TooltipContent>
+      </Tooltip>
       <Separator orientation="vertical" className="my-auto h-5" />
       <FilePath />
       <Separator orientation="vertical" className="my-auto ml-auto h-5" />
-      <Button
-        variant="ghost"
-        onClick={() => {
-          const isSaved = saveActiveFile();
-          if (isSaved) {
-            toast.success("File saved successfully!");
-          } else {
-            toast.error("No active file to save!");
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                const isSaved = saveActiveFile();
+                if (isSaved) {
+                  toast.success("File saved successfully!");
+                } else {
+                  toast.error("No active file to save!");
+                }
+              }}
+            >
+              <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
+            </Button>
           }
-        }}
-      >
-        <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
-      </Button>
-      <Button variant="ghost">
-        <HugeiconsIcon icon={Settings01Icon} className="size-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        onClick={() => {
-          if (rightPanelRef.current?.isCollapsed()) {
-            if (isWindowSmall) {
-              leftPanelRef.current?.collapse();
-            }
-            rightPanelRef.current?.expand();
-          } else {
-            rightPanelRef.current?.collapse();
+        />
+        <TooltipContent side="bottom">
+          <p>Save</p>
+          <KbdGroup>
+            <Kbd>Ctrl</Kbd>
+            <span>+</span>
+            <Kbd>S</Kbd>
+          </KbdGroup>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button variant="ghost" size="icon">
+              <HugeiconsIcon icon={Settings01Icon} className="size-4" />
+            </Button>
           }
-        }}
-      >
-        <HugeiconsIcon icon={LayoutAlignRightIcon} className="size-4" />
-      </Button>
+        />
+        <TooltipContent side="bottom">
+          <p>Settings</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                if (rightPanelRef.current?.isCollapsed()) {
+                  if (isWindowSmall) {
+                    leftPanelRef.current?.collapse();
+                  }
+                  rightPanelRef.current?.expand();
+                } else {
+                  rightPanelRef.current?.collapse();
+                }
+              }}
+            >
+              <HugeiconsIcon icon={LayoutAlignRightIcon} className="size-4" />
+            </Button>
+          }
+        />
+        <TooltipContent side="bottom">
+          <p>Toggle right panel</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }

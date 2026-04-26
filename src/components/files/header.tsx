@@ -34,7 +34,7 @@ export default function Header() {
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button variant="ghost" className="size-9">
+            <Button variant="ghost" size="icon">
               <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
             </Button>
           }

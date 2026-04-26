@@ -32,6 +32,19 @@ export default function FilePath() {
     },
     { fileName: "", folderName: "", rest: [] as string[] },
   );
+
+  // TODO: better way for this
+  if (!fileName) {
+    return (
+      <Breadcrumb className="flex h-9 items-center px-2">
+        <BreadcrumbList>
+          <BreadcrumbItem className="select-none">
+            <BreadcrumbLink>No file opened</BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    );
+  }
   return (
     <Breadcrumb className="flex h-9 items-center px-2">
       <BreadcrumbList>
@@ -93,13 +106,11 @@ export default function FilePath() {
           </>
         )}
         <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage className="select-none">
-            {fileName != ""
-              ? activeFilePath[activeFilePath.length - 1]
-              : "New Snippet"}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
+        {
+          <BreadcrumbItem>
+            <BreadcrumbPage className="select-none">{fileName}</BreadcrumbPage>
+          </BreadcrumbItem>
+        }
       </BreadcrumbList>
     </Breadcrumb>
   );

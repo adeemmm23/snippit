@@ -9,8 +9,6 @@ import { useEffect } from "react";
 import DateAddon from "./date-addon";
 import DurationAddon from "./duration-addon";
 import PasswordAddon from "./password-addon";
-import { Kbd, KbdGroup } from "../ui/kbd";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,8 +17,14 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useEditor } from "@/context/editor/editor-context";
 
 export default function Variables() {
