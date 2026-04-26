@@ -119,6 +119,10 @@
 }
 
 @layer base {
+  ::selection {
+    color: oklch(from var(--color-primary-foreground) calc(l + 0.05) c h);
+    background-color: oklch(from var(--color-primary) calc(l + 0.05) c h);
+  }
   * {
     @apply border-border outline-ring/50;
   }
