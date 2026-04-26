@@ -3,9 +3,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
-import { Kbd, KbdGroup } from "../ui/kbd";
-
 import { Button } from "@/components/ui/button";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Tooltip,

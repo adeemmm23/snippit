@@ -11,6 +11,11 @@ import { isFile, isFolder } from "./types";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useEditor } from "@/context/editor/editor-context";
 import { useFiles } from "@/context/files/files-context";
 
@@ -59,7 +64,7 @@ export default function Tree() {
           <div className="flex w-full gap-1">
             <Button
               variant="ghost"
-              className="min-w-0 flex-1 grow justify-start gap-1"
+              className="min-w-0 flex-1 grow justify-start gap-2"
               onClick={() => {
                 setCurrentWorkingFolder(currentWorkingFolder.slice(0, -1));
               }}
@@ -69,15 +74,24 @@ export default function Tree() {
                 {currentWorkingFolder[currentWorkingFolder.length - 1]}
               </span>
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setCurrentWorkingFolder([]);
-              }}
-            >
-              <HugeiconsIcon icon={Home02Icon} className="size-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setCurrentWorkingFolder([]);
+                    }}
+                  >
+                    <HugeiconsIcon icon={Home02Icon} className="size-4" />
+                  </Button>
+                }
+              />
+              <TooltipContent side="right">
+                <p>Go back to Root</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         ) : (
           <Button variant="ghost" className="w-full justify-start gap-2">

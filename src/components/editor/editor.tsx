@@ -1,10 +1,11 @@
 import { Input } from "./input";
 import { Output } from "./output";
+
 import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
-} from "../ui/resizable";
+} from "@/components/ui/resizable";
 
 export default function Editor() {
   return (

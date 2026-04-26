@@ -1,3 +1,6 @@
+import { Home02Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -53,7 +56,7 @@ export default function FilePath() {
             onClick={() => setCurrentWorkingFolder([])}
             className="select-none"
           >
-            Root
+            <HugeiconsIcon icon={Home02Icon} className="size-4" />
           </BreadcrumbLink>
         </BreadcrumbItem>
         {rest.length != 0 && (
