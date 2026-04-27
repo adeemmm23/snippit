@@ -103,7 +103,7 @@ export default function Node({
     >
       <HugeiconsIcon
         icon={isFile ? File01Icon : Folder01Icon}
-        className="size-4"
+        className="size-4 shrink-0"
       />
       {isRenaming ? (
         <span
