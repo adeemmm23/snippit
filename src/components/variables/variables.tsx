@@ -62,7 +62,7 @@ export default function Variables() {
     return () => document.removeEventListener("keydown", down);
   }, [variables]);
   return (
-    <div className="flex h-full min-w-48 grow flex-col gap-2">
+    <div className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-r-none border border-r-0 p-2">
       <div className="flex items-center justify-between py-2">
         {Object.keys(variables).length > 0 && (
           <>
@@ -127,16 +127,16 @@ export default function Variables() {
         </div>
       ) : (
         <ScrollArea className="grow overflow-auto">
-          <div className="flex flex-col gap-4 px-1 py-1">
+          <div className="flex h-full flex-col gap-4 py-1">
             {Object.keys(variables).map((varName) => (
-              <div key={varName}>
+              <div key={varName} className="flex w-full flex-col gap-1">
                 <Label
                   htmlFor={varName}
                   className="mb-2 flex items-center gap-2 px-2"
                 >
                   {varName}
                 </Label>
-                <InputGroup className="w-full">
+                <InputGroup>
                   <InputGroupInput
                     id={varName}
                     value={variables[varName]}

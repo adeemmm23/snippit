@@ -18,7 +18,7 @@ export default function Editor() {
       >
         <Input />
       </ResizablePanel>
-      <ResizableHandle />
+      <ResizableHandle className="bg-transparent" withHandle />
       <ResizablePanel
         minSize="25%"
         defaultSize="50%"
