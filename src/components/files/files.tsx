@@ -4,7 +4,10 @@ import Tree from "./tree";
 
 export default function Files() {
   return (
-    <div dir="ltr" className="flex h-full min-w-48 grow flex-col gap-2">
+    <div
+      dir="ltr"
+      className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-l-none border border-l-0 p-2"
+    >
       <Header />
       <SearchBar />
       <Tree />

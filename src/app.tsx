@@ -10,7 +10,6 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Variables from "@/components/variables";
@@ -25,44 +24,41 @@ export default function App() {
     <EditorProvider>
       <FilesProvider>
         <TooltipProvider>
-            <main className="bg-background flex h-screen flex-col">
-              <Appbar
-                leftPanelRef={leftPanelRef}
-                rightPanelRef={rightPanelRef}
-              />
-              <Separator />
-              <ResizablePanelGroup orientation="horizontal">
-                <ResizablePanel
-                  id="left-sidebar"
-                  defaultSize={250}
-                  minSize={200}
-                  maxSize={300}
-                  className="p-2"
-                  panelRef={leftPanelRef}
-                  collapsible
-                  dir="rtl"
-                >
-                  <Files />
-                </ResizablePanel>
-                <ResizableHandle />
-                <ResizablePanel id="editor" minSize="50%" className="px-2 py-2">
-                  <Editor />
-                </ResizablePanel>
-                <ResizableHandle />
-                <ResizablePanel
-                  id="right-sidebar"
-                  defaultSize={250}
-                  minSize={200}
-                  maxSize={300}
-                  className="p-1" // TODO: inside there is an extra px-1 that result in an equal padding overall; I'll fix it
-                  panelRef={rightPanelRef}
-                  collapsible
-                >
-                  <Variables />
-                </ResizablePanel>
-              </ResizablePanelGroup>
-            </main>
-            <Toaster />
+          <main className="bg-background flex h-screen flex-col">
+            <Appbar leftPanelRef={leftPanelRef} rightPanelRef={rightPanelRef} />
+            {/*<Separator />*/}
+            <ResizablePanelGroup orientation="horizontal" className="mb-2">
+              <ResizablePanel
+                id="left-sidebar"
+                defaultSize={250}
+                minSize={220}
+                maxSize={300}
+                panelRef={leftPanelRef}
+                collapsible
+                className="mr-2"
+                dir="rtl"
+              >
+                <Files />
+              </ResizablePanel>
+              <ResizableHandle className="bg-transparent" withHandle />
+              <ResizablePanel id="editor" minSize="50%" className="mx-2">
+                <Editor />
+              </ResizablePanel>
+              <ResizableHandle className="bg-transparent" withHandle />
+              <ResizablePanel
+                id="right-sidebar"
+                defaultSize={250}
+                minSize={220}
+                maxSize={300}
+                className="ml-2"
+                panelRef={rightPanelRef}
+                collapsible
+              >
+                <Variables />
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </main>
+          <Toaster />
         </TooltipProvider>
       </FilesProvider>
     </EditorProvider>

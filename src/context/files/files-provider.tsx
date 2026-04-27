@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 
 import { FilesContext } from "./files-context";
+import { findItemByPath, getAvailableName, getParentFolder } from "./utils";
 import { useEditor } from "../editor/editor-context";
 
 import type { FileSystemItem, FolderItem } from "@/components/files/types";
@@ -41,71 +42,22 @@ export function FilesProvider({ children }: FilesProviderProps) {
 
   const { template } = useEditor();
 
-  // Helper function to find an item by path
-  const findItemByPath = (
-    items: FileSystemItem[],
-    path: string[],
-  ): FileSystemItem | null => {
-    if (path.length === 0) return null;
+  const saveActiveFile = () => {
+    if (activeFilePath.length === 0) return false;
 
-    let current: FileSystemItem[] = items;
+    setFiles((prevFiles) => {
+      const newFiles = JSON.parse(JSON.stringify(prevFiles));
+      const item = findItemByPath(newFiles, activeFilePath);
 
-    for (let i = 0; i < path.length - 1; i++) {
-      const segment = path[i];
-      const found = current.find((item) => item.name === segment);
-
-      if (!found || !isFolder(found)) {
-        return null;
+      if (!item || !isFile(item)) {
+        return prevFiles;
       }
 
-      current = found.files;
-    }
-
-    const lastSegment = path[path.length - 1];
-    return current.find((item) => item.name === lastSegment) || null;
-  };
-
-  // Helper function to get parent folder by path
-  const getParentFolder = (
-    items: FileSystemItem[],
-    path: string[],
-  ): FileSystemItem[] | null => {
-    if (path.length === 0) return items;
-    if (path.length === 1) return items;
-
-    let current: FileSystemItem[] = items;
-
-    for (let i = 0; i < path.length - 1; i++) {
-      const segment = path[i];
-      const found = current.find((item) => item.name === segment);
-
-      if (!found || !isFolder(found)) {
-        return null;
-      }
-
-      current = found.files;
-    }
-
-    return current;
-  };
-
-  const getAvailableName = (
-    items: FileSystemItem[],
-    baseName: string,
-  ): string => {
-    if (!items.find((item) => item.name === baseName)) {
-      return baseName;
-    }
-
-    let counter = 1;
-    let finalName = baseName;
-
-    while (items.find((item) => item.name === finalName)) {
-      finalName = `${baseName} ${counter}`;
-      counter++;
-    }
-
-    return finalName;
+      item.content = template;
+      saveFilesToStorage(newFiles);
+      return newFiles;
+    });
+    return true;
   };
 
   const createItem = (
@@ -167,24 +119,6 @@ export function FilesProvider({ children }: FilesProviderProps) {
     });
   };
 
-  const saveActiveFile = () => {
-    if (activeFilePath.length === 0) return false;
-
-    setFiles((prevFiles) => {
-      const newFiles = JSON.parse(JSON.stringify(prevFiles));
-      const item = findItemByPath(newFiles, activeFilePath);
-
-      if (!item || !isFile(item)) {
-        return prevFiles;
-      }
-
-      item.content = template;
-      saveFilesToStorage(newFiles);
-      return newFiles;
-    });
-    return true;
-  };
-
   const renameItem = (oldPath: string[], newPath: string[]) => {
     setFiles((prevFiles) => {
       const newFiles = JSON.parse(JSON.stringify(prevFiles));
@@ -223,7 +157,6 @@ export function FilesProvider({ children }: FilesProviderProps) {
     });
   };
 
-  // TODO: this doesn't work deep, need some refactoring
   const removeItem = (path: string[]) => {
     setFiles((prevFiles) => {
       const newFiles = JSON.parse(JSON.stringify(prevFiles));

@@ -67,7 +67,7 @@ export default function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
   }, [saveActiveFile]);
 
   return (
-    <div className="flex gap-2 px-2 py-2">
+    <div className="flex gap-2 p-2">
       <Tooltip>
         <TooltipTrigger
           render={

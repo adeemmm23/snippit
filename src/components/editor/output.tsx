@@ -79,7 +79,11 @@ export function Output() {
           {parts.map((part, index) => (
             <span
               key={index}
-              className={part.isVariable ? "text-primary-foreground" : ""}
+              className={
+                part.isVariable
+                  ? "dark:text-primary text-primary-foreground"
+                  : ""
+              }
             >
               {part.text}
             </span>
