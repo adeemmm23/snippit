@@ -93,7 +93,7 @@ export default function Node({
       className={cn(
         "group/file focus-visible:border-ring focus-visible:ring-ring/50 group/button hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 flex h-9 w-full shrink-0 items-center justify-start gap-2 rounded-md border border-transparent px-2.5 pr-0 text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-[3px]",
         isActive &&
-          "bg-primary/10 hover:bg-primary/20! text-primary-foreground! focus-within:bg-primary/20 focus:bg-primary/20",
+          "bg-card/90 hover:bg-card text-card-foreground focus-within:bg-card focus:bg-card",
       )}
       onClick={() => {
         if (!isRenaming) {
