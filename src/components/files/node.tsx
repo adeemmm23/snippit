@@ -109,8 +109,9 @@ export default function Node({
         <span
           ref={spanRef}
           contentEditable="plaintext-only"
+          autoCorrect="off"
           suppressContentEditableWarning
-          className="bg-primary/10 focus:bg-primary/20 flex-1 cursor-text overflow-hidden rounded px-0.5 text-start text-ellipsis whitespace-nowrap outline-none"
+          className="bg-primary/10 focus:bg-primary/20 flex-1 cursor-text overflow-hidden rounded-xs px-0.5 text-start text-ellipsis whitespace-nowrap outline-none"
           onBlur={handleRenameEnd}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
