@@ -1,5 +1,7 @@
 import * as ResizablePrimitive from "react-resizable-panels";
 
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+
 import { cn } from "@/lib/utils";
 
 function ResizablePanelGroup({
@@ -24,10 +26,12 @@ function ResizablePanel({ ...props }: ResizablePrimitive.PanelProps) {
 
 function ResizableHandle({
   withHandle,
+  side = "top",
   className,
   ...props
 }: ResizablePrimitive.SeparatorProps & {
   withHandle?: boolean;
+  side?: "left" | "right" | "top" | "bottom";
 }) {
   return (
     <ResizablePrimitive.Separator
@@ -39,7 +43,16 @@ function ResizableHandle({
       {...props}
     >
       {withHandle && (
-        <div className="bg-border z-10 flex h-12 w-1 shrink-0 rounded-lg" />
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <div className="bg-border z-10 flex h-12 w-1 shrink-0 rounded-lg" />
+            }
+          />
+          <TooltipContent side={side} sideOffset={8}>
+            Drag to resize
+          </TooltipContent>
+        </Tooltip>
       )}
     </ResizablePrimitive.Separator>
   );
