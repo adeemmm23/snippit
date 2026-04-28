@@ -111,7 +111,8 @@ export default function Node({
           contentEditable="plaintext-only"
           autoCorrect="off"
           suppressContentEditableWarning
-          className="bg-primary/10 focus:bg-primary/20 min-w-0 flex-1 cursor-text overflow-hidden rounded-xs px-0.5 text-start text-ellipsis whitespace-nowrap outline-none"
+          className="bg-primary/10 focus:bg-primary/20 block max-w-full min-w-0 flex-1 cursor-text overflow-hidden rounded-xs px-0.5 text-start text-ellipsis whitespace-nowrap outline-none"
+          style={{ width: "100%", boxSizing: "border-box" }}
           onBlur={handleRenameEnd}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
@@ -119,7 +120,10 @@ export default function Node({
           {name}
         </span>
       ) : (
-        <span className="min-w-0 flex-1 overflow-hidden px-0.5 text-ellipsis whitespace-nowrap">
+        <span
+          className="max-w-full min-w-0 flex-1 overflow-hidden px-0.5 text-start text-ellipsis whitespace-nowrap"
+          style={{ width: "100%", boxSizing: "border-box" }}
+        >
           {name}
         </span>
       )}
