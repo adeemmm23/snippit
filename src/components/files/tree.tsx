@@ -58,8 +58,8 @@ export default function Tree() {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <ScrollArea className="grow overflow-auto">
-      <div className="flex h-full flex-col gap-2 py-1">
+    <ScrollArea className="size-full overflow-auto">
+      <div className="flex h-full w-full flex-col gap-2 py-1">
         {currentWorkingFolder.length > 0 ? (
           <div className="flex w-full gap-1">
             <Button

@@ -91,7 +91,7 @@ export default function Node({
       title={name}
       data-path={path.join("/")}
       className={cn(
-        "group/file focus-visible:border-ring focus-visible:ring-ring/50 group/button hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 flex h-9 w-full shrink-0 items-center justify-start gap-2 rounded-md border border-transparent px-2.5 pr-0 text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-[3px]",
+        "group/file group/button hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 flex h-9 w-full items-center justify-start gap-2 rounded-md border border-transparent pl-2.5 text-sm font-medium transition-all outline-none select-none",
         isActive &&
           "bg-card/90 hover:bg-card text-card-foreground focus-within:bg-card focus:bg-card",
       )}
@@ -111,8 +111,7 @@ export default function Node({
           contentEditable="plaintext-only"
           autoCorrect="off"
           suppressContentEditableWarning
-          className="bg-primary/10 focus:bg-primary/20 block max-w-full min-w-0 flex-1 cursor-text overflow-hidden rounded-xs px-0.5 text-start text-ellipsis whitespace-nowrap outline-none"
-          style={{ width: "100%", boxSizing: "border-box" }}
+          className="bg-primary/10 focus:bg-primary/20 box-border block min-w-0 flex-1 grow cursor-text overflow-hidden rounded-xs px-0.5 text-start text-ellipsis whitespace-nowrap outline-none"
           onBlur={handleRenameEnd}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
@@ -120,14 +119,11 @@ export default function Node({
           {name}
         </span>
       ) : (
-        <span
-          className="max-w-full min-w-0 flex-1 overflow-hidden px-0.5 text-start text-ellipsis whitespace-nowrap"
-          style={{ width: "100%", boxSizing: "border-box" }}
-        >
+        <span className="box-border min-w-0 grow overflow-hidden px-0.5 text-start text-ellipsis whitespace-nowrap">
           {name}
         </span>
       )}
-      <div className="ml-auto flex size-9 items-center justify-center">
+      <div className="ml-auto flex size-9 shrink-0 items-center justify-center">
         <DropdownMenu>
           <DropdownMenuTrigger
             onClick={(e) => e.stopPropagation()}
