@@ -35,21 +35,20 @@ export default function App() {
                 maxSize={300}
                 panelRef={leftPanelRef}
                 collapsible
-                className="mr-2"
                 dir="rtl"
               >
                 <Files />
               </ResizablePanel>
               <ResizableHandle
-                className="bg-transparent"
+                className="bg-transparent px-2"
                 withHandle
                 side="right"
               />
-              <ResizablePanel id="editor" minSize="50%" className="mx-2">
+              <ResizablePanel id="editor" minSize="50%">
                 <Editor />
               </ResizablePanel>
               <ResizableHandle
-                className="bg-transparent"
+                className="bg-transparent px-2"
                 withHandle
                 side="left"
               />
@@ -58,7 +57,6 @@ export default function App() {
                 defaultSize={280}
                 minSize={260}
                 maxSize={300}
-                className="ml-2"
                 panelRef={rightPanelRef}
                 collapsible
               >
