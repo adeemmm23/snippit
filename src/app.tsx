@@ -25,7 +25,7 @@ export default function App() {
       <FilesProvider>
         <TooltipProvider>
           <main className="bg-background flex h-screen flex-col">
-            <Appbar leftPanelRef={leftPanelRef} rightPanelRef={rightPanelRef} />
+            <Appbar />
             {/*<Separator />*/}
             <ResizablePanelGroup orientation="horizontal" className="mb-2">
               <ResizablePanel
