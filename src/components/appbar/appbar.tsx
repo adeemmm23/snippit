@@ -1,13 +1,10 @@
 import {
   File02Icon,
   FloppyDiskIcon,
-  LayoutAlignLeftIcon,
-  LayoutAlignRightIcon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect, useState } from "react";
-import { usePanelRef } from "react-resizable-panels";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 import FilePath from "./file-path";
@@ -23,31 +20,9 @@ import {
 import { useEditor } from "@/context/editor/editor-context";
 import { useFiles } from "@/context/files/files-context";
 
-type AppbarProps = {
-  leftPanelRef: ReturnType<typeof usePanelRef>;
-  rightPanelRef: ReturnType<typeof usePanelRef>;
-};
-export default function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
+export default function Appbar() {
   const { saveActiveFile, setActiveFilePath } = useFiles();
   const { setTemplate } = useEditor();
-  const [isWindowSmall, setIsWindowSmall] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIsWindowSmall(true);
-        leftPanelRef.current?.collapse();
-      } else {
-        setIsWindowSmall(false);
-        leftPanelRef.current?.expand();
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [leftPanelRef]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -68,31 +43,6 @@ export default function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
 
   return (
     <div className="flex gap-2 p-2">
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                if (leftPanelRef.current?.isCollapsed()) {
-                  if (isWindowSmall) {
-                    rightPanelRef.current?.collapse();
-                  }
-                  leftPanelRef.current?.expand();
-                } else {
-                  leftPanelRef.current?.collapse();
-                }
-              }}
-            >
-              <HugeiconsIcon icon={LayoutAlignLeftIcon} className="size-4" />
-            </Button>
-          }
-        />
-        <TooltipContent side="bottom">
-          <p>Toggle left panel</p>
-        </TooltipContent>
-      </Tooltip>
       <Tooltip>
         <TooltipTrigger
           render={
@@ -153,31 +103,6 @@ export default function Appbar({ leftPanelRef, rightPanelRef }: AppbarProps) {
         />
         <TooltipContent side="bottom">
           <p>Settings</p>
-        </TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                if (rightPanelRef.current?.isCollapsed()) {
-                  if (isWindowSmall) {
-                    leftPanelRef.current?.collapse();
-                  }
-                  rightPanelRef.current?.expand();
-                } else {
-                  rightPanelRef.current?.collapse();
-                }
-              }}
-            >
-              <HugeiconsIcon icon={LayoutAlignRightIcon} className="size-4" />
-            </Button>
-          }
-        />
-        <TooltipContent side="bottom">
-          <p>Toggle right panel</p>
         </TooltipContent>
       </Tooltip>
     </div>
