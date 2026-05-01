@@ -34,10 +34,12 @@ export default function Node({
   isActive,
   path,
 }: NodeProps) {
-  const { removeItem, renameItem } = useFiles();
+  const { removeItem, renameItem, moveItem } = useFiles();
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(name);
+  // const [isDragOver, setIsDragOver] = useState(false);
   const spanRef = useRef<HTMLSpanElement>(null);
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isRenaming && spanRef.current) {
@@ -83,17 +85,105 @@ export default function Node({
     setNewName(text);
   };
 
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    if (isRenaming) {
+      e.preventDefault();
+      return;
+    }
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("application/json", JSON.stringify(path));
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+
+    // Only allow drop on folders and not the same folder
+    try {
+      const draggedPath = JSON.parse(
+        e.dataTransfer.getData("application/json"),
+      ) as string[];
+
+      if (
+        JSON.stringify(draggedPath) === JSON.stringify(path) ||
+        draggedPath.every((segment, index) => path[index] === segment)
+      ) {
+        // set css data attribute data-isDragOver to false to prevent hover styles
+        nodeRef.current?.removeAttribute("data-dragover");
+        // setIsDragOver(false);
+      } else {
+        if (!isFile) {
+          // setIsDragOver(true);
+          nodeRef.current?.setAttribute("data-dragover", "true");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to parse drag data:", error);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    // Only remove hover if leaving the element entirely
+    if (e.currentTarget === e.target) {
+      // setIsDragOver(false);
+      nodeRef.current?.removeAttribute("data-dragover");
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // setIsDragOver(false);
+    nodeRef.current?.removeAttribute("data-dragover");
+
+    // Only allow drop on folders
+    if (isFile) {
+      return;
+    }
+
+    try {
+      const draggedPath = JSON.parse(
+        e.dataTransfer.getData("application/json"),
+      ) as string[];
+
+      // Don't allow dropping on itself or its children
+      if (
+        JSON.stringify(draggedPath) === JSON.stringify(path) ||
+        draggedPath.every((segment, index) => path[index] === segment)
+      ) {
+        return;
+      }
+
+      // Move the item to the new folder
+      const draggedItemName = draggedPath[draggedPath.length - 1];
+      const newPath = [...path, draggedItemName];
+      moveItem(draggedPath, newPath);
+    } catch (error) {
+      console.error("Failed to parse drag data:", error);
+    }
+  };
+
   return (
     <div
+      ref={nodeRef}
       role="button"
       tabIndex={0}
       key={name}
       title={name}
       data-path={path.join("/")}
+      draggable={!isRenaming}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDragEnd={handleDragLeave}
+      onDragExit={handleDragLeave}
+      onDrop={handleDrop}
       className={cn(
         "group/file group/button hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 flex h-9 w-full items-center justify-start gap-2 rounded-md border border-transparent pl-2.5 text-sm font-medium transition-all outline-none select-none",
         isActive &&
           "bg-card/90 hover:bg-card text-card-foreground focus-within:bg-card focus:bg-card",
+        !isFile &&
+          "data-dragover:bg-primary/20 data-dragover:border-primary/50",
       )}
       onClick={() => {
         if (!isRenaming) {
