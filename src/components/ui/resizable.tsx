@@ -46,7 +46,7 @@ function ResizableHandle({
         <Tooltip>
           <TooltipTrigger
             render={
-              <div className="bg-border group-focus-visible:ring-ring z-10 flex h-12 w-1 shrink-0 rounded-lg outline-0 group-focus-visible:ring-2" />
+              <div className="bg-border group-hover:bg-primary z-10 mx-auto flex h-12 w-1 shrink-0 rounded-lg outline-0" />
             }
           />
           <TooltipContent side={side} sideOffset={8}>
