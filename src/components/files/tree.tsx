@@ -4,6 +4,7 @@ import {
   Home02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useState } from "react";
 
 import Node from "./node";
 import type { FileSystemItem } from "./types";
@@ -21,6 +22,7 @@ import { useFiles } from "@/context/files/files-context";
 
 export default function Tree() {
   const { setTemplate } = useEditor();
+  const [isDragOverHeader, setIsDragOverHeader] = useState(false);
 
   const {
     setActiveFilePath,
@@ -28,6 +30,7 @@ export default function Tree() {
     files: data,
     currentWorkingFolder,
     setCurrentWorkingFolder,
+    moveItem,
   } = useFiles();
 
   // Navigate to the current working folder
@@ -57,48 +60,100 @@ export default function Tree() {
     .filter(isFile)
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setIsDragOverHeader(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    if (e.currentTarget === e.target) {
+      setIsDragOverHeader(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOverHeader(false);
+
+    try {
+      const draggedPath = JSON.parse(
+        e.dataTransfer.getData("application/json"),
+      ) as string[];
+
+      // Don't allow dropping on itself or its children
+      if (
+        JSON.stringify(draggedPath) === JSON.stringify(currentWorkingFolder) ||
+        draggedPath.every(
+          (segment, index) => currentWorkingFolder[index] === segment,
+        )
+      ) {
+        return;
+      }
+
+      // Move the item to the current working folder
+      const draggedItemName = draggedPath[draggedPath.length - 1];
+      const newPath = [...currentWorkingFolder, draggedItemName];
+      moveItem(draggedPath, newPath);
+    } catch (error) {
+      console.error("Failed to parse drag data:", error);
+    }
+  };
+
   // TODO: look into this, and keep consitency with the right panel
   return (
     <div className="flex min-h-0 flex-1 grow flex-col gap-2">
-      {currentWorkingFolder.length > 0 ? (
-        <div className="flex w-full gap-1">
-          <Button
-            variant="ghost"
-            className="min-w-0 flex-1 grow justify-start gap-2"
-            onClick={() => {
-              setCurrentWorkingFolder(currentWorkingFolder.slice(0, -1));
-            }}
-          >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-            <span className="overflow-hidden text-ellipsis">
-              {currentWorkingFolder[currentWorkingFolder.length - 1]}
-            </span>
-          </Button>
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    setCurrentWorkingFolder([]);
-                  }}
-                >
-                  <HugeiconsIcon icon={Home02Icon} className="size-4" />
-                </Button>
+      <div
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDragEnd={handleDragLeave}
+        onDragExit={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {currentWorkingFolder.length > 0 ? (
+          <div className="flex w-full gap-1">
+            <Button
+              variant="ghost"
+              className={
+                "min-w-0 flex-1 grow justify-start gap-2" +
+                (isDragOverHeader ? " bg-primary/20 border-primary/50" : "")
               }
-            />
-            <TooltipContent side="right">
-              <p>Go back to Root</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      ) : (
-        <Button variant="ghost" className="w-full justify-start gap-2">
-          <HugeiconsIcon icon={Home02Icon} className="size-4" />
-          <span>Root</span>
-        </Button>
-      )}
+              onClick={() => {
+                setCurrentWorkingFolder(currentWorkingFolder.slice(0, -1));
+              }}
+            >
+              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+              <span className="overflow-hidden text-ellipsis">
+                {currentWorkingFolder[currentWorkingFolder.length - 1]}
+              </span>
+            </Button>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setCurrentWorkingFolder([]);
+                    }}
+                  >
+                    <HugeiconsIcon icon={Home02Icon} className="size-4" />
+                  </Button>
+                }
+              />
+              <TooltipContent side="right">
+                <p>Go back to Root</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        ) : (
+          <Button variant="ghost" className="w-full justify-start gap-2">
+            <HugeiconsIcon icon={Home02Icon} className="size-4" />
+            <span>Root</span>
+          </Button>
+        )}
+      </div>
       <ScrollArea className="size-full overflow-auto">
         <div className="flex h-full w-full flex-col gap-2">
           {folders.map(({ name }) => (
