@@ -133,4 +133,8 @@
   html {
     @apply font-sans;
   }
+
+  [data-dnd-overlay]:not([style*="--dnd-translate"]) {
+    display: none;
+  }
 }

@@ -186,6 +186,63 @@ export function FilesProvider({ children }: FilesProviderProps) {
     });
   };
 
+  const moveItem = (oldPath: string[], newPath: string[]) => {
+    setFiles((prevFiles) => {
+      const newFiles = JSON.parse(JSON.stringify(prevFiles));
+      const item = findItemByPath(newFiles, oldPath);
+
+      if (!item) {
+        return prevFiles;
+      }
+
+      const oldParentPath = oldPath.slice(0, -1);
+      const oldParentItems =
+        oldParentPath.length === 0
+          ? newFiles
+          : getParentFolder(newFiles, oldParentPath);
+
+      if (!oldParentItems) {
+        return prevFiles;
+      }
+
+      const itemIndex = oldParentItems.findIndex(
+        (i: FileSystemItem) => i.name === oldPath[oldPath.length - 1],
+      );
+      if (itemIndex === -1) {
+        return prevFiles;
+      }
+
+      const removedItem = oldParentItems.splice(itemIndex, 1)[0];
+
+      const newParentPath = newPath.slice(0, -1);
+      const newParentItems =
+        newParentPath.length === 0
+          ? newFiles
+          : getParentFolder(newFiles, newParentPath);
+
+      if (!newParentItems) {
+        oldParentItems.splice(itemIndex, 0, removedItem);
+        return prevFiles;
+      }
+
+      const newName = newPath[newPath.length - 1];
+      const finalName = getAvailableName(newParentItems, newName);
+      removedItem.name = finalName;
+
+      newParentItems.push(removedItem);
+
+      if (
+        activeFilePath.length > 0 &&
+        JSON.stringify(activeFilePath) === JSON.stringify(oldPath)
+      ) {
+        setActiveFilePath(newParentPath.concat([finalName]));
+      }
+
+      saveFilesToStorage(newFiles);
+      return newFiles;
+    });
+  };
+
   const value = {
     activeFilePath,
     setActiveFilePath,
@@ -197,6 +254,7 @@ export function FilesProvider({ children }: FilesProviderProps) {
     setCurrentWorkingFolder,
     removeItem,
     renameItem,
+    moveItem,
   };
 
   return (

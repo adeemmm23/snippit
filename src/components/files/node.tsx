@@ -1,3 +1,4 @@
+import { useDraggable, useDroppable } from "@dnd-kit/react";
 import {
   Delete02Icon,
   File01Icon,
@@ -38,6 +39,21 @@ export default function Node({
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(name);
   const spanRef = useRef<HTMLSpanElement>(null);
+
+  const { isDragging, ref: nodeRef } = useDraggable({
+    id: path.join("/"),
+    data: {
+      path,
+      name,
+    },
+  });
+
+  const { isDropTarget, ref: dropRef } = useDroppable({
+    id: path.join("/"),
+    data: {
+      path,
+    },
+  });
 
   useEffect(() => {
     if (isRenaming && spanRef.current) {
@@ -85,6 +101,10 @@ export default function Node({
 
   return (
     <div
+      ref={(node) => {
+        nodeRef(node);
+        if (!isFile) dropRef(node);
+      }}
       role="button"
       tabIndex={0}
       key={name}
@@ -94,6 +114,10 @@ export default function Node({
         "group/file group/button hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 flex h-9 w-full items-center justify-start gap-2 rounded-md border border-transparent pl-2.5 text-sm font-medium transition-all outline-none select-none",
         isActive &&
           "bg-card/90 hover:bg-card text-card-foreground focus-within:bg-card focus:bg-card",
+        !isFile &&
+          isDropTarget &&
+          !isDragging &&
+          "bg-primary/20 border-primary/50",
       )}
       onClick={() => {
         if (!isRenaming) {

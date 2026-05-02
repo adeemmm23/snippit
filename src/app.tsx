@@ -1,5 +1,3 @@
-import { usePanelRef } from "react-resizable-panels";
-
 import { FilesProvider } from "./context/files/files-provider";
 
 import Appbar from "@/components/appbar";
@@ -16,10 +14,6 @@ import Variables from "@/components/variables";
 import { EditorProvider } from "@/context/editor/editor-provider";
 
 export default function App() {
-  // Used to toggle panels visibility
-  const leftPanelRef = usePanelRef();
-  const rightPanelRef = usePanelRef();
-
   return (
     <EditorProvider>
       <FilesProvider>
@@ -33,7 +27,6 @@ export default function App() {
                 defaultSize={280}
                 minSize={260}
                 maxSize={300}
-                panelRef={leftPanelRef}
                 collapsible
                 dir="rtl"
               >
@@ -57,7 +50,6 @@ export default function App() {
                 defaultSize={280}
                 minSize={260}
                 maxSize={300}
-                panelRef={rightPanelRef}
                 collapsible
               >
                 <Variables />

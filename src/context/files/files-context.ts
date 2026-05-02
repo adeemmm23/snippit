@@ -17,6 +17,7 @@ type FilesContextType = {
   ) => void;
   removeItem: (path: string[]) => void;
   renameItem: (oldPath: string[], newPath: string[]) => void;
+  moveItem: (oldPath: string[], newPath: string[]) => void;
 };
 
 export const FilesContext = createContext<FilesContextType | undefined>(
