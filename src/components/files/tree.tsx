@@ -131,14 +131,16 @@ export default function Tree() {
               </div>
             )}
             <DragOverlay dropAnimation={null}>
-              {(source) =>
-                source && (
-                  <div className="bg-foreground/80 text-background pointer-events-none flex w-fit max-w-40 rounded-sm px-2 py-1">
-                    <p className="truncate text-sm font-medium text-nowrap">
-                      {source.data.name}
-                    </p>
-                  </div>
-                )
+              {
+                // TODO: mx-auto is a temporary fix, need to find a better solution for this
+                (source) =>
+                  source && (
+                    <div className="bg-foreground/80 text-background pointer-events-none mx-auto flex w-fit max-w-40 rounded-sm px-2 py-1">
+                      <p className="truncate text-sm font-medium text-nowrap">
+                        {source.data.name}
+                      </p>
+                    </div>
+                  )
               }
             </DragOverlay>
           </div>
