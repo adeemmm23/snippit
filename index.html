@@ -6,8 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>snippit</title>
   </head>
-  <body class="dark">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- apply theme before appload -->
+    <script>
+      const theme = localStorage.getItem("theme") || "light";
+      document.documentElement.classList.remove("light", "dark");
+      if (theme !== "system") {
+        document.documentElement.classList.add(theme);
+      } else {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+          .matches
+          ? "dark"
+          : "light";
+        document.documentElement.classList.add(systemTheme);
+      }
+    </script>
   </body>
 </html>

@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 import FilePath from "./file-path";
-import Settings from "./settings";
+import Settings from "./settings/settings";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
