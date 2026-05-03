@@ -99,11 +99,13 @@ export default function Appbar() {
         <TooltipTrigger
           render={
             <Dialog>
-              <DialogTrigger>
-                <Button variant="ghost" size="icon">
-                  <HugeiconsIcon icon={Settings01Icon} className="size-4" />
-                </Button>
-              </DialogTrigger>
+              <DialogTrigger
+                render={
+                  <Button variant="ghost" size="icon">
+                    <HugeiconsIcon icon={Settings01Icon} className="size-4" />
+                  </Button>
+                }
+              />
               <Settings />
             </Dialog>
           }
