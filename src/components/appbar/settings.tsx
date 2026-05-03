@@ -14,7 +14,7 @@ import {
 
 export default function Settings() {
   return (
-    <DialogContent className="flex h-11/12 w-full max-w-5xl! flex-col">
+    <DialogContent className="bg-popover flex h-11/12 w-full max-w-5xl! flex-col">
       <DialogHeader className="shrink">
         <DialogTitle className="text-2xl">Settings</DialogTitle>
         <DialogDescription>
@@ -24,7 +24,11 @@ export default function Settings() {
       </DialogHeader>
       <div className="flex h-full flex-1 grow gap-2 py-2">
         <aside className="flex w-1/6 flex-col gap-2">
-          <Button variant="ghost" size="sm" className="justify-start">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="bg-primary text-primary-foreground justify-start"
+          >
             Appearance
           </Button>
           <Button variant="ghost" size="sm" className="justify-start">
