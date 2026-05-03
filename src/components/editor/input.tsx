@@ -28,6 +28,7 @@ export function Input() {
     }
   }, [template]);
 
+  // TODO: fix HTML
   return (
     <div className="relative flex h-full min-h-0 flex-col">
       <Tooltip>
@@ -52,7 +53,7 @@ export function Input() {
           Template
         </span>
       )}*/}
-      <div className="border-input focus:ring-ring/50 bg-input/10 dark:bg-input/30 flex min-h-0 flex-1 overflow-hidden rounded-md border shadow-xs transition-all focus:ring-2 focus:outline-none">
+      <div className="border-input bg-input/10 dark:bg-input/30 focus-within:border-primary flex min-h-0 flex-1 overflow-hidden rounded-md border shadow-xs transition-colors focus:outline-none">
         <ScrollArea className="h-full w-full">
           <div
             ref={editorRef}
