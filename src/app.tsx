@@ -1,3 +1,5 @@
+import { useDefaultLayout } from "react-resizable-panels";
+
 import { FilesProvider } from "./context/files/files-provider";
 
 import Appbar from "@/components/appbar";
@@ -14,6 +16,11 @@ import Variables from "@/components/variables";
 import { EditorProvider } from "@/context/editor/editor-provider";
 
 export default function App() {
+  const { defaultLayout, onLayoutChanged } = useDefaultLayout({
+    id: "main-layout",
+
+    storage: localStorage,
+  });
   return (
     <EditorProvider>
       <FilesProvider>
@@ -21,7 +28,12 @@ export default function App() {
           <main className="bg-background flex h-screen flex-col">
             <Appbar />
             {/*<Separator />*/}
-            <ResizablePanelGroup orientation="horizontal" className="mb-2">
+            <ResizablePanelGroup
+              defaultLayout={defaultLayout}
+              onLayoutChanged={onLayoutChanged}
+              orientation="horizontal"
+              className="mb-2"
+            >
               <ResizablePanel
                 id="left-sidebar"
                 defaultSize={280}
