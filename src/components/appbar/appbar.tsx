@@ -8,8 +8,10 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 import FilePath from "./file-path";
+import Settings from "./settings";
 
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -96,9 +98,14 @@ export default function Appbar() {
       <Tooltip>
         <TooltipTrigger
           render={
-            <Button variant="ghost" size="icon">
-              <HugeiconsIcon icon={Settings01Icon} className="size-4" />
-            </Button>
+            <Dialog>
+              <DialogTrigger>
+                <Button variant="ghost" size="icon">
+                  <HugeiconsIcon icon={Settings01Icon} className="size-4" />
+                </Button>
+              </DialogTrigger>
+              <Settings />
+            </Dialog>
           }
         />
         <TooltipContent side="bottom">
