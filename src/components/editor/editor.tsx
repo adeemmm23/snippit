@@ -1,3 +1,5 @@
+import { useDefaultLayout } from "react-resizable-panels";
+
 import { Input } from "./input";
 import { Output } from "./output";
 
@@ -8,8 +10,17 @@ import {
 } from "@/components/ui/resizable";
 
 export default function Editor() {
+  const { defaultLayout, onLayoutChanged } = useDefaultLayout({
+    id: "editor-layout",
+
+    storage: localStorage,
+  });
   return (
-    <ResizablePanelGroup orientation="vertical">
+    <ResizablePanelGroup
+      defaultLayout={defaultLayout}
+      onLayoutChanged={onLayoutChanged}
+      orientation="vertical"
+    >
       <ResizablePanel minSize="25%" defaultSize="50%" collapsible>
         <Input />
       </ResizablePanel>
