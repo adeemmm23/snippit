@@ -1,11 +1,21 @@
+import { useSections } from "../context/sections-context";
+
 import { Button } from "@/components/ui/button";
 
 export default function SettingsNavigation() {
+  const { sections } = useSections();
+  console.log(sections);
   return (
     <aside className="flex w-1/6 flex-col gap-2">
-      <Button
+      {/*<Button
         variant="ghost"
         size="sm"
+        onClick={() => {
+          const section = document.getElementById("Appearance");
+          if (section) {
+            section.scrollIntoView({ behavior: "smooth" });
+          }
+        }}
         className="bg-primary text-primary-foreground hover:bg-primary/80 dark:hover:bg-primary/80 hover:text-primary-foreground justify-start"
       >
         Appearance
@@ -24,7 +34,24 @@ export default function SettingsNavigation() {
       </Button>
       <Button variant="ghost" size="sm" className="justify-start">
         Danger
-      </Button>
+      </Button>*/}
+
+      {sections.map((section) => (
+        <Button
+          key={section.id}
+          variant={section.isActive ? "default" : "ghost"}
+          size="sm"
+          onClick={() => {
+            const el = document.getElementById(section.id);
+            if (el) {
+              el.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
+          className="justify-start"
+        >
+          {section.title}
+        </Button>
+      ))}
     </aside>
   );
 }

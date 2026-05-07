@@ -8,9 +8,9 @@ export default function SettingSection({
   children,
 }: SettingSectionProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <section id={title} data-section={title} className="flex flex-col gap-2">
       <h2 className="mb-2 text-lg font-semibold">{title}</h2>
       <div className="flex flex-col gap-10">{children}</div>
-    </div>
+    </section>
   );
 }

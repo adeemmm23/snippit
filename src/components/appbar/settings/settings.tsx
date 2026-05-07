@@ -1,5 +1,6 @@
 import SettingsNavigation from "./components/settings-navigation";
 import SettingsSections from "./components/settings-sections";
+import { SectionsProvider } from "./context/sections-provider";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,9 +27,11 @@ export default function Settings() {
         </DialogDescription>
       </DialogHeader>
       <div className="flex min-h-0 flex-1 grow gap-2 py-2">
-        <SettingsNavigation />
-        <Separator orientation="vertical" className="mx-4" />
-        <SettingsSections />
+        <SectionsProvider>
+          <SettingsNavigation />
+          <Separator orientation="vertical" className="mx-4" />
+          <SettingsSections />
+        </SectionsProvider>
       </div>
       <DialogFooter className="shrink-0">
         <DialogClose render={<Button variant="outline">Cancel</Button>} />
