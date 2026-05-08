@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export default function SettingsSections() {
   const ref = useRef<HTMLElement | null>(null);
 
-  const { setSections } = useSections();
+  const { setSections, setActiveSection } = useSections();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -20,12 +20,9 @@ export default function SettingsSections() {
           .filter((entry) => entry.isIntersecting)
           .map((entry) => entry.target.id);
 
-        setSections((prevSections) =>
-          prevSections.map((section) => ({
-            ...section,
-            isActive: visibleSections.includes(section.id),
-          })),
-        );
+        if (visibleSections.length > 0) {
+          setActiveSection(visibleSections[0]);
+        }
       },
       {
         root: ref.current,
@@ -45,8 +42,8 @@ export default function SettingsSections() {
     console.log("temp", tempSections);
 
     setSections(tempSections);
+    setActiveSection(tempSections[0]?.id || null);
 
-    // observe their parents div, which is the section
     sections?.forEach((section) => {
       observer.observe(section);
     });
