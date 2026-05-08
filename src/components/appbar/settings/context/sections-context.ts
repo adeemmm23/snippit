@@ -1,10 +1,15 @@
 import { createContext, useContext } from "react";
 
+export type SectionType = {
+  id: string;
+  title: string;
+};
+
 type SectionsContextType = {
-  sections: { id: string; title: string; isActive: boolean }[];
-  setSections: React.Dispatch<
-    React.SetStateAction<{ id: string; title: string; isActive: boolean }[]>
-  >;
+  sections: SectionType[] | null;
+  setSections: React.Dispatch<React.SetStateAction<SectionType[] | null>>;
+  activeSection: string | null;
+  setActiveSection: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export const SectionsContext = createContext<SectionsContextType | undefined>(

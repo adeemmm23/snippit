@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export default function SettingsSections() {
   const ref = useRef<HTMLElement | null>(null);
 
-  const { setSections } = useSections();
+  const { setSections, setActiveSection } = useSections();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -20,12 +20,9 @@ export default function SettingsSections() {
           .filter((entry) => entry.isIntersecting)
           .map((entry) => entry.target.id);
 
-        setSections((prevSections) =>
-          prevSections.map((section) => ({
-            ...section,
-            isActive: visibleSections.includes(section.id),
-          })),
-        );
+        if (visibleSections.length > 0) {
+          setActiveSection(visibleSections[0]);
+        }
       },
       {
         root: ref.current,
@@ -45,8 +42,8 @@ export default function SettingsSections() {
     console.log("temp", tempSections);
 
     setSections(tempSections);
+    setActiveSection(tempSections[0]?.id || null);
 
-    // observe their parents div, which is the section
     sections?.forEach((section) => {
       observer.observe(section);
     });
@@ -66,6 +63,27 @@ export default function SettingsSections() {
           <SettingSection title="Editor">
             <VariableSettingGroup />
             <MagicSettingGroup />
+          </SettingSection>
+          <SettingSection title="About">
+            <p className="text-muted-foreground text-sm">
+              Snippit is a free and open-source code snippet manager built with
+              React and Electron. It allows you to easily organize, search, and
+              manage your code snippets across different programming languages.
+            </p>
+          </SettingSection>
+          <SettingSection title="Support">
+            <p className="text-muted-foreground text-sm">
+              If you find Snippit useful and would like to support its
+              development, consider donating or contributing on GitHub. Your
+              support helps keep the project free and open-source for everyone.
+            </p>
+          </SettingSection>
+          <SettingSection title="License">
+            <p className="text-muted-foreground text-sm">
+              Snippit is licensed under the MIT License. You are free to use,
+              modify, and distribute this software for both personal and
+              commercial purposes. See the LICENSE file for more details.
+            </p>
           </SettingSection>
         </div>
       </ScrollArea>

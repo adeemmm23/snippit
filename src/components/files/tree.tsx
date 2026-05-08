@@ -136,7 +136,7 @@ export default function Tree() {
                 (source) =>
                   source && (
                     <div className="bg-foreground/80 text-background pointer-events-none mx-auto flex w-fit max-w-40 rounded-sm px-2 py-1">
-                      <p className="truncate text-sm font-medium text-nowrap">
+                      <p className="truncate text-xs font-medium text-nowrap">
                         {source.data.name}
                       </p>
                     </div>
