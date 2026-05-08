@@ -64,6 +64,27 @@ export default function SettingsSections() {
             <VariableSettingGroup />
             <MagicSettingGroup />
           </SettingSection>
+          <SettingSection title="About">
+            <p className="text-muted-foreground text-sm">
+              Snippit is a free and open-source code snippet manager built with
+              React and Electron. It allows you to easily organize, search, and
+              manage your code snippets across different programming languages.
+            </p>
+          </SettingSection>
+          <SettingSection title="Support">
+            <p className="text-muted-foreground text-sm">
+              If you find Snippit useful and would like to support its
+              development, consider donating or contributing on GitHub. Your
+              support helps keep the project free and open-source for everyone.
+            </p>
+          </SettingSection>
+          <SettingSection title="License">
+            <p className="text-muted-foreground text-sm">
+              Snippit is licensed under the MIT License. You are free to use,
+              modify, and distribute this software for both personal and
+              commercial purposes. See the LICENSE file for more details.
+            </p>
+          </SettingSection>
         </div>
       </ScrollArea>
     </main>
