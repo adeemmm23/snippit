@@ -1,4 +1,8 @@
-import { Add01Icon, Settings01Icon } from "@hugeicons/core-free-icons";
+import {
+  Add01Icon,
+  Delete01Icon,
+  Settings01Icon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 
@@ -35,6 +39,9 @@ export default function MagicSettingGroup() {
 
   return (
     <SettingGroup title="Magic">
+      <p className="text-muted-foreground text-sm">
+        Define magic inputs that can be used in your snippets.
+      </p>
       {inputs.map((input, index) => (
         <div key={index} className="flex gap-2">
           <Input
@@ -59,6 +66,17 @@ export default function MagicSettingGroup() {
           </Select>
           <Button variant="outline" size="icon">
             <HugeiconsIcon icon={Settings01Icon} />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              const newInputs = [...inputs];
+              newInputs.splice(index, 1);
+              setInputs(newInputs);
+            }}
+          >
+            <HugeiconsIcon icon={Delete01Icon} />
           </Button>
         </div>
       ))}
