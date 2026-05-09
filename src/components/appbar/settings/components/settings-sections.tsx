@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 
 import MagicSettingGroup from "./groups/magic";
+import ShortcutsGroup from "./groups/shortcuts";
 import ThemeSettingGroup from "./groups/theme";
 import VariableSettingGroup from "./groups/variable";
 import SettingSection from "./ui/setting-section";
 import { useSections } from "../context/sections-context";
+import TooltipsGroup from "./groups/tooltips";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -73,14 +75,8 @@ export default function SettingsSections() {
             </ul>
           </SettingSection>
           <SettingSection title="Shortcuts">
-            <p className="text-muted-foreground text-sm">
-              This section should be responsible for:
-            </p>
-            <ul className="text-muted-foreground list-inside list-disc text-sm">
-              <li>Customizing keyboard shortcuts for various actions</li>
-              <li>Enabling/disabling global shortcuts</li>
-              <li>Resetting shortcuts to default</li>
-            </ul>
+            <TooltipsGroup />
+            <ShortcutsGroup />
           </SettingSection>
           <SettingSection title="Danger">
             <p className="text-muted-foreground text-sm">
