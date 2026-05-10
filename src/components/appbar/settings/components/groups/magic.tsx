@@ -70,10 +70,10 @@ export default function MagicSettingGroup() {
       ))}
       <Button
         variant="default"
-        className="mt-4 max-w-48"
+        className="mt-4 w-fit"
         onClick={() => setInputs([...inputs, { name: "", type: null }])}
       >
-        <HugeiconsIcon icon={Add01Icon} className="mr-2" />
+        <HugeiconsIcon icon={Add01Icon} />
         Add Magic Input
       </Button>
     </SettingGroup>
@@ -110,6 +110,7 @@ function MagicInput({
         items={items}
         defaultValue={type}
         onValueChange={(value) => onChange?.({ type: value as MagicType })}
+        disabled={name == ""}
       >
         <SelectTrigger className="w-full max-w-48">
           <SelectValue />
@@ -128,7 +129,11 @@ function MagicInput({
       <Dialog>
         <DialogTrigger
           render={
-            <Button variant="outline" size="icon">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={!type || name == ""}
+            >
               <HugeiconsIcon icon={Settings01Icon} />
             </Button>
           }
