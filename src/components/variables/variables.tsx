@@ -4,10 +4,8 @@ import {
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-import DateAddon from "./date-addon";
-import DurationAddon from "./duration-addon";
 import PasswordAddon from "./password-addon";
 
 import { Button } from "@/components/ui/button";
@@ -27,8 +25,17 @@ import {
 } from "@/components/ui/tooltip";
 import { useEditor } from "@/context/editor/editor-context";
 
+type MagicType = "date" | "duration" | "password";
+
 export default function Variables() {
   const { variables, setVariable, resetVariables } = useEditor();
+  const [magicTypes, setMagicTypes] = useState<
+    {
+      name: string;
+      type: MagicType | null;
+      settings?: Record<string, string | number | boolean>;
+    }[]
+  >([]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -61,6 +68,14 @@ export default function Variables() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, [variables]);
+
+  useEffect(() => {
+    const storedMagicTypes = localStorage.getItem("magicInputs");
+    if (storedMagicTypes) {
+      setMagicTypes(JSON.parse(storedMagicTypes));
+    }
+  }, []);
+
   return (
     <div className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-r-none border border-r-0 p-2">
       <div className="flex items-center justify-between py-2">
@@ -170,7 +185,7 @@ export default function Variables() {
                       </InputGroupButton>
                     </InputGroupAddon>
                   )}
-                  {varName.toLocaleLowerCase().includes("password") && (
+                  {/*{varName.toLocaleLowerCase().includes("password") && (
                     <PasswordAddon
                       onGenerate={(generatedPassword) => {
                         setVariable(varName, generatedPassword);
@@ -188,6 +203,18 @@ export default function Variables() {
                     <DurationAddon
                       onSelect={(formatedDuration) => {
                         setVariable(varName, formatedDuration);
+                      }}
+                    />
+                  )}*/}
+
+                  {magicTypes.find((m) => m.name === varName)?.type ===
+                    "password" && (
+                    <PasswordAddon
+                      settings={
+                        magicTypes.find((m) => m.name === varName)?.settings
+                      }
+                      onGenerate={(generatedPassword) => {
+                        setVariable(varName, generatedPassword);
                       }}
                     />
                   )}

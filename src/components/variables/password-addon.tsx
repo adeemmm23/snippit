@@ -5,15 +5,29 @@ import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group";
 
 type PasswordAddonProps = {
   onGenerate: (generatedPassword: string) => void;
+  settings?: Record<string, string | number | boolean>;
 };
 
-export default function PasswordAddon({ onGenerate }: PasswordAddonProps) {
+export default function PasswordAddon({
+  settings,
+  onGenerate,
+}: PasswordAddonProps) {
   return (
     <InputGroupAddon align="inline-end">
       <InputGroupButton
         variant="ghost"
         size="icon-xs"
-        onClick={() => onGenerate(generateRandomPassword())}
+        onClick={() =>
+          onGenerate(
+            generateRandomPassword(
+              settings?.length as number,
+              settings?.upperCase as boolean,
+              settings?.lowerCase as boolean,
+              settings?.numbers as boolean,
+              settings?.special as boolean,
+            ),
+          )
+        }
       >
         <HugeiconsIcon icon={RefreshDotIcon} className="size-4" />
       </InputGroupButton>
@@ -21,23 +35,29 @@ export default function PasswordAddon({ onGenerate }: PasswordAddonProps) {
   );
 }
 
-const generateRandomPassword = (length: number = 12) => {
-  const lowerCase = "abcdefghijklmnopqrstuvwxyz";
-  const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const digits = "0123456789";
-  const specialChars = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+const generateRandomPassword = (
+  length: number = 12,
+  upperCase: boolean = true,
+  lowerCase: boolean = true,
+  numbers: boolean = true,
+  special: boolean = true,
+) => {
+  console.log({ length, upperCase, lowerCase, numbers, special });
+  const lowerCaseString = "abcdefghijklmnopqrstuvwxyz";
+  const upperCaseString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbersString = "0123456789";
+  const specialStrings = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
 
-  // Ensure the password includes at least one character from each set
-  const allChars = lowerCase + upperCase + digits + specialChars;
+  const allChars =
+    (upperCase ? upperCaseString : "") +
+    (lowerCase ? lowerCaseString : "") +
+    (numbers ? numbersString : "") +
+    (special ? specialStrings : "");
   let password = "";
-  password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
-  password += upperCase[Math.floor(Math.random() * upperCase.length)];
-  password += digits[Math.floor(Math.random() * digits.length)];
-  password += specialChars[Math.floor(Math.random() * specialChars.length)];
 
   // Fill the remaining length with random characters from all sets
   for (let i = password.length; i < length; i++) {
-    password += allChars[Math.floor(Math.random() * allChars.length)];
+    password += allChars.charAt(Math.floor(Math.random() * allChars.length));
   }
 
   // Shuffle the password to avoid predictable patterns
