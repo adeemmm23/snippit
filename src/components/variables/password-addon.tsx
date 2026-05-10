@@ -5,12 +5,18 @@ import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group";
 
 type PasswordAddonProps = {
   onGenerate: (generatedPassword: string) => void;
-  settings?: Record<string, string | number | boolean>;
+  options?: {
+    length?: number;
+    upperCase?: boolean;
+    lowerCase?: boolean;
+    numbers?: boolean;
+    specials?: boolean;
+  };
 };
 
 export default function PasswordAddon({
-  settings,
   onGenerate,
+  options,
 }: PasswordAddonProps) {
   return (
     <InputGroupAddon align="inline-end">
@@ -20,11 +26,11 @@ export default function PasswordAddon({
         onClick={() =>
           onGenerate(
             generateRandomPassword(
-              settings?.length as number,
-              settings?.upperCase as boolean,
-              settings?.lowerCase as boolean,
-              settings?.numbers as boolean,
-              settings?.special as boolean,
+              options?.length ?? 12,
+              options?.upperCase ?? true,
+              options?.lowerCase ?? true,
+              options?.numbers ?? true,
+              options?.specials ?? true,
             ),
           )
         }
@@ -36,13 +42,12 @@ export default function PasswordAddon({
 }
 
 const generateRandomPassword = (
-  length: number = 12,
-  upperCase: boolean = true,
-  lowerCase: boolean = true,
-  numbers: boolean = true,
-  special: boolean = true,
+  length: number,
+  upperCase: boolean,
+  lowerCase: boolean,
+  numbers: boolean,
+  specials: boolean,
 ) => {
-  console.log({ length, upperCase, lowerCase, numbers, special });
   const lowerCaseString = "abcdefghijklmnopqrstuvwxyz";
   const upperCaseString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const numbersString = "0123456789";
@@ -52,15 +57,14 @@ const generateRandomPassword = (
     (upperCase ? upperCaseString : "") +
     (lowerCase ? lowerCaseString : "") +
     (numbers ? numbersString : "") +
-    (special ? specialStrings : "");
+    (specials ? specialStrings : "");
+
   let password = "";
 
-  // Fill the remaining length with random characters from all sets
   for (let i = password.length; i < length; i++) {
     password += allChars.charAt(Math.floor(Math.random() * allChars.length));
   }
 
-  // Shuffle the password to avoid predictable patterns
   return password
     .split("")
     .sort(() => Math.random() - 0.5)

@@ -6,6 +6,8 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useState } from "react";
 
+import DateAddon from "./date-addon";
+import DurationAddon from "./duration-addon";
 import PasswordAddon from "./password-addon";
 
 import { Button } from "@/components/ui/button";
@@ -72,6 +74,7 @@ export default function Variables() {
   useEffect(() => {
     const storedMagicTypes = localStorage.getItem("magicInputs");
     if (storedMagicTypes) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMagicTypes(JSON.parse(storedMagicTypes));
     }
   }, []);
@@ -143,84 +146,97 @@ export default function Variables() {
       ) : (
         <ScrollArea className="grow overflow-auto">
           <div className="flex h-full flex-col gap-4 py-1">
-            {Object.keys(variables).map((varName) => (
-              <div key={varName} className="flex w-full flex-col gap-1">
-                <Label
-                  htmlFor={varName}
-                  className="mb-2 flex items-center gap-2 px-2"
-                >
-                  {varName}
-                </Label>
-                <InputGroup>
-                  <InputGroupInput
-                    id={varName}
-                    value={variables[varName]}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const varKeys = Object.keys(variables);
-                        const currentIndex = varKeys.indexOf(varName);
-                        const nextIndex = (currentIndex + 1) % varKeys.length;
-                        const nextVarName = varKeys[nextIndex];
-                        const nextInput = document.getElementById(
-                          nextVarName,
-                        ) as HTMLInputElement;
-                        if (nextInput) {
-                          nextInput.focus();
-                        }
-                      }
-                    }}
-                    onChange={(e) => setVariable(varName, e.target.value)}
-                    placeholder={`Enter ${varName}...`}
-                  />
+            {Object.keys(variables).map((varName) => {
+              let InputAddon: React.ReactNode = null;
 
-                  {variables[varName] && (
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupButton
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={() => setVariable(varName, "")}
-                      >
-                        <HugeiconsIcon icon={Delete01Icon} className="size-4" />
-                      </InputGroupButton>
-                    </InputGroupAddon>
-                  )}
-                  {/*{varName.toLocaleLowerCase().includes("password") && (
+              const magicType = magicTypes.find((m) =>
+                varName.toLowerCase().includes(m.name.toLowerCase()),
+              );
+
+              switch (magicType?.type) {
+                case "password":
+                  InputAddon = (
                     <PasswordAddon
                       onGenerate={(generatedPassword) => {
                         setVariable(varName, generatedPassword);
                       }}
+                      options={magicType.settings}
                     />
-                  )}
-                  {varName.toLocaleLowerCase().includes("date") && (
+                  );
+                  break;
+                case "date":
+                  InputAddon = (
                     <DateAddon
                       onSelect={(formatedDate) => {
                         setVariable(varName, formatedDate);
                       }}
+                      // options={magicType.settings}
                     />
-                  )}
-                  {varName.toLocaleLowerCase().includes("duration") && (
+                  );
+                  break;
+                case "duration":
+                  InputAddon = (
                     <DurationAddon
                       onSelect={(formatedDuration) => {
                         setVariable(varName, formatedDuration);
                       }}
+                      // options={magicType.settings}
                     />
-                  )}*/}
-
-                  {magicTypes.find((m) => m.name === varName)?.type ===
-                    "password" && (
-                    <PasswordAddon
-                      settings={
-                        magicTypes.find((m) => m.name === varName)?.settings
-                      }
-                      onGenerate={(generatedPassword) => {
-                        setVariable(varName, generatedPassword);
+                  );
+                  break;
+                default:
+                  InputAddon = null;
+              }
+              return (
+                <div key={varName} className="flex w-full flex-col gap-1">
+                  <Label
+                    htmlFor={varName}
+                    className="mb-2 flex items-center gap-2 px-2"
+                  >
+                    {varName}
+                  </Label>
+                  <InputGroup>
+                    <InputGroupInput
+                      id={varName}
+                      value={variables[varName]}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const varKeys = Object.keys(variables);
+                          const currentIndex = varKeys.indexOf(varName);
+                          const nextIndex = (currentIndex + 1) % varKeys.length;
+                          const nextVarName = varKeys[nextIndex];
+                          const nextInput = document.getElementById(
+                            nextVarName,
+                          ) as HTMLInputElement;
+                          if (nextInput) {
+                            nextInput.focus();
+                          }
+                        }
                       }}
+                      onChange={(e) => setVariable(varName, e.target.value)}
+                      placeholder={`Enter ${varName}...`}
                     />
-                  )}
-                </InputGroup>
-              </div>
-            ))}
+
+                    {variables[varName] && (
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupButton
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={() => setVariable(varName, "")}
+                        >
+                          <HugeiconsIcon
+                            icon={Delete01Icon}
+                            className="size-4"
+                          />
+                        </InputGroupButton>
+                      </InputGroupAddon>
+                    )}
+                    {InputAddon}
+                  </InputGroup>
+                </div>
+              );
+            })}
           </div>
         </ScrollArea>
       )}

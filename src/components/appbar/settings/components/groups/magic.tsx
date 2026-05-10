@@ -30,23 +30,19 @@ import { Switch } from "@/components/ui/switch";
 
 type MagicType = "date" | "duration" | "password";
 
+type MagicInput = {
+  name: string;
+  type: MagicType | null;
+  options?: Record<string, string | number | boolean>;
+};
+
 export default function MagicSettingGroup() {
-  const [inputs, setInputs] = useState<
-    {
-      name: string;
-      type: MagicType | null;
-      settings?: Record<string, string | number | boolean>;
-    }[]
-  >([
-    { name: "Date", type: "date" },
-    { name: "Duration", type: "duration" },
-    { name: "Password", type: "password" },
-    { name: "Passcode", type: "password", settings: { length: 6 } },
-  ]);
+  const [inputs, setInputs] = useState<MagicInput[]>(() => {
+    const saved = localStorage.getItem("magicInputs");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   useEffect(() => {
-    console.log(inputs);
-    // save to local storage
     localStorage.setItem("magicInputs", JSON.stringify(inputs));
   }, [inputs]);
 
@@ -60,7 +56,7 @@ export default function MagicSettingGroup() {
           key={index}
           name={input.name}
           type={input.type}
-          settings={input.settings}
+          options={input.options}
           onChange={(updated) => {
             const newInputs = [...inputs];
             newInputs[index] = { ...newInputs[index], ...updated };
@@ -84,25 +80,14 @@ export default function MagicSettingGroup() {
   );
 }
 
-type MagicInputProps = {
-  name: string;
-  type: MagicType | null;
-  settings?: Record<string, string | number | boolean>;
-  onChange?: ({
-    name,
-    type,
-    settings,
-  }: {
-    name?: string;
-    type?: MagicType | null;
-    settings?: Record<string, string | number | boolean>;
-  }) => void;
+type MagicInputProps = MagicInput & {
+  onChange?: ({ name, type, options }: Partial<MagicInput>) => void;
   onDelete?: () => void;
 };
 function MagicInput({
   name,
   type,
-  settings,
+  options,
   onChange,
   onDelete,
 }: MagicInputProps) {
@@ -158,13 +143,13 @@ function MagicInput({
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <Slider
-                  value={[(settings?.length as number) || 6]}
+                  value={[(options?.length as number) || 6]}
                   min={1}
                   max={64}
                   step={1}
                   onValueChange={(value) =>
                     onChange?.({
-                      settings: { ...settings, length: value as number },
+                      options: { ...options, length: value as number },
                     })
                   }
                 />
@@ -172,10 +157,10 @@ function MagicInput({
               </div>
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={settings?.lowerCase == true}
+                  checked={options?.lowerCase == true}
                   onCheckedChange={(checked) =>
                     onChange?.({
-                      settings: { ...settings, lowerCase: checked },
+                      options: { ...options, lowerCase: checked },
                     })
                   }
                 />
@@ -183,10 +168,10 @@ function MagicInput({
               </div>
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={settings?.upperCase == true}
+                  checked={options?.upperCase == true}
                   onCheckedChange={(checked) =>
                     onChange?.({
-                      settings: { ...settings, upperCase: checked },
+                      options: { ...options, upperCase: checked },
                     })
                   }
                 />
@@ -194,10 +179,10 @@ function MagicInput({
               </div>
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={settings?.numbers == true}
+                  checked={options?.numbers == true}
                   onCheckedChange={(checked) =>
                     onChange?.({
-                      settings: { ...settings, numbers: checked },
+                      options: { ...options, numbers: checked },
                     })
                   }
                 />
@@ -205,10 +190,10 @@ function MagicInput({
               </div>
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={settings?.special == true}
+                  checked={options?.special == true}
                   onCheckedChange={(checked) =>
                     onChange?.({
-                      settings: { ...settings, special: checked },
+                      options: { ...options, special: checked },
                     })
                   }
                 />
