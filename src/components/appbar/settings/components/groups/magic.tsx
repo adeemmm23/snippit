@@ -132,7 +132,9 @@ function MagicInput({
             <Button
               variant="outline"
               size="icon"
-              disabled={!type || name == ""}
+              disabled={
+                !type || name == "" || type == "date" || type == "duration"
+              }
             >
               <HugeiconsIcon icon={Settings01Icon} />
             </Button>
