@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { EditorContext, type TemplatePart } from "./editor-context";
 
-import { VARIABLE_REGEX } from "@/lib/const";
+import { VARIABLE_FORMATS } from "@/lib/const";
 
 type EditorProviderProps = {
   children: ReactNode;
@@ -29,7 +29,12 @@ export function EditorProvider({ children }: EditorProviderProps) {
   };
 
   useEffect(() => {
-    const regex = VARIABLE_REGEX;
+    // TODO: create a handler util for this
+    const { value: regexValue, label: regexLabel } =
+      VARIABLE_FORMATS.find(
+        (format) => format.label === localStorage.getItem("variableFormat"),
+      ) ?? VARIABLE_FORMATS[0];
+
     const foundVars = new Set<string>();
     const newVariables: Record<string, string> = {};
     const newParts: TemplatePart[] = [];
@@ -37,7 +42,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
     let lastIndex = 0;
     let match: RegExpExecArray | null;
 
-    while ((match = regex.exec(template)) !== null) {
+    while ((match = regexValue.exec(template)) !== null) {
       if (match.index > lastIndex) {
         newParts.push({
           text: template.slice(lastIndex, match.index),
@@ -52,12 +57,12 @@ export function EditorProvider({ children }: EditorProviderProps) {
       newVariables[varName] = value;
 
       newParts.push({
-        text: value == "" ? `{${varName}}` : value,
+        text: value == "" ? regexLabel.replace("variable", varName) : value,
         isVariable: true,
         variableName: varName,
       });
 
-      lastIndex = regex.lastIndex;
+      lastIndex = regexValue.lastIndex;
     }
 
     if (lastIndex < template.length) {

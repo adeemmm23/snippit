@@ -18,17 +18,19 @@ export default function DateAddon({ onSelect }: DateAddonProps) {
   return (
     <InputGroupAddon align="inline-end">
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger>
-          <InputGroupButton
-            id="date-picker"
-            variant="ghost"
-            size="icon-xs"
-            aria-label="Select date"
-          >
-            <HugeiconsIcon icon={Calendar01Icon} className="size-4" />
-            <span className="sr-only">Select date</span>
-          </InputGroupButton>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <InputGroupButton
+              id="date-picker"
+              variant="ghost"
+              size="icon-xs"
+              aria-label="Select date"
+            >
+              <HugeiconsIcon icon={Calendar01Icon} className="size-4" />
+              <span className="sr-only">Select date</span>
+            </InputGroupButton>
+          }
+        />
         <PopoverContent
           className="w-auto overflow-hidden p-0"
           align="end"

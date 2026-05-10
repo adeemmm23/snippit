@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 
 import MagicSettingGroup from "./groups/magic";
+import ShortcutsGroup from "./groups/shortcuts";
 import ThemeSettingGroup from "./groups/theme";
 import VariableSettingGroup from "./groups/variable";
 import SettingSection from "./ui/setting-section";
 import { useSections } from "../context/sections-context";
+import TooltipsGroup from "./groups/tooltips";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -39,8 +41,6 @@ export default function SettingsSections() {
       isActive: false,
     }));
 
-    console.log("temp", tempSections);
-
     setSections(tempSections);
     setActiveSection(tempSections[0]?.id || null);
 
@@ -56,7 +56,7 @@ export default function SettingsSections() {
   return (
     <main ref={ref} className="h-full flex-1">
       <ScrollArea className="size-full overflow-auto">
-        <div className="flex flex-col gap-10" id="settings-sections">
+        <div className="flex flex-col gap-10 pb-20" id="settings-sections">
           <SettingSection title="Appearance">
             <ThemeSettingGroup />
           </SettingSection>
@@ -64,26 +64,39 @@ export default function SettingsSections() {
             <VariableSettingGroup />
             <MagicSettingGroup />
           </SettingSection>
+          <SettingSection title="Files">
+            <p className="text-muted-foreground text-sm">
+              This section should be responsible for:
+            </p>
+            <ul className="text-muted-foreground list-inside list-disc text-sm">
+              <li>Default save location for snippets</li>
+              <li>Auto-save settings</li>
+              <li>Import/export snippets</li>
+            </ul>
+          </SettingSection>
+          <SettingSection title="Shortcuts">
+            <TooltipsGroup />
+            <ShortcutsGroup />
+          </SettingSection>
+          <SettingSection title="Danger">
+            <p className="text-muted-foreground text-sm">
+              This section should be responsible for:
+            </p>
+            <ul className="text-muted-foreground list-inside list-disc text-sm">
+              <li>Resetting the app to default settings</li>
+              <li>Clearing all snippets (with confirmation)</li>
+              <li>Uninstalling the app</li>
+            </ul>
+          </SettingSection>
           <SettingSection title="About">
             <p className="text-muted-foreground text-sm">
-              Snippit is a free and open-source code snippet manager built with
-              React and Electron. It allows you to easily organize, search, and
-              manage your code snippets across different programming languages.
+              This section should be responsible for:
             </p>
-          </SettingSection>
-          <SettingSection title="Support">
-            <p className="text-muted-foreground text-sm">
-              If you find Snippit useful and would like to support its
-              development, consider donating or contributing on GitHub. Your
-              support helps keep the project free and open-source for everyone.
-            </p>
-          </SettingSection>
-          <SettingSection title="License">
-            <p className="text-muted-foreground text-sm">
-              Snippit is licensed under the MIT License. You are free to use,
-              modify, and distribute this software for both personal and
-              commercial purposes. See the LICENSE file for more details.
-            </p>
+            <ul className="text-muted-foreground list-inside list-disc text-sm">
+              <li>Displaying app version and build information</li>
+              <li>Providing links to documentation and support</li>
+              <li>Showing credits and acknowledgments</li>
+            </ul>
           </SettingSection>
         </div>
       </ScrollArea>

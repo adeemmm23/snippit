@@ -4,7 +4,7 @@ import {
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import DateAddon from "./date-addon";
 import DurationAddon from "./duration-addon";
@@ -27,8 +27,17 @@ import {
 } from "@/components/ui/tooltip";
 import { useEditor } from "@/context/editor/editor-context";
 
+type MagicType = "date" | "duration" | "password";
+
 export default function Variables() {
   const { variables, setVariable, resetVariables } = useEditor();
+  const [magicTypes, setMagicTypes] = useState<
+    {
+      name: string;
+      type: MagicType | null;
+      settings?: Record<string, string | number | boolean>;
+    }[]
+  >([]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -61,6 +70,15 @@ export default function Variables() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, [variables]);
+
+  useEffect(() => {
+    const storedMagicTypes = localStorage.getItem("magicInputs");
+    if (storedMagicTypes) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMagicTypes(JSON.parse(storedMagicTypes));
+    }
+  }, []);
+
   return (
     <div className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-r-none border border-r-0 p-2">
       <div className="flex items-center justify-between py-2">
@@ -128,72 +146,97 @@ export default function Variables() {
       ) : (
         <ScrollArea className="grow overflow-auto">
           <div className="flex h-full flex-col gap-4 py-1">
-            {Object.keys(variables).map((varName) => (
-              <div key={varName} className="flex w-full flex-col gap-1">
-                <Label
-                  htmlFor={varName}
-                  className="mb-2 flex items-center gap-2 px-2"
-                >
-                  {varName}
-                </Label>
-                <InputGroup>
-                  <InputGroupInput
-                    id={varName}
-                    value={variables[varName]}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const varKeys = Object.keys(variables);
-                        const currentIndex = varKeys.indexOf(varName);
-                        const nextIndex = (currentIndex + 1) % varKeys.length;
-                        const nextVarName = varKeys[nextIndex];
-                        const nextInput = document.getElementById(
-                          nextVarName,
-                        ) as HTMLInputElement;
-                        if (nextInput) {
-                          nextInput.focus();
-                        }
-                      }
-                    }}
-                    onChange={(e) => setVariable(varName, e.target.value)}
-                    placeholder={`Enter ${varName}...`}
-                  />
+            {Object.keys(variables).map((varName) => {
+              let InputAddon: React.ReactNode = null;
 
-                  {variables[varName] && (
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupButton
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={() => setVariable(varName, "")}
-                      >
-                        <HugeiconsIcon icon={Delete01Icon} className="size-4" />
-                      </InputGroupButton>
-                    </InputGroupAddon>
-                  )}
-                  {varName.toLocaleLowerCase().includes("password") && (
+              const magicType = magicTypes.find((m) =>
+                varName.toLowerCase().includes(m.name.toLowerCase()),
+              );
+
+              switch (magicType?.type) {
+                case "password":
+                  InputAddon = (
                     <PasswordAddon
                       onGenerate={(generatedPassword) => {
                         setVariable(varName, generatedPassword);
                       }}
+                      options={magicType.settings}
                     />
-                  )}
-                  {varName.toLocaleLowerCase().includes("date") && (
+                  );
+                  break;
+                case "date":
+                  InputAddon = (
                     <DateAddon
                       onSelect={(formatedDate) => {
                         setVariable(varName, formatedDate);
                       }}
+                      // options={magicType.settings}
                     />
-                  )}
-                  {varName.toLocaleLowerCase().includes("duration") && (
+                  );
+                  break;
+                case "duration":
+                  InputAddon = (
                     <DurationAddon
                       onSelect={(formatedDuration) => {
                         setVariable(varName, formatedDuration);
                       }}
+                      // options={magicType.settings}
                     />
-                  )}
-                </InputGroup>
-              </div>
-            ))}
+                  );
+                  break;
+                default:
+                  InputAddon = null;
+              }
+              return (
+                <div key={varName} className="flex w-full flex-col gap-1">
+                  <Label
+                    htmlFor={varName}
+                    className="mb-2 flex items-center gap-2 px-2"
+                  >
+                    {varName}
+                  </Label>
+                  <InputGroup>
+                    <InputGroupInput
+                      id={varName}
+                      value={variables[varName]}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const varKeys = Object.keys(variables);
+                          const currentIndex = varKeys.indexOf(varName);
+                          const nextIndex = (currentIndex + 1) % varKeys.length;
+                          const nextVarName = varKeys[nextIndex];
+                          const nextInput = document.getElementById(
+                            nextVarName,
+                          ) as HTMLInputElement;
+                          if (nextInput) {
+                            nextInput.focus();
+                          }
+                        }
+                      }}
+                      onChange={(e) => setVariable(varName, e.target.value)}
+                      placeholder={`Enter ${varName}...`}
+                    />
+
+                    {variables[varName] && (
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupButton
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={() => setVariable(varName, "")}
+                        >
+                          <HugeiconsIcon
+                            icon={Delete01Icon}
+                            className="size-4"
+                          />
+                        </InputGroupButton>
+                      </InputGroupAddon>
+                    )}
+                    {InputAddon}
+                  </InputGroup>
+                </div>
+              );
+            })}
           </div>
         </ScrollArea>
       )}

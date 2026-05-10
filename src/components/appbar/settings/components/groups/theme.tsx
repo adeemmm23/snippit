@@ -39,6 +39,9 @@ export default function ThemeSettingGroup() {
 
   return (
     <SettingGroup title="Theme">
+      <p className="text-muted-foreground text-sm">
+        Choose your preferred theme.
+      </p>
       <RadioGroup
         defaultValue={theme}
         value={theme}
