@@ -16,9 +16,9 @@ import Variables from "@/components/variables";
 export default function App() {
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
     id: "main-layout",
-
     storage: localStorage,
   });
+
   return (
     <Provider>
       <main className="bg-background flex h-screen flex-col">
