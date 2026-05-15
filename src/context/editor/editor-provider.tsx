@@ -3,12 +3,15 @@ import { useEffect, useState, type ReactNode } from "react";
 import { EditorContext, type TemplatePart } from "./editor-context";
 
 import { VARIABLE_FORMATS } from "@/lib/const";
+import useSettingsStore from "@/stores/settings/settings-store";
 
 type EditorProviderProps = {
   children: ReactNode;
 };
 
 export function EditorProvider({ children }: EditorProviderProps) {
+  const variableFormat = useSettingsStore((state) => state.variableFormat);
+
   const [variables, setVariables] = useState<Record<string, string>>({});
   const [template, setTemplate] = useState("");
   const [parts, setParts] = useState<TemplatePart[]>([]);
@@ -29,11 +32,9 @@ export function EditorProvider({ children }: EditorProviderProps) {
   };
 
   useEffect(() => {
-    // TODO: create a handler util for this
-    const { value: regexValue, label: regexLabel } =
-      VARIABLE_FORMATS.find(
-        (format) => format.label === localStorage.getItem("variableFormat"),
-      ) ?? VARIABLE_FORMATS[0];
+    const { value: regexValue, label: regexLabel } = VARIABLE_FORMATS.find(
+      (format) => format.label === variableFormat,
+    )!;
 
     const foundVars = new Set<string>();
     const newVariables: Record<string, string> = {};
@@ -80,7 +81,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
     if (!same) {
       setVariables(newVariables);
     }
-  }, [template, variables]);
+  }, [template, variables, variableFormat]);
 
   const value = {
     variables,

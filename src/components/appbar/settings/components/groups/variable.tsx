@@ -10,20 +10,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { VARIABLE_FORMATS } from "@/lib/const";
+import useSettingsStore from "@/stores/settings/settings-store";
 
 export default function VariableSettingGroup() {
+  const variableFormat = useSettingsStore((state) => state.variableFormat);
+  const setVariableFormat = useSettingsStore(
+    (state) => state.setVariableFormat,
+  );
+
   const items = VARIABLE_FORMATS.map((format) => ({
     label: format.label,
     value: format.value,
   }));
 
   const handleChange = (value: string | null) => {
-    // TODO: Move the local key as a global constant
-    if (!value) return;
-    const selected = items.find((item) => item.label === value);
-    if (selected) {
-      localStorage.setItem("variableFormat", selected.label);
-      window.dispatchEvent(new Event("variableFormatChange"));
+    if (value) {
+      setVariableFormat(value);
     }
   };
 
@@ -33,15 +35,7 @@ export default function VariableSettingGroup() {
         Choose the format for your variables. Default is{" "}
         <code>{`{variable}`}</code>.
       </p>
-      <Select
-        items={items}
-        defaultValue={
-          items.find(
-            (item) => item.label === localStorage.getItem("variableFormat"),
-          )?.label || items[0].label
-        }
-        onValueChange={handleChange}
-      >
+      <Select items={items} value={variableFormat} onValueChange={handleChange}>
         <SelectTrigger className="w-full max-w-48">
           <SelectValue />
         </SelectTrigger>
