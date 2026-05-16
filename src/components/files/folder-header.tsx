@@ -8,11 +8,16 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
-import { useFiles } from "@/context/files/files-context";
 import { cn } from "@/lib/utils";
+import { useFilesStore } from "@/stores/files/files-store";
 
 export default function FolderHeader() {
-  const { currentWorkingFolder, setCurrentWorkingFolder } = useFiles();
+  const currentWorkingFolder = useFilesStore(
+    (state) => state.currentWorkingFolder,
+  );
+  const setCurrentWorkingFolder = useFilesStore(
+    (state) => state.setCurrentWorkingFolder,
+  );
 
   const { isDropTarget, ref: dropRef } = useDroppable({
     id: currentWorkingFolder.slice(0, -1).join("/"),

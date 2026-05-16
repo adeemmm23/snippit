@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 import useSettingsStore from "../settings/settings-store";
 
@@ -19,79 +20,85 @@ type EditorStore = {
   parts: TemplatePart[];
 };
 
-export const useEditorStore = create<EditorStore>((set, get) => ({
-  variables: {},
-  setVariable: (name, value) => {
-    console.log("Setting variable", name, "to", value);
-    set((state) => ({
-      variables: {
-        ...state.variables,
-        [name]: value,
+export const useEditorStore = create<EditorStore>()(
+  persist(
+    (set, get) => ({
+      variables: {},
+      setVariable: (name, value) => {
+        console.log("Setting variable", name, "to", value);
+        set((state) => ({
+          variables: {
+            ...state.variables,
+            [name]: value,
+          },
+        }));
+        get().setTemplate(get().template);
       },
-    }));
-    get().setTemplate(get().template);
-  },
-  resetVariables: () => {
-    set((state) => {
-      const newVariables: Record<string, string> = {};
-      Object.keys(state.variables).forEach((key) => {
-        newVariables[key] = "";
-      });
-      return { variables: newVariables };
-    });
-    get().setTemplate(get().template);
-  },
-  template: "",
-  setTemplate: (template) => {
-    const { value: regexValue, label: regexLabel } = VARIABLE_FORMATS.find(
-      (format) => format.label === useSettingsStore.getState().variableFormat,
-    )!;
-
-    const foundVars = new Set<string>();
-    const newVariables: Record<string, string> = {};
-    const newParts: TemplatePart[] = [];
-
-    let lastIndex = 0;
-    let match: RegExpExecArray | null;
-
-    while ((match = regexValue.exec(template)) !== null) {
-      if (match.index > lastIndex) {
-        newParts.push({
-          text: template.slice(lastIndex, match.index),
-          isVariable: false,
+      resetVariables: () => {
+        set((state) => {
+          const newVariables: Record<string, string> = {};
+          Object.keys(state.variables).forEach((key) => {
+            newVariables[key] = "";
+          });
+          return { variables: newVariables };
         });
-      }
+        get().setTemplate(get().template);
+      },
+      template: "",
+      setTemplate: (template) => {
+        const { value: regexValue, label: regexLabel } = VARIABLE_FORMATS.find(
+          (format) =>
+            format.label === useSettingsStore.getState().variableFormat,
+        )!;
 
-      const varName = match[1];
-      foundVars.add(varName);
+        const foundVars = new Set<string>();
+        const newVariables: Record<string, string> = {};
+        const newParts: TemplatePart[] = [];
 
-      const value = get().variables[varName] || "";
-      newVariables[varName] = value;
+        let lastIndex = 0;
+        let match: RegExpExecArray | null;
 
-      newParts.push({
-        text: value == "" ? regexLabel.replace("variable", varName) : value,
-        isVariable: true,
-        variableName: varName,
-      });
+        while ((match = regexValue.exec(template)) !== null) {
+          if (match.index > lastIndex) {
+            newParts.push({
+              text: template.slice(lastIndex, match.index),
+              isVariable: false,
+            });
+          }
 
-      lastIndex = regexValue.lastIndex;
-    }
+          const varName = match[1];
+          foundVars.add(varName);
 
-    if (lastIndex < template.length) {
-      newParts.push({
-        text: template.slice(lastIndex),
-        isVariable: false,
-      });
-    }
+          const value = get().variables[varName] || "";
+          newVariables[varName] = value;
 
-    set({
-      template,
-      variables: newVariables,
-      parts: newParts,
-    });
-  },
-  parts: [],
-}));
+          newParts.push({
+            text: value == "" ? regexLabel.replace("variable", varName) : value,
+            isVariable: true,
+            variableName: varName,
+          });
+
+          lastIndex = regexValue.lastIndex;
+        }
+
+        if (lastIndex < template.length) {
+          newParts.push({
+            text: template.slice(lastIndex),
+            isVariable: false,
+          });
+        }
+
+        set({
+          template,
+          variables: newVariables,
+          parts: newParts,
+        });
+      },
+      parts: [],
+    }),
+    { name: "editor" },
+  ),
+);
 
 // Refreshes the template whenever the variable format changes
 useSettingsStore.subscribe(

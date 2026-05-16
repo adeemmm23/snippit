@@ -17,8 +17,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useFiles } from "@/context/files/files-context";
 import { cn } from "@/lib/utils";
+import { useFilesStore } from "@/stores/files/files-store";
 
 type NodeProps = {
   name: string;
@@ -35,7 +35,9 @@ export default function Node({
   isActive,
   path,
 }: NodeProps) {
-  const { removeItem, renameItem } = useFiles();
+  const removeItem = useFilesStore((state) => state.removeItem);
+  const renameItem = useFilesStore((state) => state.renameItem);
+
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(name);
   const spanRef = useRef<HTMLSpanElement>(null);

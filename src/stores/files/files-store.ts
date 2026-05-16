@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 import { findItemByPath, getAvailableName, getParentFolder } from "./utils";
 import { useEditorStore } from "../editor/editor-store";
@@ -28,220 +29,227 @@ type FilesStore = {
   moveItem: (oldPath: string[], newPath: string[]) => void;
 };
 
-export const useFilesStore = create<FilesStore>((set, get) => ({
-  activeFilePath: [],
-  setActiveFilePath: (activeFilePath) => set({ activeFilePath }),
-  currentWorkingFolder: [],
-  setCurrentWorkingFolder: (currentWorkingFolder) =>
-    set({ currentWorkingFolder }),
-  files: getFilesFromStorage(),
-  setFiles: (files) => set({ files }),
-  saveActiveFile: () => {
-    const { activeFilePath, files } = get();
-    const template = useEditorStore.getState().template;
-    if (activeFilePath.length === 0) return false;
+export const useFilesStore = create<FilesStore>()(
+  persist(
+    (set, get) => ({
+      activeFilePath: [],
+      setActiveFilePath: (activeFilePath) => set({ activeFilePath }),
+      currentWorkingFolder: [],
+      setCurrentWorkingFolder: (currentWorkingFolder) =>
+        set({ currentWorkingFolder }),
+      files: [],
+      setFiles: (files) => set({ files }),
+      saveActiveFile: () => {
+        const { activeFilePath, files } = get();
+        const template = useEditorStore.getState().template;
+        if (activeFilePath.length === 0) return false;
 
-    const newFiles = JSON.parse(JSON.stringify(files));
-    const item = findItemByPath(newFiles, activeFilePath);
+        const newFiles = JSON.parse(JSON.stringify(files));
+        const item = findItemByPath(newFiles, activeFilePath);
 
-    if (!item || !isFile(item)) {
-      return false;
-    }
-
-    item.content = template;
-    saveFilesToStorage(newFiles);
-    set({ files: newFiles });
-
-    return true;
-  },
-  createItem: (path, type, content) => {
-    const { files } = get();
-    const newFiles = JSON.parse(JSON.stringify(files));
-    const parentPath = path.slice(0, -1);
-    const itemName = path[path.length - 1];
-
-    let parentItems: FileSystemItem[];
-
-    if (parentPath.length === 0) {
-      parentItems = newFiles;
-    } else {
-      const parentFolder = findItemByPath(newFiles, parentPath);
-      if (!parentFolder || !isFolder(parentFolder)) {
-        let current: FileSystemItem[] = newFiles;
-        for (const segment of parentPath) {
-          let folder = current.find(
-            (item) => item.name === segment && isFolder(item),
-          );
-          if (!folder) {
-            folder = { type: "folder", name: segment, files: [] };
-            current.push(folder);
-          }
-          current = (folder as FolderItem).files;
+        if (!item || !isFile(item)) {
+          return false;
         }
-        parentItems = current;
-      } else {
-        parentItems = parentFolder.files;
-      }
-    }
 
-    const finalName = getAvailableName(parentItems, itemName);
-    let newItem: FileSystemItem;
+        item.content = template;
+        // saveFilesToStorage(newFiles);
+        set({ files: newFiles });
 
-    if (type === "file") {
-      newItem = {
-        type: "file",
-        name: finalName,
-        content: content || "",
-      };
-    } else {
-      newItem = {
-        type: "folder",
-        name: finalName,
-        files: [],
-      };
-    }
+        return true;
+      },
+      createItem: (path, type, content) => {
+        const { files } = get();
+        const newFiles = JSON.parse(JSON.stringify(files));
+        const parentPath = path.slice(0, -1);
+        const itemName = path[path.length - 1];
 
-    parentItems.push(newItem);
+        let parentItems: FileSystemItem[];
 
-    saveFilesToStorage(newFiles);
-    set({ files: newFiles });
-  },
-  removeItem: (path) => {
-    const { files } = get();
-    const newFiles = JSON.parse(JSON.stringify(files));
-    const parentPath = path.slice(0, -1);
+        if (parentPath.length === 0) {
+          parentItems = newFiles;
+        } else {
+          const parentFolder = findItemByPath(newFiles, parentPath);
+          if (!parentFolder || !isFolder(parentFolder)) {
+            let current: FileSystemItem[] = newFiles;
+            for (const segment of parentPath) {
+              let folder = current.find(
+                (item) => item.name === segment && isFolder(item),
+              );
+              if (!folder) {
+                folder = { type: "folder", name: segment, files: [] };
+                current.push(folder);
+              }
+              current = (folder as FolderItem).files;
+            }
+            parentItems = current;
+          } else {
+            parentItems = parentFolder.files;
+          }
+        }
 
-    const parentItems =
-      parentPath.length === 0
-        ? newFiles
-        : getParentFolder(newFiles, parentPath);
+        const finalName = getAvailableName(parentItems, itemName);
+        let newItem: FileSystemItem;
 
-    if (!parentItems) {
-      return;
-    }
+        if (type === "file") {
+          newItem = {
+            type: "file",
+            name: finalName,
+            content: content || "",
+          };
+        } else {
+          newItem = {
+            type: "folder",
+            name: finalName,
+            files: [],
+          };
+        }
 
-    const itemName = path[path.length - 1];
-    const itemIndex = parentItems.findIndex(
-      (item: FileSystemItem) => item.name === itemName,
-    );
+        parentItems.push(newItem);
 
-    if (itemIndex === -1) {
-      return;
-    }
+        // saveFilesToStorage(newFiles);
+        set({ files: newFiles });
+      },
+      removeItem: (path) => {
+        const { files } = get();
+        const newFiles = JSON.parse(JSON.stringify(files));
+        const parentPath = path.slice(0, -1);
 
-    parentItems.splice(itemIndex, 1);
-    saveFilesToStorage(newFiles);
-    set({ files: newFiles });
-  },
-  renameItem: (oldPath, newPath) => {
-    const { files } = get();
-    const newFiles = JSON.parse(JSON.stringify(files));
-    const item = findItemByPath(newFiles, oldPath);
+        const parentItems =
+          parentPath.length === 0
+            ? newFiles
+            : getParentFolder(newFiles, parentPath);
 
-    if (!item) {
-      return;
-    }
+        if (!parentItems) {
+          return;
+        }
 
-    const parentPath = oldPath.slice(0, -1);
-    const parentItems =
-      parentPath.length === 0
-        ? newFiles
-        : getParentFolder(newFiles, parentPath);
+        const itemName = path[path.length - 1];
+        const itemIndex = parentItems.findIndex(
+          (item: FileSystemItem) => item.name === itemName,
+        );
 
-    if (!parentItems) {
-      return;
-    }
+        if (itemIndex === -1) {
+          return;
+        }
 
-    const itemIndex = parentItems.findIndex(
-      (i: FileSystemItem) => i.name === oldPath[oldPath.length - 1],
-    );
-    if (itemIndex === -1) {
-      return;
-    }
+        parentItems.splice(itemIndex, 1);
+        // saveFilesToStorage(newFiles);
+        set({ files: newFiles });
+      },
+      renameItem: (oldPath, newPath) => {
+        const { files } = get();
+        const newFiles = JSON.parse(JSON.stringify(files));
+        const item = findItemByPath(newFiles, oldPath);
 
-    const newName = newPath[newPath.length - 1];
-    const finalName = getAvailableName(
-      parentItems.filter((_: FileSystemItem, i: number) => i !== itemIndex),
-      newName,
-    );
+        if (!item) {
+          return;
+        }
 
-    item.name = finalName;
-    saveFilesToStorage(newFiles);
-    set({ files: newFiles });
-  },
-  moveItem: (oldPath, newPath) => {
-    const { files, activeFilePath } = get();
-    const newFiles = JSON.parse(JSON.stringify(files));
-    const item = findItemByPath(newFiles, oldPath);
+        const parentPath = oldPath.slice(0, -1);
+        const parentItems =
+          parentPath.length === 0
+            ? newFiles
+            : getParentFolder(newFiles, parentPath);
 
-    if (!item) {
-      return;
-    }
+        if (!parentItems) {
+          return;
+        }
 
-    const oldParentPath = oldPath.slice(0, -1);
-    const oldParentItems =
-      oldParentPath.length === 0
-        ? newFiles
-        : getParentFolder(newFiles, oldParentPath);
+        const itemIndex = parentItems.findIndex(
+          (i: FileSystemItem) => i.name === oldPath[oldPath.length - 1],
+        );
+        if (itemIndex === -1) {
+          return;
+        }
 
-    if (!oldParentItems) {
-      return;
-    }
+        const newName = newPath[newPath.length - 1];
+        const finalName = getAvailableName(
+          parentItems.filter((_: FileSystemItem, i: number) => i !== itemIndex),
+          newName,
+        );
 
-    const itemIndex = oldParentItems.findIndex(
-      (i: FileSystemItem) => i.name === oldPath[oldPath.length - 1],
-    );
-    if (itemIndex === -1) {
-      return;
-    }
+        item.name = finalName;
+        // saveFilesToStorage(newFiles);
+        set({ files: newFiles });
+      },
+      moveItem: (oldPath, newPath) => {
+        const { files, activeFilePath } = get();
+        const newFiles = JSON.parse(JSON.stringify(files));
+        const item = findItemByPath(newFiles, oldPath);
 
-    const removedItem = oldParentItems.splice(itemIndex, 1)[0];
+        if (!item) {
+          return;
+        }
 
-    const newParentPath = newPath.slice(0, -1);
-    const newParentItems =
-      newParentPath.length === 0
-        ? newFiles
-        : getParentFolder(newFiles, newParentPath);
+        const oldParentPath = oldPath.slice(0, -1);
+        const oldParentItems =
+          oldParentPath.length === 0
+            ? newFiles
+            : getParentFolder(newFiles, oldParentPath);
 
-    if (!newParentItems) {
-      oldParentItems.splice(itemIndex, 0, removedItem);
-      return;
-    }
+        if (!oldParentItems) {
+          return;
+        }
 
-    const newName = newPath[newPath.length - 1];
-    const finalName = getAvailableName(newParentItems, newName);
-    removedItem.name = finalName;
+        const itemIndex = oldParentItems.findIndex(
+          (i: FileSystemItem) => i.name === oldPath[oldPath.length - 1],
+        );
+        if (itemIndex === -1) {
+          return;
+        }
 
-    newParentItems.push(removedItem);
+        const removedItem = oldParentItems.splice(itemIndex, 1)[0];
 
-    if (
-      activeFilePath.length > 0 &&
-      JSON.stringify(activeFilePath) === JSON.stringify(oldPath)
-    ) {
-      set({ activeFilePath: newParentPath.concat([finalName]) });
-    }
+        const newParentPath = newPath.slice(0, -1);
+        const newParentItems =
+          newParentPath.length === 0
+            ? newFiles
+            : getParentFolder(newFiles, newParentPath);
 
-    saveFilesToStorage(newFiles);
-    set({ files: newFiles });
-  },
-}));
+        if (!newParentItems) {
+          oldParentItems.splice(itemIndex, 0, removedItem);
+          return;
+        }
 
-const getFilesFromStorage = () => {
-  const storedFiles = localStorage.getItem("files");
-  if (storedFiles) {
-    try {
-      return JSON.parse(storedFiles);
-    } catch (e) {
-      console.error("Failed to parse stored files:", e);
-    }
-  }
-  return [];
-};
+        const newName = newPath[newPath.length - 1];
+        const finalName = getAvailableName(newParentItems, newName);
+        removedItem.name = finalName;
 
-const saveFilesToStorage = (files: FileSystemItem[]) => {
-  try {
-    localStorage.setItem("files", JSON.stringify(files));
-  } catch (e) {
-    console.error("Failed to save files to storage:", e);
-  }
-};
+        newParentItems.push(removedItem);
+
+        if (
+          activeFilePath.length > 0 &&
+          JSON.stringify(activeFilePath) === JSON.stringify(oldPath)
+        ) {
+          set({ activeFilePath: newParentPath.concat([finalName]) });
+        }
+
+        // saveFilesToStorage(newFiles);
+        set({ files: newFiles });
+      },
+    }),
+    {
+      name: "files-storage",
+    },
+  ),
+);
+
+// const getFilesFromStorage = () => {
+//   const storedFiles = localStorage.getItem("files");
+//   if (storedFiles) {
+//     try {
+//       return JSON.parse(storedFiles);
+//     } catch (e) {
+//       console.error("Failed to parse stored files:", e);
+//     }
+//   }
+//   return [];
+// };
+
+// const saveFilesToStorage = (files: FileSystemItem[]) => {
+//   try {
+//     localStorage.setItem("files", JSON.stringify(files));
+//   } catch (e) {
+//     console.error("Failed to save files to storage:", e);
+//   }
+// };

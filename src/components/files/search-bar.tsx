@@ -16,12 +16,14 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
-import { useFiles } from "@/context/files/files-context";
 import { useEditorStore } from "@/stores/editor/editor-store";
+import { useFilesStore } from "@/stores/files/files-store";
 
 export default function SearchBar() {
   const [open, setOpen] = useState(false);
-  const { setActiveFilePath, files } = useFiles();
+  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
+  const files = useFilesStore((state) => state.files);
+
   const setTemplate = useEditorStore((state) => state.setTemplate);
 
   const flattenFiles = (

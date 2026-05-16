@@ -14,20 +14,31 @@ import type { FileSystemItem } from "./types";
 import { isFile, isFolder } from "./types";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useFiles } from "@/context/files/files-context";
 import { useEditorStore } from "@/stores/editor/editor-store";
+import { useFilesStore } from "@/stores/files/files-store";
 
 export default function Tree() {
   const setTemplate = useEditorStore((state) => state.setTemplate);
 
-  const {
-    setActiveFilePath,
-    activeFilePath,
-    files: data,
-    currentWorkingFolder,
-    setCurrentWorkingFolder,
-    moveItem,
-  } = useFiles();
+  // const {
+  //   setActiveFilePath,
+  //   activeFilePath,
+  //   files: data,
+  //   currentWorkingFolder,
+  //   setCurrentWorkingFolder,
+  //   moveItem,
+  // } = useFiles();
+
+  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
+  const activeFilePath = useFilesStore((state) => state.activeFilePath);
+  const data = useFilesStore((state) => state.files);
+  const currentWorkingFolder = useFilesStore(
+    (state) => state.currentWorkingFolder,
+  );
+  const setCurrentWorkingFolder = useFilesStore(
+    (state) => state.setCurrentWorkingFolder,
+  );
+  const moveItem = useFilesStore((state) => state.moveItem);
 
   // Navigate to the current working folder
   const getCurrentFolderItems = (): FileSystemItem[] => {

@@ -19,11 +19,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useFiles } from "@/context/files/files-context";
 import { useEditorStore } from "@/stores/editor/editor-store";
+import { useFilesStore } from "@/stores/files/files-store";
 
 export default function Appbar() {
-  const { saveActiveFile, setActiveFilePath } = useFiles();
+  const saveActiveFile = useFilesStore((state) => state.saveActiveFile);
+  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
+
   const setTemplate = useEditorStore((state) => state.setTemplate);
 
   useEffect(() => {

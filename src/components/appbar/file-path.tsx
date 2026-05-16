@@ -15,10 +15,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useFiles } from "@/context/files/files-context";
+import { useFilesStore } from "@/stores/files/files-store";
 
 export default function FilePath() {
-  const { activeFilePath, setCurrentWorkingFolder } = useFiles();
+  const setCurrentWorkingFolder = useFilesStore(
+    (state) => state.setCurrentWorkingFolder,
+  );
+  const activeFilePath = useFilesStore((state) => state.activeFilePath);
+
   const { fileName, folderName, rest } = activeFilePath.reduce(
     (acc, segment, index) => {
       if (index === activeFilePath.length - 1) {
