@@ -112,7 +112,14 @@ export default function FilePath() {
         <BreadcrumbSeparator />
         {
           <BreadcrumbItem>
-            <BreadcrumbPage className="select-none">{fileName}</BreadcrumbPage>
+            <BreadcrumbPage
+              onClick={() =>
+                setCurrentWorkingFolder(activeFilePath.slice(0, -1))
+              }
+              className="select-none"
+            >
+              {fileName}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         }
       </BreadcrumbList>

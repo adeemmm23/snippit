@@ -43,7 +43,7 @@ export default function Appbar() {
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, [saveActiveFile]);
+  }, []);
 
   return (
     <div className="flex gap-2 p-2">
