@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, subscribeWithSelector } from "zustand/middleware";
 
 import { createThemeSlice, type ThemeSlice } from "./slices/theme-slice";
 import {
@@ -10,12 +10,14 @@ import {
 type SettingsStore = ThemeSlice & VariableSlice;
 
 const useSettingsStore = create<SettingsStore>()(
-  persist(
-    (...args) => ({
-      ...createThemeSlice(...args),
-      ...createVariableSlice(...args),
-    }),
-    { name: "settings" },
+  subscribeWithSelector(
+    persist(
+      (...args) => ({
+        ...createThemeSlice(...args),
+        ...createVariableSlice(...args),
+      }),
+      { name: "settings" },
+    ),
   ),
 );
 

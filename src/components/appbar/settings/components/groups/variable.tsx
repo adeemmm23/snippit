@@ -10,11 +10,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { VARIABLE_FORMATS } from "@/lib/const";
-import { useEditorStore } from "@/stores/editor/editor-store";
+import useSettingsStore from "@/stores/settings/settings-store";
 
 export default function VariableSettingGroup() {
-  const variableFormat = useEditorStore((state) => state.variableFormat);
-  const setVariableFormat = useEditorStore((state) => state.setVariableFormat);
+  const variableFormat = useSettingsStore((state) => state.variableFormat);
+  const setVariableFormat = useSettingsStore(
+    (state) => state.setVariableFormat,
+  );
 
   const items = VARIABLE_FORMATS.map((format) => ({
     label: format.label,
