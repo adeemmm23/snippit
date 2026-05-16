@@ -14,11 +14,11 @@ import type { FileSystemItem } from "./types";
 import { isFile, isFolder } from "./types";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEditor } from "@/context/editor/editor-context";
 import { useFiles } from "@/context/files/files-context";
+import { useEditorStore } from "@/stores/editor/editor-store";
 
 export default function Tree() {
-  const { setTemplate } = useEditor();
+  const setTemplate = useEditorStore((state) => state.setTemplate);
 
   const {
     setActiveFilePath,

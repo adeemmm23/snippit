@@ -19,12 +19,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEditor } from "@/context/editor/editor-context";
 import { useFiles } from "@/context/files/files-context";
+import { useEditorStore } from "@/stores/editor/editor-store";
 
 export default function Appbar() {
   const { saveActiveFile, setActiveFilePath } = useFiles();
-  const { setTemplate } = useEditor();
+  const setTemplate = useEditorStore((state) => state.setTemplate);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {

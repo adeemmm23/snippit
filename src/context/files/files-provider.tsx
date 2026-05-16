@@ -2,10 +2,10 @@ import { useState, type ReactNode } from "react";
 
 import { FilesContext } from "./files-context";
 import { findItemByPath, getAvailableName, getParentFolder } from "./utils";
-import { useEditor } from "../editor/editor-context";
 
 import type { FileSystemItem, FolderItem } from "@/components/files/types";
 import { isFile, isFolder } from "@/components/files/types";
+import { useEditorStore } from "@/stores/editor/editor-store";
 
 type FilesProviderProps = {
   children: ReactNode;
@@ -40,7 +40,7 @@ export function FilesProvider({ children }: FilesProviderProps) {
     getFilesFromStorage(),
   );
 
-  const { template } = useEditor();
+  const template = useEditorStore((state) => state.template);
 
   const saveActiveFile = () => {
     if (activeFilePath.length === 0) return false;

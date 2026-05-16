@@ -9,10 +9,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEditor } from "@/context/editor/editor-context";
+import { useEditorStore } from "@/stores/editor/editor-store";
 
 export function Input() {
-  const { template, setTemplate } = useEditor();
+  const template = useEditorStore((state) => state.template);
+  const setTemplate = useEditorStore((state) => state.setTemplate);
   const editorRef = useRef<HTMLDivElement>(null);
 
   const handleClear = () => {

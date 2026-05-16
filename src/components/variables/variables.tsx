@@ -25,12 +25,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEditor } from "@/context/editor/editor-context";
+import { useEditorStore } from "@/stores/editor/editor-store";
 
 type MagicType = "date" | "duration" | "password";
 
 export default function Variables() {
-  const { variables, setVariable, resetVariables } = useEditor();
+  const variables = useEditorStore((state) => state.variables);
+  const setVariable = useEditorStore((state) => state.setVariable);
+  const resetVariables = useEditorStore((state) => state.resetVariables);
+
   const [magicTypes, setMagicTypes] = useState<
     {
       name: string;
