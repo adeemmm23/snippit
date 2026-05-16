@@ -1,21 +1,34 @@
 import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
 
-import { createThemeSlice, type ThemeSlice } from "./slices/theme-slice";
-import {
-  createVariableSlice,
-  type VariableSlice,
-} from "./slices/variable-slice";
+import { createThemeSlice } from "./slices/theme-slice";
+import { createTooltipsSlice } from "./slices/tooltips-slice";
+import { createVariableSlice } from "./slices/variable-slice";
 
-type SettingsStore = ThemeSlice & VariableSlice;
+const settingsSlices = [
+  createThemeSlice,
+  createVariableSlice,
+  createTooltipsSlice,
+] as const;
+
+type UnionToIntersection<T> = (
+  T extends unknown ? (arg: T) => void : never
+) extends (arg: infer I) => void
+  ? I
+  : never;
+
+type SettingsStore = UnionToIntersection<
+  ReturnType<(typeof settingsSlices)[number]>
+>;
 
 const useSettingsStore = create<SettingsStore>()(
   subscribeWithSelector(
     persist(
-      (...args) => ({
-        ...createThemeSlice(...args),
-        ...createVariableSlice(...args),
-      }),
+      (...args) =>
+        Object.assign(
+          {},
+          ...settingsSlices.map((createSlice) => createSlice(...args)),
+        ),
       { name: "settings" },
     ),
   ),
