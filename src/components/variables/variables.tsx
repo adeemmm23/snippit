@@ -67,9 +67,10 @@ export default function Variables() {
     return () => document.removeEventListener("keydown", down);
   }, [variables]);
 
+  // TODO: fix layout here
   return (
-    <div className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-r-none border border-r-0 p-2">
-      <div className="flex items-center justify-between py-2">
+    <div className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-r-none border border-r-0 py-2">
+      <div className="flex items-center justify-between p-2">
         {Object.keys(variables).length > 0 && (
           <>
             <Label className="px-2 text-lg font-medium">Variables</Label>
@@ -133,7 +134,7 @@ export default function Variables() {
         </div>
       ) : (
         <ScrollArea className="grow overflow-auto">
-          <div className="flex h-full flex-col gap-4 py-1">
+          <div className="flex h-full flex-col gap-4 px-2 py-1">
             {Object.keys(variables).map((varName) => {
               let InputAddon: React.ReactNode = null;
 

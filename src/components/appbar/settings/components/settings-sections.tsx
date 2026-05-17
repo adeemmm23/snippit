@@ -54,11 +54,15 @@ export default function SettingsSections() {
     };
   }, []);
 
-  // TODO: Change bottom padding to something morea accurate
+  // TODO: Change bottom padding to something more accurate
+  // px-4 is a work arround of ring not appearing when no padding
   return (
     <main ref={ref} className="h-full flex-1">
       <ScrollArea className="size-full overflow-auto">
-        <div className="flex flex-col gap-10 pb-120" id="settings-sections">
+        <div
+          className="flex flex-col gap-10 px-4 pb-120"
+          id="settings-sections"
+        >
           <SettingSection title="Appearance">
             <ThemeSettingGroup />
           </SettingSection>
