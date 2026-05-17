@@ -43,7 +43,7 @@ export const useFilesStore = create<FilesStore>()(
           ...latestOpenedFiles.filter(
             (path) => JSON.stringify(path) !== JSON.stringify(activeFilePath),
           ),
-        ].slice(0, 3);
+        ];
 
         const existingMostOpened = mostOpenedFiles.find(
           (item) =>

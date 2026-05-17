@@ -20,90 +20,47 @@ import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
 
 export default function SearchBar() {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
 
-  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
   const latestOpenedFiles = useFilesStore((state) => state.latestOpenedFiles);
   const mostOpenedFiles = useFilesStore((state) => state.mostOpenedFiles);
-
   const files = useFilesStore((state) => state.files);
-
-  const setTemplate = useEditorStore((state) => state.setTemplate);
 
   const indexedFiles = flattenFiles(files, "");
 
-  const sortedMostOpenedFiles = [...mostOpenedFiles]
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 3);
-
   const generateMostOpened = () => {
-    return sortedMostOpenedFiles.map((item, index) => {
-      const file = indexedFiles.find((f) => f.path === item.path.join("/"));
-      if (!file) return null;
+    return mostOpenedFiles
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3)
+      .map((item, index) => {
+        const file = indexedFiles.find((f) => f.path === item.path.join("/"));
+        if (!file) return null;
 
-      return (
-        <CommandItem
-          key={index}
-          onSelect={() => {
-            setTemplate(file.content);
-            setActiveFilePath(file.path.split("/"));
-            setOpen(false);
-          }}
-        >
-          <span className="grow overflow-hidden text-ellipsis whitespace-nowrap">
-            {file.filename}
-          </span>
-          <span className="text-muted-foreground ml-auto flex-1 overflow-hidden text-right text-xs text-ellipsis whitespace-nowrap">
-            {file.path} ({item.count} opens)
-          </span>
-        </CommandItem>
-      );
-    });
+        return (
+          <FileItem
+            key={index}
+            file={file}
+            onSelectEnd={() => setOpen(false)}
+          />
+        );
+      });
   };
 
   const generateLatest = () => {
-    return latestOpenedFiles.map((path, index) => {
+    return latestOpenedFiles.slice(0, 3).map((path, index) => {
       const file = indexedFiles.find((f) => f.path === path.join("/"));
       if (!file) return null;
 
       return (
-        <CommandItem
-          key={index}
-          onSelect={() => {
-            setTemplate(file.content);
-            setActiveFilePath(file.path.split("/"));
-            setOpen(false);
-          }}
-        >
-          <span className="grow overflow-hidden text-ellipsis whitespace-nowrap">
-            {file.filename}
-          </span>
-          <span className="text-muted-foreground ml-auto flex-1 overflow-hidden text-right text-xs text-ellipsis whitespace-nowrap">
-            {file.path}
-          </span>
-        </CommandItem>
+        <FileItem key={index} file={file} onSelectEnd={() => setOpen(false)} />
       );
     });
   };
 
   const generatePreview = () => {
     return indexedFiles.map((file, index) => (
-      <CommandItem
-        key={index}
-        onSelect={() => {
-          setTemplate(file.content);
-          setActiveFilePath(file.path.split("/"));
-          setOpen(false);
-        }}
-      >
-        <span className="grow overflow-hidden text-ellipsis whitespace-nowrap">
-          {file.filename}
-        </span>
-        <span className="text-muted-foreground ml-auto flex-1 overflow-hidden text-right text-xs text-ellipsis whitespace-nowrap">
-          {file.path}
-        </span>
-      </CommandItem>
+      <FileItem key={index} file={file} onSelectEnd={() => setOpen(false)} />
     ));
   };
 
@@ -152,7 +109,7 @@ export default function SearchBar() {
             <CommandEmpty>
               {query.length > 0 ? "No results found." : "Search for a file"}
             </CommandEmpty>
-            {query.length == 0 && sortedMostOpenedFiles.length > 0 && (
+            {query.length == 0 && mostOpenedFiles.length > 0 && (
               <CommandGroup heading="Most opened">
                 {generateMostOpened()}
               </CommandGroup>
@@ -170,6 +127,34 @@ export default function SearchBar() {
   );
 }
 
+type FileItemProps = {
+  file: { filename: string; path: string; content: string };
+  onSelectEnd: () => void;
+};
+
+function FileItem({ file, onSelectEnd }: FileItemProps) {
+  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
+  const setTemplate = useEditorStore((state) => state.setTemplate);
+
+  return (
+    <CommandItem
+      onSelect={() => {
+        setTemplate(file.content);
+        setActiveFilePath(file.path.split("/"));
+        onSelectEnd();
+      }}
+    >
+      <span className="grow overflow-hidden text-ellipsis whitespace-nowrap">
+        {file.filename}
+      </span>
+      <span className="text-muted-foreground ml-auto flex-1 overflow-hidden text-right text-xs text-ellipsis whitespace-nowrap">
+        {file.path}
+      </span>
+    </CommandItem>
+  );
+}
+
+// TODO: content shouldn't be shipped from here
 const flattenFiles = (
   items: FileSystemItem[],
   prefix: string,
