@@ -4,7 +4,6 @@ import {
   Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect, useState } from "react";
 
 import SettingGroup from "../ui/setting-group";
 
@@ -27,24 +26,17 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-
-type MagicType = "date" | "duration" | "password";
-
-type MagicInput = {
-  name: string;
-  type: MagicType | null;
-  options?: Record<string, string | number | boolean>;
-};
+import useSettingsStore from "@/stores/settings/settings-store";
+import type {
+  MagicInput as MagicInputType,
+  MagicType,
+} from "@/stores/settings/slices/magic-inputs-slice";
 
 export default function MagicSettingGroup() {
-  const [inputs, setInputs] = useState<MagicInput[]>(() => {
-    const saved = localStorage.getItem("magicInputs");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("magicInputs", JSON.stringify(inputs));
-  }, [inputs]);
+  const inputs = useSettingsStore((state) => state.magicInputs);
+  const addMagicInput = useSettingsStore((state) => state.addMagicInput);
+  const updateMagicInput = useSettingsStore((state) => state.updateMagicInput);
+  const removeMagicInput = useSettingsStore((state) => state.removeMagicInput);
 
   return (
     <SettingGroup title="Magic">
@@ -57,21 +49,14 @@ export default function MagicSettingGroup() {
           name={input.name}
           type={input.type}
           options={input.options}
-          onChange={(updated) => {
-            const newInputs = [...inputs];
-            newInputs[index] = { ...newInputs[index], ...updated };
-            setInputs(newInputs);
-          }}
-          onDelete={() => {
-            const newInputs = inputs.filter((_, i) => i !== index);
-            setInputs(newInputs);
-          }}
+          onChange={(updated) => updateMagicInput(index, updated)}
+          onDelete={() => removeMagicInput(index)}
         />
       ))}
       <Button
         variant="default"
         className="mt-4 w-fit"
-        onClick={() => setInputs([...inputs, { name: "", type: null }])}
+        onClick={() => addMagicInput()}
       >
         <HugeiconsIcon icon={Add01Icon} />
         Add Magic Input
@@ -80,8 +65,8 @@ export default function MagicSettingGroup() {
   );
 }
 
-type MagicInputProps = MagicInput & {
-  onChange?: ({ name, type, options }: Partial<MagicInput>) => void;
+type MagicInputProps = MagicInputType & {
+  onChange?: ({ name, type, options }: Partial<MagicInputType>) => void;
   onDelete?: () => void;
 };
 function MagicInput({
@@ -197,14 +182,14 @@ function MagicInput({
               </div>
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={options?.special == true}
+                  checked={options?.specials == true}
                   onCheckedChange={(checked) =>
                     onChange?.({
-                      options: { ...options, special: checked },
+                      options: { ...options, specials: checked },
                     })
                   }
                 />
-                <label className="text-sm">special</label>
+                <label className="text-sm">Specials</label>
               </div>
             </div>
           )}

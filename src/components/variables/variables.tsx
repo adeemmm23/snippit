@@ -4,7 +4,7 @@ import {
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import DateAddon from "./date-addon";
 import DurationAddon from "./duration-addon";
@@ -26,21 +26,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useEditorStore } from "@/stores/editor/editor-store";
-
-type MagicType = "date" | "duration" | "password";
+import useSettingsStore from "@/stores/settings/settings-store";
 
 export default function Variables() {
   const variables = useEditorStore((state) => state.variables);
   const setVariable = useEditorStore((state) => state.setVariable);
   const resetVariables = useEditorStore((state) => state.resetVariables);
 
-  const [magicTypes, setMagicTypes] = useState<
-    {
-      name: string;
-      type: MagicType | null;
-      settings?: Record<string, string | number | boolean>;
-    }[]
-  >([]);
+  const magicInputs = useSettingsStore((state) => state.magicInputs);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -73,14 +66,6 @@ export default function Variables() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, [variables]);
-
-  useEffect(() => {
-    const storedMagicTypes = localStorage.getItem("magicInputs");
-    if (storedMagicTypes) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setMagicTypes(JSON.parse(storedMagicTypes));
-    }
-  }, []);
 
   return (
     <div className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-r-none border border-r-0 p-2">
@@ -152,18 +137,18 @@ export default function Variables() {
             {Object.keys(variables).map((varName) => {
               let InputAddon: React.ReactNode = null;
 
-              const magicType = magicTypes.find((m) =>
+              const magicInput = magicInputs.find((m) =>
                 varName.toLowerCase().includes(m.name.toLowerCase()),
               );
 
-              switch (magicType?.type) {
+              switch (magicInput?.type) {
                 case "password":
                   InputAddon = (
                     <PasswordAddon
                       onGenerate={(generatedPassword) => {
                         setVariable(varName, generatedPassword);
                       }}
-                      options={magicType.settings}
+                      options={magicInput.options}
                     />
                   );
                   break;
