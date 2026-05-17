@@ -11,7 +11,9 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -153,18 +155,24 @@ function PasswordSettingContent({
   };
   onChange?: (updated: { options: Helper["options"] }) => void;
 }) {
-  // TODO: fix strucutre here
+  const lengthValue = options?.length ?? 6;
+
   return (
     <DialogContent forceRender className="bg-popover">
       <DialogHeader>
-        <p className="text-lg font-semibold">
-          Configure {name || "magic input"}
-        </p>
+        <DialogTitle>Configure {name || "magic input"}</DialogTitle>
+        <DialogDescription>
+          Adjust the settings for this password generator helper.
+        </DialogDescription>
       </DialogHeader>
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">Password length</label>
+            <span className="text-muted-foreground text-xs">{lengthValue}</span>
+          </div>
           <Slider
-            value={[options?.length as number]}
+            value={[lengthValue]}
             min={1}
             max={64}
             step={1}
@@ -174,60 +182,53 @@ function PasswordSettingContent({
               })
             }
           />
-          <label className="shrink-0 text-sm">
-            Length{" "}
-            <span className="dark:text-primary text-primary-foreground font-mono">
-              {options?.length && options?.length.toString().length > 2
-                ? options?.length
-                : options?.length &&
-                  options?.length.toString().padStart(2, "0")}
-            </span>
-          </label>
         </div>
-        <Separator className="my-2" />
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={options?.lowerCase == true}
-            onCheckedChange={(checked) =>
-              onChange?.({
-                options: { ...options, lowerCase: checked },
-              })
-            }
-          />
-          <label className="text-sm">Lowercase</label>
-        </div>
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={options?.upperCase == true}
-            onCheckedChange={(checked) =>
-              onChange?.({
-                options: { ...options, upperCase: checked },
-              })
-            }
-          />
-          <label className="text-sm">Uppercase</label>
-        </div>
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={options?.numbers == true}
-            onCheckedChange={(checked) =>
-              onChange?.({
-                options: { ...options, numbers: checked },
-              })
-            }
-          />
-          <label className="text-sm">Numbers</label>
-        </div>
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={options?.specials == true}
-            onCheckedChange={(checked) =>
-              onChange?.({
-                options: { ...options, specials: checked },
-              })
-            }
-          />
-          <label className="text-sm">Specials</label>
+        <Separator />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="flex items-center justify-between rounded-md border p-2">
+            <label className="text-sm">Lowercase</label>
+            <Switch
+              checked={options?.lowerCase == true}
+              onCheckedChange={(checked) =>
+                onChange?.({
+                  options: { ...options, lowerCase: checked },
+                })
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between rounded-md border p-2">
+            <label className="text-sm">Uppercase</label>
+            <Switch
+              checked={options?.upperCase == true}
+              onCheckedChange={(checked) =>
+                onChange?.({
+                  options: { ...options, upperCase: checked },
+                })
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between rounded-md border p-2">
+            <label className="text-sm">Numbers</label>
+            <Switch
+              checked={options?.numbers == true}
+              onCheckedChange={(checked) =>
+                onChange?.({
+                  options: { ...options, numbers: checked },
+                })
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between rounded-md border p-2">
+            <label className="text-sm">Specials</label>
+            <Switch
+              checked={options?.specials == true}
+              onCheckedChange={(checked) =>
+                onChange?.({
+                  options: { ...options, specials: checked },
+                })
+              }
+            />
+          </div>
         </div>
       </div>
     </DialogContent>
