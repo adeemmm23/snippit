@@ -1,6 +1,7 @@
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
 
 import { cn } from "@/lib/utils";
+import useSettingsStore from "@/stores/settings/settings-store";
 
 function TooltipProvider({
   delay = 500,
@@ -16,7 +17,15 @@ function TooltipProvider({
 }
 
 function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
-  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
+  const tooltipsEnabled = useSettingsStore((state) => state.tooltipsEnabled);
+
+  return (
+    <TooltipPrimitive.Root
+      disabled={!tooltipsEnabled}
+      data-slot="tooltip"
+      {...props}
+    />
+  );
 }
 
 function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {

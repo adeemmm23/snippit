@@ -11,8 +11,10 @@
     <script type="module" src="/src/main.tsx"></script>
     <!-- apply theme before appload -->
     <script>
-      const theme = localStorage.getItem("theme") || "light";
+      const data = localStorage.getItem("settings");
+      const theme = data ? JSON.parse(data).state.theme : "system";
       document.documentElement.classList.remove("light", "dark");
+
       if (theme !== "system") {
         document.documentElement.classList.add(theme);
       } else {

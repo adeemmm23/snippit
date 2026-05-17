@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 import FilePath from "./file-path";
-import Settings from "./settings/settings";
+import Settings from "./settings";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -19,12 +19,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEditor } from "@/context/editor/editor-context";
-import { useFiles } from "@/context/files/files-context";
+import { useEditorStore } from "@/stores/editor/editor-store";
+import { useFilesStore } from "@/stores/files/files-store";
 
 export default function Appbar() {
-  const { saveActiveFile, setActiveFilePath } = useFiles();
-  const { setTemplate } = useEditor();
+  const saveActiveFile = useFilesStore((state) => state.saveActiveFile);
+  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
+
+  const setTemplate = useEditorStore((state) => state.setTemplate);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -41,7 +43,7 @@ export default function Appbar() {
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, [saveActiveFile]);
+  }, []);
 
   return (
     <div className="flex gap-2 p-2">

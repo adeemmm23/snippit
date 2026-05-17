@@ -16,13 +16,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useFiles } from "@/context/files/files-context";
 import { IT_SUPPORT_SNIPPETS } from "@/lib/test";
+import { useFilesStore } from "@/stores/files/files-store";
 
 export default function Header() {
-  const { createItem, currentWorkingFolder } = useFiles();
+  const createItem = useFilesStore((state) => state.createItem);
+  const setFiles = useFilesStore((state) => state.setFiles);
+  const currentWorkingFolder = useFilesStore(
+    (state) => state.currentWorkingFolder,
+  );
+
   return (
-    <div className="flex">
+    <div className="flex px-2">
       <div className="flex h-9 min-w-0 flex-1 items-center gap-1 px-2 select-none">
         <span className="overflow-hidden font-medium text-ellipsis whitespace-nowrap">
           IT Control Center
@@ -66,10 +71,10 @@ export default function Header() {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                localStorage.setItem(
-                  "files",
+                const newFiles = JSON.parse(
                   JSON.stringify(IT_SUPPORT_SNIPPETS),
                 );
+                setFiles(newFiles);
               }}
             >
               <HugeiconsIcon icon={FolderAddIcon} className="size-4" />

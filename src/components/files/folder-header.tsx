@@ -8,11 +8,16 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
-import { useFiles } from "@/context/files/files-context";
 import { cn } from "@/lib/utils";
+import { useFilesStore } from "@/stores/files/files-store";
 
 export default function FolderHeader() {
-  const { currentWorkingFolder, setCurrentWorkingFolder } = useFiles();
+  const currentWorkingFolder = useFilesStore(
+    (state) => state.currentWorkingFolder,
+  );
+  const setCurrentWorkingFolder = useFilesStore(
+    (state) => state.setCurrentWorkingFolder,
+  );
 
   const { isDropTarget, ref: dropRef } = useDroppable({
     id: currentWorkingFolder.slice(0, -1).join("/"),
@@ -22,14 +27,16 @@ export default function FolderHeader() {
   });
 
   return (
-    <>
+    <div className="flex px-2">
       {currentWorkingFolder.length > 0 ? (
         <div className="flex w-full gap-1">
           <div
             ref={dropRef}
             role="button"
+            tabIndex={0}
+            title={currentWorkingFolder[currentWorkingFolder.length - 1]}
             className={cn(
-              "group/button hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 flex h-9 w-full min-w-0 flex-1 grow items-center justify-start gap-2 rounded-md border border-transparent pl-2.5 text-sm font-medium transition-all outline-none select-none",
+              "group/button hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full min-w-0 flex-1 grow items-center justify-start gap-2 rounded-md border border-transparent pl-2.5 text-sm font-medium transition-all outline-none select-none focus-visible:ring-[3px]",
               isDropTarget && "bg-primary/20 border-primary/50",
             )}
             onClick={() => {
@@ -66,6 +73,6 @@ export default function FolderHeader() {
           <span>Root</span>
         </Button>
       )}
-    </>
+    </div>
   );
 }

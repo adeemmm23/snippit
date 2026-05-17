@@ -4,7 +4,7 @@ import {
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import DateAddon from "./date-addon";
 import DurationAddon from "./duration-addon";
@@ -25,19 +25,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEditor } from "@/context/editor/editor-context";
-
-type MagicType = "date" | "duration" | "password";
+import { useEditorStore } from "@/stores/editor/editor-store";
+import useSettingsStore from "@/stores/settings/settings-store";
 
 export default function Variables() {
-  const { variables, setVariable, resetVariables } = useEditor();
-  const [magicTypes, setMagicTypes] = useState<
-    {
-      name: string;
-      type: MagicType | null;
-      settings?: Record<string, string | number | boolean>;
-    }[]
-  >([]);
+  const variables = useEditorStore((state) => state.variables);
+  const setVariable = useEditorStore((state) => state.setVariable);
+  const resetVariables = useEditorStore((state) => state.resetVariables);
+
+  const helpers = useSettingsStore((state) => state.helpers);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -71,17 +67,10 @@ export default function Variables() {
     return () => document.removeEventListener("keydown", down);
   }, [variables]);
 
-  useEffect(() => {
-    const storedMagicTypes = localStorage.getItem("magicInputs");
-    if (storedMagicTypes) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setMagicTypes(JSON.parse(storedMagicTypes));
-    }
-  }, []);
-
+  // TODO: fix layout here
   return (
-    <div className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-r-none border border-r-0 p-2">
-      <div className="flex items-center justify-between py-2">
+    <div className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-r-none border border-r-0 py-2">
+      <div className="flex items-center justify-between p-2">
         {Object.keys(variables).length > 0 && (
           <>
             <Label className="px-2 text-lg font-medium">Variables</Label>
@@ -145,22 +134,22 @@ export default function Variables() {
         </div>
       ) : (
         <ScrollArea className="grow overflow-auto">
-          <div className="flex h-full flex-col gap-4 py-1">
+          <div className="flex h-full flex-col gap-4 px-2 py-1">
             {Object.keys(variables).map((varName) => {
               let InputAddon: React.ReactNode = null;
 
-              const magicType = magicTypes.find((m) =>
+              const helper = helpers.find((m) =>
                 varName.toLowerCase().includes(m.name.toLowerCase()),
               );
 
-              switch (magicType?.type) {
+              switch (helper?.type) {
                 case "password":
                   InputAddon = (
                     <PasswordAddon
                       onGenerate={(generatedPassword) => {
                         setVariable(varName, generatedPassword);
                       }}
-                      options={magicType.settings}
+                      options={helper.options}
                     />
                   );
                   break;

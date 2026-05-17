@@ -30,7 +30,7 @@ export default function PasswordAddon({
               options?.upperCase ?? true,
               options?.lowerCase ?? true,
               options?.numbers ?? true,
-              options?.specials ?? true,
+              options?.specials ?? false,
             ),
           )
         }

@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
 
-import MagicSettingGroup from "./groups/magic";
-import ShortcutsGroup from "./groups/shortcuts";
-import ThemeSettingGroup from "./groups/theme";
-import VariableSettingGroup from "./groups/variable";
+import HelpersSettingGroup from "./groups/helpers-setting-group";
+import ShortcutsGroup from "./groups/shortcuts-setting-group";
+import ThemeSettingGroup from "./groups/theme-setting-group";
+import TooltipsGroup from "./groups/tooltips-setting-group";
+import VariableSettingGroup from "./groups/variable-setting-group";
 import SettingSection from "./ui/setting-section";
 import { useSections } from "../context/sections-context";
-import TooltipsGroup from "./groups/tooltips";
+import ExportGroup from "./groups/export-setting-group";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -53,30 +54,28 @@ export default function SettingsSections() {
     };
   }, []);
 
+  // TODO: Change bottom padding to something more accurate
+  // px-4 is a work arround of ring not appearing when no padding
   return (
     <main ref={ref} className="h-full flex-1">
       <ScrollArea className="size-full overflow-auto">
-        <div className="flex flex-col gap-10 pb-20" id="settings-sections">
+        <div
+          className="flex flex-col gap-10 px-4 pb-120"
+          id="settings-sections"
+        >
           <SettingSection title="Appearance">
             <ThemeSettingGroup />
           </SettingSection>
           <SettingSection title="Editor">
             <VariableSettingGroup />
-            <MagicSettingGroup />
-          </SettingSection>
-          <SettingSection title="Files">
-            <p className="text-muted-foreground text-sm">
-              This section should be responsible for:
-            </p>
-            <ul className="text-muted-foreground list-inside list-disc text-sm">
-              <li>Default save location for snippets</li>
-              <li>Auto-save settings</li>
-              <li>Import/export snippets</li>
-            </ul>
+            <HelpersSettingGroup />
           </SettingSection>
           <SettingSection title="Shortcuts">
             <TooltipsGroup />
             <ShortcutsGroup />
+          </SettingSection>
+          <SettingSection title="Files">
+            <ExportGroup />
           </SettingSection>
           <SettingSection title="Danger">
             <p className="text-muted-foreground text-sm">

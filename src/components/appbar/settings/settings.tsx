@@ -23,7 +23,7 @@ export default function Settings() {
       <div className="flex min-h-0 flex-1 grow gap-2 py-2">
         <SectionsProvider>
           <SettingsNavigation />
-          <Separator orientation="vertical" className="mx-4" />
+          <Separator orientation="vertical" className="ml-4" />
           <SettingsSections />
         </SectionsProvider>
       </div>

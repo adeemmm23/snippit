@@ -1,20 +1,16 @@
-import { useState } from "react";
-
 import SettingGroup from "../ui/setting-group";
 
 import { Label } from "@/components/ui/label";
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
-
-type Theme = "system" | "dark" | "light";
+import useSettingsStore from "@/stores/settings/settings-store";
+import type { Theme } from "@/stores/settings/slices/theme-slice";
 
 export default function ThemeSettingGroup() {
-  const [theme, setTheme] = useState(
-    (localStorage.getItem("theme") as Theme) || "system",
-  );
+  const theme = useSettingsStore((state) => state.theme);
+  const setTheme = useSettingsStore((state) => state.setTheme);
 
   const handleThemeChange = (value: Theme) => {
     setTheme(value);
-    localStorage.setItem("theme", value);
 
     document.documentElement.classList.add("remove-transition");
     document.documentElement.classList.remove("dark", "light");

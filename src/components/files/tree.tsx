@@ -14,20 +14,31 @@ import type { FileSystemItem } from "./types";
 import { isFile, isFolder } from "./types";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEditor } from "@/context/editor/editor-context";
-import { useFiles } from "@/context/files/files-context";
+import { useEditorStore } from "@/stores/editor/editor-store";
+import { useFilesStore } from "@/stores/files/files-store";
 
 export default function Tree() {
-  const { setTemplate } = useEditor();
+  const setTemplate = useEditorStore((state) => state.setTemplate);
 
-  const {
-    setActiveFilePath,
-    activeFilePath,
-    files: data,
-    currentWorkingFolder,
-    setCurrentWorkingFolder,
-    moveItem,
-  } = useFiles();
+  // const {
+  //   setActiveFilePath,
+  //   activeFilePath,
+  //   files: data,
+  //   currentWorkingFolder,
+  //   setCurrentWorkingFolder,
+  //   moveItem,
+  // } = useFiles();
+
+  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
+  const activeFilePath = useFilesStore((state) => state.activeFilePath);
+  const data = useFilesStore((state) => state.files);
+  const currentWorkingFolder = useFilesStore(
+    (state) => state.currentWorkingFolder,
+  );
+  const setCurrentWorkingFolder = useFilesStore(
+    (state) => state.setCurrentWorkingFolder,
+  );
+  const moveItem = useFilesStore((state) => state.moveItem);
 
   // Navigate to the current working folder
   const getCurrentFolderItems = (): FileSystemItem[] => {
@@ -90,10 +101,10 @@ export default function Tree() {
         moveItem(source?.data.path, [...target.data.path, source?.data.name]);
       }}
     >
-      <div className="flex min-h-0 flex-1 grow flex-col gap-2">
+      <div className="flex min-h-0 flex-1 grow flex-col">
         <FolderHeader />
         <ScrollArea className="size-full overflow-auto">
-          <div className="flex h-full w-full flex-col gap-2">
+          <div className="flex h-full w-full flex-col gap-2 p-2">
             {folders.map(({ name }) => (
               <Node
                 key={name}

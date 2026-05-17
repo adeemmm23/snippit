@@ -11,10 +11,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEditor } from "@/context/editor/editor-context";
+import { useEditorStore } from "@/stores/editor/editor-store";
 
 export function Output() {
-  const { parts } = useEditor();
+  const parts = useEditorStore((state) => state.parts);
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async (isShortcut: boolean | undefined = false) => {
