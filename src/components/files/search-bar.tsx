@@ -84,7 +84,7 @@ export default function SearchBar() {
   }, []);
 
   return (
-    <>
+    <div className="flex px-2">
       <Button
         variant="outline"
         className="w-full cursor-text"
@@ -109,6 +109,6 @@ export default function SearchBar() {
           </CommandList>
         </Command>
       </CommandDialog>
-    </>
+    </div>
   );
 }

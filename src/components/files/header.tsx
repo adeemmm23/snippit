@@ -27,7 +27,7 @@ export default function Header() {
   );
 
   return (
-    <div className="flex">
+    <div className="flex px-2">
       <div className="flex h-9 min-w-0 flex-1 items-center gap-1 px-2 select-none">
         <span className="overflow-hidden font-medium text-ellipsis whitespace-nowrap">
           IT Control Center

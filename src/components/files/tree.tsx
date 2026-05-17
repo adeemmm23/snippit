@@ -101,10 +101,10 @@ export default function Tree() {
         moveItem(source?.data.path, [...target.data.path, source?.data.name]);
       }}
     >
-      <div className="flex min-h-0 flex-1 grow flex-col gap-2">
+      <div className="flex min-h-0 flex-1 grow flex-col">
         <FolderHeader />
         <ScrollArea className="size-full overflow-auto">
-          <div className="flex h-full w-full flex-col gap-2">
+          <div className="flex h-full w-full flex-col gap-2 p-2">
             {folders.map(({ name }) => (
               <Node
                 key={name}

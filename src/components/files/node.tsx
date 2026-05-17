@@ -113,7 +113,7 @@ export default function Node({
       title={name}
       data-path={path.join("/")}
       className={cn(
-        "group/file group/button hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 flex h-9 w-full items-center justify-start gap-2 rounded-md border border-transparent pl-2.5 text-sm font-medium transition-all outline-none select-none",
+        "group hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full items-center justify-start gap-2 rounded-md border border-transparent pl-2.5 text-sm font-medium transition-all outline-none select-none focus-visible:ring-[3px]",
         isActive &&
           "bg-card/90 hover:bg-card text-card-foreground focus-within:bg-card focus:bg-card",
         !isFile &&
@@ -157,7 +157,7 @@ export default function Node({
               <Button
                 variant="ghost"
                 size="icon-xs"
-                className="pointer-events-none shrink-0 opacity-0 group-hover/file:pointer-events-auto group-hover/file:opacity-100"
+                className="pointer-events-none shrink-0 opacity-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 data-popup-open:pointer-events-auto data-popup-open:opacity-100"
               >
                 <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
               </Button>
