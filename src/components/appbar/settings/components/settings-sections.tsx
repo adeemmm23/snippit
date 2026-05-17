@@ -53,16 +53,21 @@ export default function SettingsSections() {
     };
   }, []);
 
+  // TODO: Change bottom padding to something morea accurate
   return (
     <main ref={ref} className="h-full flex-1">
       <ScrollArea className="size-full overflow-auto">
-        <div className="flex flex-col gap-10 pb-20" id="settings-sections">
+        <div className="flex flex-col gap-10 pb-120" id="settings-sections">
           <SettingSection title="Appearance">
             <ThemeSettingGroup />
           </SettingSection>
           <SettingSection title="Editor">
             <VariableSettingGroup />
             <MagicSettingGroup />
+          </SettingSection>
+          <SettingSection title="Shortcuts">
+            <TooltipsGroup />
+            <ShortcutsGroup />
           </SettingSection>
           <SettingSection title="Files">
             <p className="text-muted-foreground text-sm">
@@ -73,10 +78,6 @@ export default function SettingsSections() {
               <li>Auto-save settings</li>
               <li>Import/export snippets</li>
             </ul>
-          </SettingSection>
-          <SettingSection title="Shortcuts">
-            <TooltipsGroup />
-            <ShortcutsGroup />
           </SettingSection>
           <SettingSection title="Danger">
             <p className="text-muted-foreground text-sm">
