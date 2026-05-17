@@ -4,6 +4,7 @@ import {
   Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useEffect } from "react";
 
 import SettingGroup from "../ui/setting-group";
 
@@ -127,7 +128,7 @@ function HelperSettingInput({
         />
         {type === "password" && (
           <PasswordSettingContent
-            name={name}
+            name={"Password"}
             options={options}
             onChange={(updated) => onChange?.({ options: updated.options })}
           />
@@ -145,7 +146,7 @@ function PasswordSettingContent({
   options,
   onChange,
 }: {
-  name?: string;
+  name: string;
   options?: {
     length?: number;
     lowerCase?: boolean;
@@ -155,12 +156,24 @@ function PasswordSettingContent({
   };
   onChange?: (updated: { options: Helper["options"] }) => void;
 }) {
-  const lengthValue = options?.length ?? 6;
+  const defaultOptions = {
+    length: 12,
+    lowerCase: true,
+    upperCase: true,
+    numbers: true,
+    specials: false,
+  };
+
+  useEffect(() => {
+    if (!options) {
+      onChange?.({ options: defaultOptions });
+    }
+  }, [options, onChange]);
 
   return (
     <DialogContent forceRender className="bg-popover">
       <DialogHeader>
-        <DialogTitle>Configure {name || "magic input"}</DialogTitle>
+        <DialogTitle>Configure {name}</DialogTitle>
         <DialogDescription>
           Adjust the settings for this password generator helper.
         </DialogDescription>
@@ -169,10 +182,13 @@ function PasswordSettingContent({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium">Password length</label>
-            <span className="text-muted-foreground text-xs">{lengthValue}</span>
+            <span className="text-muted-foreground text-xs">
+              {options?.length ?? defaultOptions.length}
+            </span>
           </div>
           <Slider
-            value={[lengthValue]}
+            defaultValue={defaultOptions.length}
+            value={options?.length}
             min={1}
             max={64}
             step={1}
@@ -188,7 +204,8 @@ function PasswordSettingContent({
           <div className="flex items-center justify-between rounded-md border p-2">
             <label className="text-sm">Lowercase</label>
             <Switch
-              checked={options?.lowerCase == true}
+              defaultChecked={defaultOptions.lowerCase}
+              checked={options?.lowerCase}
               onCheckedChange={(checked) =>
                 onChange?.({
                   options: { ...options, lowerCase: checked },
@@ -199,7 +216,8 @@ function PasswordSettingContent({
           <div className="flex items-center justify-between rounded-md border p-2">
             <label className="text-sm">Uppercase</label>
             <Switch
-              checked={options?.upperCase == true}
+              defaultChecked={defaultOptions.upperCase}
+              checked={options?.upperCase}
               onCheckedChange={(checked) =>
                 onChange?.({
                   options: { ...options, upperCase: checked },
@@ -210,7 +228,8 @@ function PasswordSettingContent({
           <div className="flex items-center justify-between rounded-md border p-2">
             <label className="text-sm">Numbers</label>
             <Switch
-              checked={options?.numbers == true}
+              defaultChecked={defaultOptions.numbers}
+              checked={options?.numbers}
               onCheckedChange={(checked) =>
                 onChange?.({
                   options: { ...options, numbers: checked },
@@ -221,7 +240,8 @@ function PasswordSettingContent({
           <div className="flex items-center justify-between rounded-md border p-2">
             <label className="text-sm">Specials</label>
             <Switch
-              checked={options?.specials == true}
+              defaultChecked={defaultOptions.specials}
+              checked={options?.specials}
               onCheckedChange={(checked) =>
                 onChange?.({
                   options: { ...options, specials: checked },
