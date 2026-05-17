@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 
-import HelpersSettingGroup from "./groups/helpers";
-import ShortcutsGroup from "./groups/shortcuts";
-import ThemeSettingGroup from "./groups/theme";
-import VariableSettingGroup from "./groups/variable";
+import HelpersSettingGroup from "./groups/helpers-setting-group";
+import ShortcutsGroup from "./groups/shortcuts-setting-group";
+import ThemeSettingGroup from "./groups/theme-setting-group";
+import TooltipsGroup from "./groups/tooltips-setting-group";
+import VariableSettingGroup from "./groups/variable-setting-group";
 import SettingSection from "./ui/setting-section";
 import { useSections } from "../context/sections-context";
-import TooltipsGroup from "./groups/tooltips";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
