@@ -229,27 +229,7 @@ export const useFilesStore = create<FilesStore>()(
       },
     }),
     {
-      name: "files-storage",
+      name: "files",
     },
   ),
 );
-
-// const getFilesFromStorage = () => {
-//   const storedFiles = localStorage.getItem("files");
-//   if (storedFiles) {
-//     try {
-//       return JSON.parse(storedFiles);
-//     } catch (e) {
-//       console.error("Failed to parse stored files:", e);
-//     }
-//   }
-//   return [];
-// };
-
-// const saveFilesToStorage = (files: FileSystemItem[]) => {
-//   try {
-//     localStorage.setItem("files", JSON.stringify(files));
-//   } catch (e) {
-//     console.error("Failed to save files to storage:", e);
-//   }
-// };
