@@ -85,7 +85,7 @@ export default function ExportGroup() {
       <div className="flex items-center space-x-2">
         <Dialog open={exportOpen} onOpenChange={setExportOpen}>
           <DialogTrigger render={<Button variant="outline">Export</Button>} />
-          <DialogContent className="bg-popover">
+          <DialogContent forceOverlayRender className="bg-popover">
             <DialogHeader>
               <DialogTitle>Export snippets</DialogTitle>
               <DialogDescription>
@@ -121,7 +121,7 @@ export default function ExportGroup() {
           }}
         >
           <DialogTrigger render={<Button variant="outline">Import</Button>} />
-          <DialogContent className="bg-popover">
+          <DialogContent forceOverlayRender className="bg-popover">
             <DialogHeader>
               <DialogTitle>Import snippets</DialogTitle>
               <DialogDescription>

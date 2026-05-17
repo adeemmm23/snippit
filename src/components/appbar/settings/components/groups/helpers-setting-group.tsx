@@ -171,7 +171,7 @@ function PasswordSettingContent({
   }, [options, onChange]);
 
   return (
-    <DialogContent forceRender className="bg-popover">
+    <DialogContent forceOverlayRender className="bg-popover">
       <DialogHeader>
         <DialogTitle>Configure {name}</DialogTitle>
         <DialogDescription>
