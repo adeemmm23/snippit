@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
 
-import { createMagicInputsSlice } from "./slices/magic-inputs-slice";
+import { createHelpersSlice } from "./slices/helper-slice";
 import { createThemeSlice } from "./slices/theme-slice";
 import { createTooltipsSlice } from "./slices/tooltips-slice";
 import { createVariableSlice } from "./slices/variable-slice";
@@ -10,7 +10,7 @@ const settingsSlices = [
   createThemeSlice,
   createVariableSlice,
   createTooltipsSlice,
-  createMagicInputsSlice,
+  createHelpersSlice,
 ] as const;
 
 type UnionToIntersection<T> = (

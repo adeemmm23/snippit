@@ -33,7 +33,7 @@ export default function Variables() {
   const setVariable = useEditorStore((state) => state.setVariable);
   const resetVariables = useEditorStore((state) => state.resetVariables);
 
-  const magicInputs = useSettingsStore((state) => state.magicInputs);
+  const helpers = useSettingsStore((state) => state.helpers);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -137,18 +137,18 @@ export default function Variables() {
             {Object.keys(variables).map((varName) => {
               let InputAddon: React.ReactNode = null;
 
-              const magicInput = magicInputs.find((m) =>
+              const helper = helpers.find((m) =>
                 varName.toLowerCase().includes(m.name.toLowerCase()),
               );
 
-              switch (magicInput?.type) {
+              switch (helper?.type) {
                 case "password":
                   InputAddon = (
                     <PasswordAddon
                       onGenerate={(generatedPassword) => {
                         setVariable(varName, generatedPassword);
                       }}
-                      options={magicInput.options}
+                      options={helper.options}
                     />
                   );
                   break;

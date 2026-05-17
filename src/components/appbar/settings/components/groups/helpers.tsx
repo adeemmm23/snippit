@@ -27,57 +27,54 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import useSettingsStore from "@/stores/settings/settings-store";
-import type {
-  MagicInput as MagicInputType,
-  MagicType,
-} from "@/stores/settings/slices/magic-inputs-slice";
+import type { Helper, HelperType } from "@/stores/settings/slices/helper-slice";
 
-export default function MagicSettingGroup() {
-  const inputs = useSettingsStore((state) => state.magicInputs);
-  const addMagicInput = useSettingsStore((state) => state.addMagicInput);
-  const updateMagicInput = useSettingsStore((state) => state.updateMagicInput);
-  const removeMagicInput = useSettingsStore((state) => state.removeMagicInput);
+export default function HelpersSettingGroup() {
+  const helpers = useSettingsStore((state) => state.helpers);
+  const addHelper = useSettingsStore((state) => state.addHelper);
+  const updateHelper = useSettingsStore((state) => state.updateHelper);
+  const removeHelper = useSettingsStore((state) => state.removeHelper);
 
   return (
-    <SettingGroup title="Magic">
+    <SettingGroup title="Helpers">
       <p className="text-muted-foreground text-sm">
-        Define magic inputs that can be used in your snippets.
+        Define helpers that can ease input generation.
       </p>
-      {inputs.map((input, index) => (
-        <MagicInput
+      {helpers.map((input, index) => (
+        <HelperSettingInput
           key={index}
           name={input.name}
           type={input.type}
           options={input.options}
-          onChange={(updated) => updateMagicInput(index, updated)}
-          onDelete={() => removeMagicInput(index)}
+          onChange={(updated) => updateHelper(index, updated)}
+          onDelete={() => removeHelper(index)}
         />
       ))}
       <Button
         variant="default"
         className="mt-4 w-fit"
-        onClick={() => addMagicInput()}
+        onClick={() => addHelper()}
       >
         <HugeiconsIcon icon={Add01Icon} />
-        Add Magic Input
+        Add Helper
       </Button>
     </SettingGroup>
   );
 }
 
-type MagicInputProps = MagicInputType & {
-  onChange?: ({ name, type, options }: Partial<MagicInputType>) => void;
+type HelperSettingInput = Helper & {
+  onChange?: ({ name, type, options }: Partial<Helper>) => void;
   onDelete?: () => void;
 };
-function MagicInput({
+function HelperSettingInput({
   name,
   type,
   options,
   onChange,
   onDelete,
-}: MagicInputProps) {
+}: HelperSettingInput) {
   const items = [
-    { label: "Select magic input", value: null },
+    { label: "Select helper type", value: null },
     { label: "Date", value: "date" },
     { label: "Duration", value: "duration" },
     { label: "Password", value: "password" },
@@ -94,7 +91,7 @@ function MagicInput({
       <Select
         items={items}
         defaultValue={type}
-        onValueChange={(value) => onChange?.({ type: value as MagicType })}
+        onValueChange={(value) => onChange?.({ type: value as HelperType })}
         disabled={name == ""}
       >
         <SelectTrigger className="w-full max-w-48">

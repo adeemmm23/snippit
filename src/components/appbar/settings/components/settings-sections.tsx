@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import MagicSettingGroup from "./groups/magic";
+import HelpersSettingGroup from "./groups/helpers";
 import ShortcutsGroup from "./groups/shortcuts";
 import ThemeSettingGroup from "./groups/theme";
 import VariableSettingGroup from "./groups/variable";
@@ -63,7 +63,7 @@ export default function SettingsSections() {
           </SettingSection>
           <SettingSection title="Editor">
             <VariableSettingGroup />
-            <MagicSettingGroup />
+            <HelpersSettingGroup />
           </SettingSection>
           <SettingSection title="Shortcuts">
             <TooltipsGroup />
