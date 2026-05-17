@@ -7,6 +7,7 @@ import TooltipsGroup from "./groups/tooltips-setting-group";
 import VariableSettingGroup from "./groups/variable-setting-group";
 import SettingSection from "./ui/setting-section";
 import { useSections } from "../context/sections-context";
+import ExportGroup from "./groups/export-setting-group";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -70,14 +71,7 @@ export default function SettingsSections() {
             <ShortcutsGroup />
           </SettingSection>
           <SettingSection title="Files">
-            <p className="text-muted-foreground text-sm">
-              This section should be responsible for:
-            </p>
-            <ul className="text-muted-foreground list-inside list-disc text-sm">
-              <li>Default save location for snippets</li>
-              <li>Auto-save settings</li>
-              <li>Import/export snippets</li>
-            </ul>
+            <ExportGroup />
           </SettingSection>
           <SettingSection title="Danger">
             <p className="text-muted-foreground text-sm">

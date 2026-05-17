@@ -18,6 +18,7 @@ type FilesStore = {
   setCurrentWorkingFolder: (path: string[]) => void;
   files: FileSystemItem[];
   setFiles: (files: FileSystemItem[]) => void;
+  addFiles: (files: FileSystemItem[]) => void;
   saveActiveFile: () => boolean;
   createItem: (
     path: string[],
@@ -39,6 +40,11 @@ export const useFilesStore = create<FilesStore>()(
         set({ currentWorkingFolder }),
       files: [],
       setFiles: (files) => set({ files }),
+      addFiles: (newFiles) => {
+        const { files } = get();
+        const mergedFiles = [...files, ...newFiles];
+        set({ files: mergedFiles });
+      },
       saveActiveFile: () => {
         const { activeFilePath, files } = get();
         const template = useEditorStore.getState().template;
