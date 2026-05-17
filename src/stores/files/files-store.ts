@@ -17,6 +17,8 @@ type FilesStore = {
   currentWorkingFolder: string[];
   setCurrentWorkingFolder: (path: string[]) => void;
   files: FileSystemItem[];
+  latestOpenedFiles: string[][];
+  mostOpenedFiles: { path: string[]; count: number }[];
   setFiles: (files: FileSystemItem[]) => void;
   addFiles: (files: FileSystemItem[]) => void;
   saveActiveFile: () => boolean;
@@ -34,11 +36,47 @@ export const useFilesStore = create<FilesStore>()(
   persist(
     (set, get) => ({
       activeFilePath: [],
-      setActiveFilePath: (activeFilePath) => set({ activeFilePath }),
+      setActiveFilePath: (activeFilePath) => {
+        const { latestOpenedFiles, mostOpenedFiles } = get();
+        const newLatestOpenedFiles = [
+          activeFilePath,
+          ...latestOpenedFiles.filter(
+            (path) => JSON.stringify(path) !== JSON.stringify(activeFilePath),
+          ),
+        ].slice(0, 3);
+
+        const existingMostOpened = mostOpenedFiles.find(
+          (item) =>
+            JSON.stringify(item.path) === JSON.stringify(activeFilePath),
+        );
+
+        let newMostOpenedFiles;
+
+        if (existingMostOpened) {
+          newMostOpenedFiles = mostOpenedFiles.map((item) =>
+            JSON.stringify(item.path) === JSON.stringify(activeFilePath)
+              ? { ...item, count: item.count + 1 }
+              : item,
+          );
+        } else {
+          newMostOpenedFiles = [
+            ...mostOpenedFiles,
+            { path: activeFilePath, count: 1 },
+          ];
+        }
+
+        set({
+          activeFilePath,
+          latestOpenedFiles: newLatestOpenedFiles,
+          mostOpenedFiles: newMostOpenedFiles,
+        });
+      },
       currentWorkingFolder: [],
       setCurrentWorkingFolder: (currentWorkingFolder) =>
         set({ currentWorkingFolder }),
       files: [],
+      latestOpenedFiles: [],
+      mostOpenedFiles: [],
       setFiles: (files) => set({ files }),
       addFiles: (newFiles) => {
         const { files } = get();
