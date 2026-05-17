@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import useSettingsStore from "@/stores/settings/settings-store";
@@ -122,79 +123,113 @@ function HelperSettingInput({
             </Button>
           }
         />
-        <DialogContent forceRender className="bg-popover">
-          <DialogHeader>
-            <p className="text-lg font-semibold">
-              Configure {name || "magic input"}
-            </p>
-          </DialogHeader>
-          {type == "password" && (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <Slider
-                  value={[(options?.length as number) || 6]}
-                  min={1}
-                  max={64}
-                  step={1}
-                  onValueChange={(value) =>
-                    onChange?.({
-                      options: { ...options, length: value as number },
-                    })
-                  }
-                />
-                <label className="shrink-0 text-sm">Password Length</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={options?.lowerCase == true}
-                  onCheckedChange={(checked) =>
-                    onChange?.({
-                      options: { ...options, lowerCase: checked },
-                    })
-                  }
-                />
-                <label className="text-sm">LowerCase</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={options?.upperCase == true}
-                  onCheckedChange={(checked) =>
-                    onChange?.({
-                      options: { ...options, upperCase: checked },
-                    })
-                  }
-                />
-                <label className="text-sm">upperCase</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={options?.numbers == true}
-                  onCheckedChange={(checked) =>
-                    onChange?.({
-                      options: { ...options, numbers: checked },
-                    })
-                  }
-                />
-                <label className="text-sm">numbers</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={options?.specials == true}
-                  onCheckedChange={(checked) =>
-                    onChange?.({
-                      options: { ...options, specials: checked },
-                    })
-                  }
-                />
-                <label className="text-sm">Specials</label>
-              </div>
-            </div>
-          )}
-        </DialogContent>
+        {type === "password" && (
+          <PasswordSettingContent
+            name={name}
+            options={options}
+            onChange={(updated) => onChange?.({ options: updated.options })}
+          />
+        )}
       </Dialog>
       <Button variant="outline" size="icon" onClick={onDelete}>
         <HugeiconsIcon icon={Delete01Icon} />
       </Button>
     </div>
+  );
+}
+
+function PasswordSettingContent({
+  name,
+  options,
+  onChange,
+}: {
+  name?: string;
+  options?: {
+    length?: number;
+    lowerCase?: boolean;
+    upperCase?: boolean;
+    numbers?: boolean;
+    specials?: boolean;
+  };
+  onChange?: (updated: { options: Helper["options"] }) => void;
+}) {
+  // TODO: fix strucutre here
+  return (
+    <DialogContent forceRender className="bg-popover">
+      <DialogHeader>
+        <p className="text-lg font-semibold">
+          Configure {name || "magic input"}
+        </p>
+      </DialogHeader>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <Slider
+            value={[options?.length as number]}
+            min={1}
+            max={64}
+            step={1}
+            onValueChange={(value) =>
+              onChange?.({
+                options: { ...options, length: value as number },
+              })
+            }
+          />
+          <label className="shrink-0 text-sm">
+            Length{" "}
+            <span className="dark:text-primary text-primary-foreground font-mono">
+              {options?.length && options?.length.toString().length > 2
+                ? options?.length
+                : options?.length &&
+                  options?.length.toString().padStart(2, "0")}
+            </span>
+          </label>
+        </div>
+        <Separator className="my-2" />
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={options?.lowerCase == true}
+            onCheckedChange={(checked) =>
+              onChange?.({
+                options: { ...options, lowerCase: checked },
+              })
+            }
+          />
+          <label className="text-sm">Lowercase</label>
+        </div>
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={options?.upperCase == true}
+            onCheckedChange={(checked) =>
+              onChange?.({
+                options: { ...options, upperCase: checked },
+              })
+            }
+          />
+          <label className="text-sm">Uppercase</label>
+        </div>
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={options?.numbers == true}
+            onCheckedChange={(checked) =>
+              onChange?.({
+                options: { ...options, numbers: checked },
+              })
+            }
+          />
+          <label className="text-sm">Numbers</label>
+        </div>
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={options?.specials == true}
+            onCheckedChange={(checked) =>
+              onChange?.({
+                options: { ...options, specials: checked },
+              })
+            }
+          />
+          <label className="text-sm">Specials</label>
+        </div>
+      </div>
+    </DialogContent>
   );
 }
