@@ -11,7 +11,13 @@ importers:
       '@base-ui/react':
         specifier: ^1.1.0
         version: 1.4.1(@date-fns/tz@1.4.1)(@types/react@19.2.14)(date-fns@4.1.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@dnd-kit/abstract':
+        specifier: ^0.4.0
+        version: 0.4.0
       '@dnd-kit/dom':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@dnd-kit/geometry':
         specifier: ^0.4.0
         version: 0.4.0
       '@dnd-kit/react':
