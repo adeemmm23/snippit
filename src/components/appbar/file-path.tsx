@@ -1,3 +1,5 @@
+import type { FileSystemItem } from "../files/types";
+
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -15,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
 
 export default function FilePath() {
@@ -22,6 +25,9 @@ export default function FilePath() {
     (state) => state.setCurrentWorkingFolder,
   );
   const activeFilePath = useFilesStore((state) => state.activeFilePath);
+  const files = useFilesStore((state) => state.files);
+  const activeFile = getFileContent(activeFilePath, files);
+  const template = useEditorStore((state) => state.template);
 
   const { fileName, folderName, rest } = activeFilePath.reduce(
     (acc, segment, index) => {
@@ -119,6 +125,9 @@ export default function FilePath() {
               className="select-none"
             >
               {fileName}
+              {activeFile !== template && (
+                <span className="text-primary"> •</span>
+              )}
             </BreadcrumbPage>
           </BreadcrumbItem>
         }
@@ -126,3 +135,21 @@ export default function FilePath() {
     </Breadcrumb>
   );
 }
+
+// TODO: this is really bad, need to optimize this with a map or something
+const getFileContent = (path: string[], files: FileSystemItem[]) => {
+  let current = files;
+
+  for (const segment of path) {
+    const next = current.find((item) => item.name === segment);
+    if (!next) {
+      return null;
+    }
+    if (next.type === "file") {
+      return next.content;
+    }
+    current = next.files;
+  }
+
+  return null;
+};

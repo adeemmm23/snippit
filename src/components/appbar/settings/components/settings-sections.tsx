@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 
+import AboutSettingGroup from "./groups/about-setting-group";
 import HelpersSettingGroup from "./groups/helpers-setting-group";
 import ShortcutsGroup from "./groups/shortcuts-setting-group";
 import ThemeSettingGroup from "./groups/theme-setting-group";
@@ -8,6 +9,7 @@ import VariableSettingGroup from "./groups/variable-setting-group";
 import SettingSection from "./ui/setting-section";
 import { useSections } from "../context/sections-context";
 import ExportGroup from "./groups/export-setting-group";
+import ResetSettingGroup from "./groups/reset-setting-group";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -78,24 +80,10 @@ export default function SettingsSections() {
             <ExportGroup />
           </SettingSection>
           <SettingSection title="Danger">
-            <p className="text-muted-foreground text-sm">
-              This section should be responsible for:
-            </p>
-            <ul className="text-muted-foreground list-inside list-disc text-sm">
-              <li>Resetting the app to default settings</li>
-              <li>Clearing all snippets (with confirmation)</li>
-              <li>Uninstalling the app</li>
-            </ul>
+            <ResetSettingGroup />
           </SettingSection>
           <SettingSection title="About">
-            <p className="text-muted-foreground text-sm">
-              This section should be responsible for:
-            </p>
-            <ul className="text-muted-foreground list-inside list-disc text-sm">
-              <li>Displaying app version and build information</li>
-              <li>Providing links to documentation and support</li>
-              <li>Showing credits and acknowledgments</li>
-            </ul>
+            <AboutSettingGroup />
           </SettingSection>
         </div>
       </ScrollArea>

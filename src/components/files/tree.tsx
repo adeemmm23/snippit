@@ -1,3 +1,4 @@
+import { Modifier } from "@dnd-kit/abstract";
 import {
   Cursor,
   DragDropManager,
@@ -72,6 +73,7 @@ export default function Tree() {
       ...defaults,
       Cursor.configure({ cursor: "cursor" }),
     ],
+    modifiers: (defaults) => [...defaults, RelativePosition],
     sensors: (defaults) => [
       ...defaults,
       PointerSensor.configure({
@@ -141,7 +143,7 @@ export default function Tree() {
                 <p className="mt-2 text-xs">Try adding some files</p>
               </div>
             )}
-            <DragOverlay dropAnimation={null}>
+            <DragOverlay dropAnimation={null} className="size-fit!">
               {
                 // TODO: mx-auto is a temporary fix, need to find a better solution for this
                 (source) =>
@@ -159,4 +161,24 @@ export default function Tree() {
       </div>
     </DragDropProvider>
   );
+}
+
+class RelativePosition extends Modifier {
+  public apply(operation: DragDropManager["dragOperation"]) {
+    const { shape, position, transform } = operation;
+
+    const MARGIN = 15;
+
+    if (!shape) {
+      return transform;
+    }
+
+    const { x, y } = position.current;
+    const { center } = shape.initial;
+
+    return {
+      x: x - center.x + MARGIN,
+      y: y - center.y + MARGIN,
+    };
+  }
 }
