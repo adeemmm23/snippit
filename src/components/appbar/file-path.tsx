@@ -25,9 +25,6 @@ export default function FilePath() {
     (state) => state.setCurrentWorkingFolder,
   );
   const activeFilePath = useFilesStore((state) => state.activeFilePath);
-  const files = useFilesStore((state) => state.files);
-  const activeFile = getFileContent(activeFilePath, files);
-  const template = useEditorStore((state) => state.template);
 
   const { fileName, folderName, rest } = activeFilePath.reduce(
     (acc, segment, index) => {
@@ -125,15 +122,23 @@ export default function FilePath() {
               className="select-none"
             >
               {fileName}
-              {activeFile !== template && (
-                <span className="text-primary"> •</span>
-              )}
+              <SaveIndicator />
             </BreadcrumbPage>
           </BreadcrumbItem>
         }
       </BreadcrumbList>
     </Breadcrumb>
   );
+}
+
+function SaveIndicator() {
+  const activeFilePath = useFilesStore((state) => state.activeFilePath);
+  const files = useFilesStore((state) => state.files);
+  const activeFile = getFileContent(activeFilePath, files);
+  const template = useEditorStore((state) => state.template);
+  if (activeFile !== template) {
+    return <span className="text-primary"> •</span>;
+  }
 }
 
 // TODO: this is really bad, need to optimize this with a map or something
