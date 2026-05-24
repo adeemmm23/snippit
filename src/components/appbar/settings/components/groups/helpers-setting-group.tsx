@@ -78,7 +78,6 @@ function HelperSettingInput({
   onDelete,
 }: HelperSettingInput) {
   const items = [
-    { label: "Select helper type", value: null },
     { label: "Date", value: "date" },
     { label: "Duration", value: "duration" },
     { label: "Password", value: "password" },
@@ -94,12 +93,12 @@ function HelperSettingInput({
       />
       <Select
         items={items}
-        defaultValue={type}
+        value={type}
         onValueChange={(value) => onChange?.({ type: value as HelperType })}
         disabled={name == ""}
       >
         <SelectTrigger className="w-full max-w-48">
-          <SelectValue />
+          <SelectValue placeholder="Select helper type" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
