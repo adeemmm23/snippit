@@ -14,7 +14,7 @@ type PasswordAddonProps = {
   };
 };
 
-export default function PasswordAddon({
+export default function PasswordHelper({
   onGenerate,
   options,
 }: PasswordAddonProps) {

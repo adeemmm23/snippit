@@ -1,22 +1,20 @@
-import { Clock01Icon } from "@hugeicons/core-free-icons";
+import { Calendar01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
-import type { DateRange } from "react-day-picker";
 
 import { Calendar } from "@/components/ui/calendar";
 import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group";
 import { PopoverContent } from "@/components/ui/popover";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 
-type DurationAddonProps = {
-  onSelect: (formatedDuration: string) => void;
+type DateAddonProps = {
+  onSelect: (formatedDate: string) => void;
 };
 
-export default function DurationAddon({ onSelect }: DurationAddonProps) {
+export default function DateHelper({ onSelect }: DateAddonProps) {
   const [open, setOpen] = useState(false);
-  const [range, setRange] = useState<DateRange | undefined>();
-  const [month, setMonth] = useState(new Date());
-
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [month, setMonth] = useState<Date | undefined>(date);
   return (
     <InputGroupAddon align="inline-end">
       <Popover open={open} onOpenChange={setOpen}>
@@ -28,7 +26,7 @@ export default function DurationAddon({ onSelect }: DurationAddonProps) {
               size="icon-xs"
               aria-label="Select date"
             >
-              <HugeiconsIcon icon={Clock01Icon} className="size-4" />
+              <HugeiconsIcon icon={Calendar01Icon} className="size-4" />
               <span className="sr-only">Select date</span>
             </InputGroupButton>
           }
@@ -40,13 +38,14 @@ export default function DurationAddon({ onSelect }: DurationAddonProps) {
           sideOffset={10}
         >
           <Calendar
-            mode="range"
+            mode="single"
+            selected={date}
             month={month}
-            onMonthChange={(month) => setMonth(month)}
-            selected={range}
-            onSelect={(range) => {
-              setRange(range);
-              onSelect(formatDuration(range));
+            onMonthChange={setMonth}
+            onSelect={(date) => {
+              setDate(date);
+              onSelect(formatDate(date));
+              setOpen(false);
             }}
           />
         </PopoverContent>
@@ -55,15 +54,14 @@ export default function DurationAddon({ onSelect }: DurationAddonProps) {
   );
 }
 
-function formatDuration(dateRange: DateRange | undefined) {
-  if (!dateRange || !dateRange.from || !dateRange.to) {
+function formatDate(date: Date | undefined) {
+  if (!date) {
     return "";
   }
-  // Calculate the difference in days between the two dates
-  const from = dateRange.from;
-  const to = dateRange.to;
-  const diffTime = Math.abs(to.getTime() - from.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  return `${diffDays} day${diffDays == 1 ? "" : "s"}`;
+  return date.toLocaleDateString("en-US", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 }

@@ -6,9 +6,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect } from "react";
 
-import DateAddon from "./date-addon";
-import DurationAddon from "./duration-addon";
-import PasswordAddon from "./password-addon";
+import Helper from "./components/helper";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,14 +24,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useEditorStore } from "@/stores/editor/editor-store";
-import useSettingsStore from "@/stores/settings/settings-store";
 
 export default function Variables() {
   const variables = useEditorStore((state) => state.variables);
   const setVariable = useEditorStore((state) => state.setVariable);
   const resetVariables = useEditorStore((state) => state.resetVariables);
-
-  const helpers = useSettingsStore((state) => state.helpers);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -120,7 +115,6 @@ export default function Variables() {
           </>
         )}
       </div>
-
       {Object.keys(variables).length === 0 ? (
         <div className="text-muted-foreground my-auto py-8 text-center">
           <div className="bg-muted mb-4 inline-flex items-center justify-center rounded-sm p-2">
@@ -136,46 +130,6 @@ export default function Variables() {
         <ScrollArea className="grow overflow-auto">
           <div className="flex h-full flex-col gap-4 px-2 py-1">
             {Object.keys(variables).map((varName) => {
-              let InputAddon: React.ReactNode = null;
-
-              const helper = helpers.find((m) =>
-                varName.toLowerCase().includes(m.name.toLowerCase()),
-              );
-
-              switch (helper?.type) {
-                case "password":
-                  InputAddon = (
-                    <PasswordAddon
-                      onGenerate={(generatedPassword) => {
-                        setVariable(varName, generatedPassword);
-                      }}
-                      options={helper.options}
-                    />
-                  );
-                  break;
-                case "date":
-                  InputAddon = (
-                    <DateAddon
-                      onSelect={(formatedDate) => {
-                        setVariable(varName, formatedDate);
-                      }}
-                      // options={magicType.settings}
-                    />
-                  );
-                  break;
-                case "duration":
-                  InputAddon = (
-                    <DurationAddon
-                      onSelect={(formatedDuration) => {
-                        setVariable(varName, formatedDuration);
-                      }}
-                      // options={magicType.settings}
-                    />
-                  );
-                  break;
-                default:
-                  InputAddon = null;
-              }
               return (
                 <div key={varName} className="flex w-full flex-col gap-1">
                   <Label
@@ -221,7 +175,10 @@ export default function Variables() {
                         </InputGroupButton>
                       </InputGroupAddon>
                     )}
-                    {InputAddon}
+                    <Helper
+                      name={varName}
+                      onChange={(value) => setVariable(varName, value)}
+                    />
                   </InputGroup>
                 </div>
               );
