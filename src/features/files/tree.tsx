@@ -11,12 +11,11 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 import FolderHeader from "./folder-header";
 import Node from "./node";
-import type { FileSystemItem } from "./types";
-import { isFile, isFolder } from "./types";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
+import { isFile, isFolder } from "@/types/file-system-type";
 
 export default function Tree() {
   const setTemplate = useEditorStore((state) => state.setTemplate);

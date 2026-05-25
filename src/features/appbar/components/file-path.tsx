@@ -1,5 +1,3 @@
-import type { FileSystemItem } from "../../files/types";
-
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -19,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
+import type { FileSystemItem } from "@/types/file-system-type";
 
 export default function FilePath() {
   const setCurrentWorkingFolder = useFilesStore(

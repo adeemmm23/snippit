@@ -2,9 +2,6 @@ import { Search01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useState } from "react";
 
-import type { FileSystemItem } from "./types";
-import { isFile, isFolder } from "./types";
-
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -18,6 +15,11 @@ import {
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
+import {
+  isFile,
+  isFolder,
+  type FileSystemItem,
+} from "@/types/file-system-type";
 
 export default function SearchBar() {
   const [open, setOpen] = useState<boolean>(false);
