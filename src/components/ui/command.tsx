@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 function Command({
   className,

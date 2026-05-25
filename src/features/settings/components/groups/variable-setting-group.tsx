@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { VARIABLE_FORMATS } from "@/lib/const";
+import { VARIABLE_FORMATS } from "@/constants/files.constants";
 import useSettingsStore from "@/stores/settings/settings-store";
 
 export default function VariableSettingGroup() {

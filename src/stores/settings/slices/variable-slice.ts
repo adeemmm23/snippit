@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 
-import { VARIABLE_FORMATS } from "@/lib/const";
+import { VARIABLE_FORMATS } from "@/constants/files.constants";
 
 export type VariableSlice = {
   variableFormat: string;

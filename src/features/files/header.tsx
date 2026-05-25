@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IT_SUPPORT_SNIPPETS } from "@/lib/test";
+import { IT_SUPPORT_SNIPPETS } from "@/constants/test.constants";
 import { useFilesStore } from "@/stores/files/files-store";
 
 export default function Header() {

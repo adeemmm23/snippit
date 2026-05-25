@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 import useSettingsStore from "../settings/settings-store";
 
-import { VARIABLE_FORMATS } from "@/lib/const";
+import { VARIABLE_FORMATS } from "@/constants/files.constants";
 
 export type TemplatePart = {
   text: string;

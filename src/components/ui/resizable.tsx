@@ -2,7 +2,7 @@ import * as ResizablePrimitive from "react-resizable-panels";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 function ResizablePanelGroup({
   className,
