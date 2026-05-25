@@ -20,32 +20,36 @@ import { useFilesStore } from "@/stores/files/files-store";
 import type { FileSystemItem } from "@/types/file-system-type";
 
 export default function FilePath() {
+  const activeFilePath = useFilesStore((state) => state.activeFilePath);
+
   const setCurrentWorkingFolder = useFilesStore(
     (state) => state.setCurrentWorkingFolder,
   );
-  const activeFilePath = useFilesStore((state) => state.activeFilePath);
 
-  const { fileName, folderName, rest } = activeFilePath.reduce(
+  const { file, parenFolder, rest } = activeFilePath.reduce(
     (acc, segment, index) => {
       if (index === activeFilePath.length - 1) {
-        acc.fileName = segment;
+        acc.file = segment;
       } else if (index === activeFilePath.length - 2) {
-        acc.folderName = segment;
+        acc.parenFolder = segment;
       } else {
         acc.rest.push(segment);
       }
       return acc;
     },
-    { fileName: "", folderName: "", rest: [] as string[] },
+    {
+      file: null as string | null,
+      parenFolder: null as string | null,
+      rest: [] as string[],
+    },
   );
 
-  // TODO: better way for this
-  if (!fileName) {
+  if (!file) {
     return (
       <Breadcrumb className="flex h-9 items-center px-2">
         <BreadcrumbList>
           <BreadcrumbItem className="select-none">
-            <BreadcrumbLink>No file opened</BreadcrumbLink>
+            <BreadcrumbLink>No file is opened</BreadcrumbLink>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -62,7 +66,7 @@ export default function FilePath() {
             Root
           </BreadcrumbLink>
         </BreadcrumbItem>
-        {rest.length != 0 && (
+        {rest.length > 0 && (
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -96,7 +100,7 @@ export default function FilePath() {
             </BreadcrumbItem>
           </>
         )}
-        {folderName != "" && (
+        {parenFolder && (
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -106,13 +110,13 @@ export default function FilePath() {
                 }
                 className="select-none"
               >
-                {folderName}
+                {parenFolder}
               </BreadcrumbLink>
             </BreadcrumbItem>
           </>
         )}
         <BreadcrumbSeparator />
-        {
+        {file && (
           <BreadcrumbItem>
             <BreadcrumbPage
               onClick={() =>
@@ -120,11 +124,11 @@ export default function FilePath() {
               }
               className="select-none"
             >
-              {fileName}
+              {file}
               <SaveIndicator />
             </BreadcrumbPage>
           </BreadcrumbItem>
-        }
+        )}
       </BreadcrumbList>
     </Breadcrumb>
   );
@@ -133,6 +137,7 @@ export default function FilePath() {
 function SaveIndicator() {
   const activeFilePath = useFilesStore((state) => state.activeFilePath);
   const files = useFilesStore((state) => state.files);
+
   const activeFile = getFileContent(activeFilePath, files);
   const template = useEditorStore((state) => state.template);
   if (activeFile !== template) {
