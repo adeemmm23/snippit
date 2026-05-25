@@ -4,12 +4,13 @@ import { persist } from "zustand/middleware";
 import { findItemByPath, getAvailableName, getParentFolder } from "./utils";
 import { useEditorStore } from "../editor/editor-store";
 
+// TODO: Refactor into global import
 import {
   isFile,
   isFolder,
   type FileSystemItem,
   type FolderItem,
-} from "@/components/files/types";
+} from "@/features/files/types";
 
 type FilesStore = {
   activeFilePath: string[];

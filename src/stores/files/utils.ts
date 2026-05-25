@@ -1,4 +1,5 @@
-import { isFolder, type FileSystemItem } from "@/components/files/types";
+// TODO: Refactor into global import
+import { isFolder, type FileSystemItem } from "@/features/files/types";
 
 // TODO: refactor all of  these functions
 export const getParentFolder = (
