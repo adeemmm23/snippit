@@ -25,7 +25,6 @@ export const useEditorStore = create<EditorStore>()(
     (set, get) => ({
       variables: {},
       setVariable: (name, value) => {
-        console.log("Setting variable", name, "to", value);
         set((state) => ({
           variables: {
             ...state.variables,

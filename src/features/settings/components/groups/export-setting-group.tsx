@@ -71,7 +71,7 @@ export default function ExportGroup() {
         setImportOpen(false);
         setImportFile(null);
       } catch (error) {
-        console.error("Failed to import snippets:", error);
+        return error;
       }
     };
     reader.readAsText(importFile);
