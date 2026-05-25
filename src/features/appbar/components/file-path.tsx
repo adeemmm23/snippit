@@ -1,4 +1,4 @@
-import type { FileSystemItem } from "../files/types";
+import type { FileSystemItem } from "../../files/types";
 
 import {
   Breadcrumb,
