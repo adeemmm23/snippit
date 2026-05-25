@@ -12,24 +12,24 @@ import Settings from "@/features/settings";
 
 export default function SaveButton() {
   return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <Dialog>
-            <DialogTrigger
+    <Dialog>
+      <Tooltip>
+        <DialogTrigger
+          render={
+            <TooltipTrigger
               render={
                 <Button variant="ghost" size="icon">
                   <HugeiconsIcon icon={Settings01Icon} className="size-4" />
                 </Button>
               }
             />
-            <Settings />
-          </Dialog>
-        }
-      />
-      <TooltipContent side="bottom">
-        <p>Settings</p>
-      </TooltipContent>
-    </Tooltip>
+          }
+        />
+        <Settings />
+        <TooltipContent side="bottom">
+          <p>Settings</p>
+        </TooltipContent>
+      </Tooltip>
+    </Dialog>
   );
 }
