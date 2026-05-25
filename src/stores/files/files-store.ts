@@ -46,6 +46,11 @@ export const useFilesStore = create<FilesStore>()(
           ),
         ];
 
+        // TODO: extract into sperate methode
+        // TODO: stop using JSON.stringify for path comparison
+        // TODO: implement decaying score for most opened files
+        const now = Date.now();
+
         const existingMostOpened = mostOpenedFiles.find(
           (item) =>
             JSON.stringify(item.path) === JSON.stringify(activeFilePath),
@@ -56,13 +61,21 @@ export const useFilesStore = create<FilesStore>()(
         if (existingMostOpened) {
           newMostOpenedFiles = mostOpenedFiles.map((item) =>
             JSON.stringify(item.path) === JSON.stringify(activeFilePath)
-              ? { ...item, count: item.count + 1 }
+              ? {
+                  ...item,
+                  count: item.count + 1,
+                  lastOpenedAt: now,
+                }
               : item,
           );
         } else {
           newMostOpenedFiles = [
             ...mostOpenedFiles,
-            { path: activeFilePath, count: 1 },
+            {
+              path: activeFilePath,
+              count: 1,
+              lastOpenedAt: now,
+            },
           ];
         }
 
