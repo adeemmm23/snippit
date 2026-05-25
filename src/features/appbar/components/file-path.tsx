@@ -84,6 +84,8 @@ export default function FilePath() {
                     {rest.map((segment, index) => (
                       <DropdownMenuItem key={index}>
                         <BreadcrumbLink
+                          title={segment}
+                          className="truncate"
                           onClick={() =>
                             setCurrentWorkingFolder(
                               activeFilePath.slice(0, index - rest.length - 1),
