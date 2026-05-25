@@ -8,7 +8,6 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 import FilePath from "./file-path";
-import Settings from "./settings";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -19,6 +18,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Settings from "@/features/settings";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
 
