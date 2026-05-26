@@ -15,7 +15,11 @@ import Node from "./node";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
-import { isFile, isFolder } from "@/types/file-system-type";
+import {
+  isFile,
+  isFolder,
+  type FileSystemItem,
+} from "@/types/file-system-type";
 
 export default function Tree() {
   const setTemplate = useEditorStore((state) => state.setTemplate);
