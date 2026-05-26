@@ -165,7 +165,7 @@ export const IT_SUPPORT_SNIPPETS = [
                 type: "file",
                 name: "Setup Instructions",
                 content:
-                  "Hello {User},\n\nHere are the setup instructions for your docking station:\n1. [Step 1]\n2. [Step 2]\n3. [Step 3]\n\nRegards,\n{Agent}",
+                  "Hello {User},\n\nHere are the setup instructions for your docking station:\n1. {Step 1}\n2. {Step 2}\n3. {Step 3}\n\nRegards,\n{Agent}",
               },
               {
                 type: "file",
