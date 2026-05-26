@@ -12,9 +12,9 @@ import {
 export default function Editor() {
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
     id: "editor-layout",
-
     storage: localStorage,
   });
+
   return (
     <ResizablePanelGroup
       defaultLayout={defaultLayout}

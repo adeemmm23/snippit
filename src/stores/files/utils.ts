@@ -1,15 +1,15 @@
 // TODO: Refactor into global import
 
-import { isFolder, type FileSystemItem } from "@/types/file-system-type";
+import { isFolder, type NodeType } from "@/types/node.types";
 
 // TODO: refactor all of  these functions
 export const getParentFolder = (
-  items: FileSystemItem[],
+  items: NodeType[],
   path: string[],
-): FileSystemItem[] | null => {
+): NodeType[] | null => {
   if (path.length === 0) return items;
 
-  let current: FileSystemItem[] = items;
+  let current: NodeType[] = items;
 
   for (let i = 0; i < path.length; i++) {
     const segment = path[i];
@@ -26,12 +26,12 @@ export const getParentFolder = (
 };
 
 export const findItemByPath = (
-  items: FileSystemItem[],
+  items: NodeType[],
   path: string[],
-): FileSystemItem | null => {
+): NodeType | null => {
   if (path.length === 0) return null;
 
-  let current: FileSystemItem[] = items;
+  let current: NodeType[] = items;
 
   for (let i = 0; i < path.length - 1; i++) {
     const segment = path[i];
@@ -49,7 +49,7 @@ export const findItemByPath = (
 };
 
 export const getAvailableName = (
-  items: FileSystemItem[],
+  items: NodeType[],
   baseName: string,
 ): string => {
   if (!items.find((item) => item.name === baseName)) {

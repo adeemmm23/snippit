@@ -15,11 +15,7 @@ import {
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
-import {
-  isFile,
-  isFolder,
-  type FileSystemItem,
-} from "@/types/file-system-type";
+import { isFile, isFolder, type NodeType } from "@/types/node.types";
 
 export default function SearchBar() {
   const [open, setOpen] = useState<boolean>(false);
@@ -158,7 +154,7 @@ function FileItem({ file, onSelectEnd }: FileItemProps) {
 
 // TODO: content shouldn't be shipped from here
 const flattenFiles = (
-  items: FileSystemItem[],
+  items: NodeType[],
   prefix: string,
 ): { filename: string; path: string; content: string }[] => {
   const result: { filename: string; path: string; content: string }[] = [];

@@ -7,9 +7,9 @@ import { useEditorStore } from "../editor/editor-store";
 import {
   isFile,
   isFolder,
-  type FileSystemItem,
-  type FolderItem,
-} from "@/types/file-system-type";
+  type NodeType,
+  type FolderType,
+} from "@/types/node.types";
 
 // TODO: Refactor into global import
 
@@ -18,11 +18,11 @@ type FilesStore = {
   setActiveFilePath: (path: string[]) => void;
   currentWorkingFolder: string[];
   setCurrentWorkingFolder: (path: string[]) => void;
-  files: FileSystemItem[];
+  files: NodeType[];
   latestOpenedFiles: string[][];
   mostOpenedFiles: { path: string[]; count: number }[];
-  setFiles: (files: FileSystemItem[]) => void;
-  addFiles: (files: FileSystemItem[]) => void;
+  setFiles: (files: NodeType[]) => void;
+  addFiles: (files: NodeType[]) => void;
   saveActiveFile: () => boolean;
   createItem: (
     path: string[],
@@ -122,14 +122,14 @@ export const useFilesStore = create<FilesStore>()(
         const parentPath = path.slice(0, -1);
         const itemName = path[path.length - 1];
 
-        let parentItems: FileSystemItem[];
+        let parentItems: NodeType[];
 
         if (parentPath.length === 0) {
           parentItems = newFiles;
         } else {
           const parentFolder = findItemByPath(newFiles, parentPath);
           if (!parentFolder || !isFolder(parentFolder)) {
-            let current: FileSystemItem[] = newFiles;
+            let current: NodeType[] = newFiles;
             for (const segment of parentPath) {
               let folder = current.find(
                 (item) => item.name === segment && isFolder(item),
@@ -138,7 +138,7 @@ export const useFilesStore = create<FilesStore>()(
                 folder = { type: "folder", name: segment, files: [] };
                 current.push(folder);
               }
-              current = (folder as FolderItem).files;
+              current = (folder as FolderType).files;
             }
             parentItems = current;
           } else {
@@ -147,7 +147,7 @@ export const useFilesStore = create<FilesStore>()(
         }
 
         const finalName = getAvailableName(parentItems, itemName);
-        let newItem: FileSystemItem;
+        let newItem: NodeType;
 
         if (type === "file") {
           newItem = {
@@ -184,7 +184,7 @@ export const useFilesStore = create<FilesStore>()(
 
         const itemName = path[path.length - 1];
         const itemIndex = parentItems.findIndex(
-          (item: FileSystemItem) => item.name === itemName,
+          (item: NodeType) => item.name === itemName,
         );
 
         if (itemIndex === -1) {
@@ -215,7 +215,7 @@ export const useFilesStore = create<FilesStore>()(
         }
 
         const itemIndex = parentItems.findIndex(
-          (i: FileSystemItem) => i.name === oldPath[oldPath.length - 1],
+          (i: NodeType) => i.name === oldPath[oldPath.length - 1],
         );
         if (itemIndex === -1) {
           return;
@@ -223,7 +223,7 @@ export const useFilesStore = create<FilesStore>()(
 
         const newName = newPath[newPath.length - 1];
         const finalName = getAvailableName(
-          parentItems.filter((_: FileSystemItem, i: number) => i !== itemIndex),
+          parentItems.filter((_: NodeType, i: number) => i !== itemIndex),
           newName,
         );
 
@@ -251,7 +251,7 @@ export const useFilesStore = create<FilesStore>()(
         }
 
         const itemIndex = oldParentItems.findIndex(
-          (i: FileSystemItem) => i.name === oldPath[oldPath.length - 1],
+          (i: NodeType) => i.name === oldPath[oldPath.length - 1],
         );
         if (itemIndex === -1) {
           return;

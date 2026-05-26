@@ -15,11 +15,7 @@ import Node from "./node";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
-import {
-  isFile,
-  isFolder,
-  type FileSystemItem,
-} from "@/types/file-system-type";
+import { isFile, isFolder, type NodeType } from "@/types/node.types";
 
 export default function Tree() {
   const setTemplate = useEditorStore((state) => state.setTemplate);
@@ -45,7 +41,7 @@ export default function Tree() {
   const moveItem = useFilesStore((state) => state.moveItem);
 
   // Navigate to the current working folder
-  const getCurrentFolderItems = (): FileSystemItem[] => {
+  const getCurrentFolderItems = (): NodeType[] => {
     let current = data;
 
     for (const folderName of currentWorkingFolder) {

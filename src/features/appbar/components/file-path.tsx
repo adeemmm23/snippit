@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
-import type { FileSystemItem } from "@/types/file-system-type";
+import type { NodeType } from "@/types/node.types";
 
 export default function FilePath() {
   const activeFilePath = useFilesStore((state) => state.activeFilePath);
@@ -148,7 +148,7 @@ function SaveIndicator() {
 }
 
 // TODO: this is really bad, need to optimize this with a map or something
-const getFileContent = (path: string[], files: FileSystemItem[]) => {
+const getFileContent = (path: string[], files: NodeType[]) => {
   let current = files;
 
   for (const segment of path) {
