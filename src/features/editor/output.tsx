@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useEditorStore } from "@/stores/editor/editor-store";
+import { cn } from "@/utils/cn";
 
 export function Output() {
   const parts = useEditorStore((state) => state.parts);
@@ -79,11 +80,10 @@ export function Output() {
           {parts.map((part, index) => (
             <span
               key={index}
-              className={
-                part.type == "variable"
-                  ? "dark:text-primary text-primary-foreground"
-                  : ""
-              }
+              className={cn(
+                part.type == "variable" &&
+                  "dark:text-primary text-primary-foreground",
+              )}
             >
               {part.text}
             </span>

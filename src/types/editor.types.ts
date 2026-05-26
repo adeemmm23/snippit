@@ -1,12 +1,4 @@
-type Text = {
-  type: "text";
+export type Part = {
+  type: "variable" | "text";
   text: string;
 };
-
-type Variable = {
-  type: "variable";
-  text: string;
-  variableName: string;
-};
-
-export type Part = Text | Variable;
