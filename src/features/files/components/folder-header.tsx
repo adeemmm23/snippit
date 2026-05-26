@@ -8,8 +8,8 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
-import { cn } from "@/utils/cn";
 import { useFilesStore } from "@/stores/files/files-store";
+import { cn } from "@/utils/cn";
 
 export default function FolderHeader() {
   const currentWorkingFolder = useFilesStore(

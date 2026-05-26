@@ -17,8 +17,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/utils/cn";
 import { useFilesStore } from "@/stores/files/files-store";
+import { cn } from "@/utils/cn";
 
 type NodeProps = {
   name: string;

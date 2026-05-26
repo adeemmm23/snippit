@@ -3,6 +3,7 @@ import {
   FolderAddIcon,
   MoreVerticalIcon,
   Refresh01Icon,
+  PackageAdd01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -27,6 +28,7 @@ export default function Header() {
   );
 
   return (
+    // TODO: implement collection
     <div className="flex px-2">
       <div className="flex h-9 min-w-0 flex-1 items-center gap-1 px-2 select-none">
         <span className="overflow-hidden font-medium text-ellipsis whitespace-nowrap">
@@ -77,7 +79,7 @@ export default function Header() {
                 setFiles(newFiles);
               }}
             >
-              <HugeiconsIcon icon={FolderAddIcon} className="size-4" />
+              <HugeiconsIcon icon={PackageAdd01Icon} className="size-4" />
               Dummy
             </DropdownMenuItem>
           </DropdownMenuGroup>

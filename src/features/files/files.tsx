@@ -1,6 +1,6 @@
-import Header from "./header";
-import SearchBar from "./search-bar";
-import Tree from "./tree";
+import Header from "./components/header";
+import SearchBar from "./components/search-bar";
+import Tree from "./components/tree";
 
 export default function Files() {
   return (
