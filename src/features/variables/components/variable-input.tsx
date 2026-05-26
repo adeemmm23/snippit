@@ -17,12 +17,14 @@ type VariableInputProps = {
   name: string;
   index: number;
   value?: string;
+  totalVariables: number;
 };
 
 export default function VariableInput({
   name,
   index,
   value,
+  totalVariables,
 }: VariableInputProps) {
   const setVariable = useEditorStore((state) => state.setVariable);
   const ref = useRef<HTMLInputElement>(null);
@@ -54,14 +56,25 @@ export default function VariableInput({
           ref={ref}
           value={value}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            // TODO: think of a way to use Ref instead
+            if (e.key === "Enter" || e.key === "ArrowDown") {
               e.preventDefault();
-              // TODO: fix this
               const nextInput = document.getElementById(
-                "var" + (index + 1),
+                "var" + ((index + 1) % totalVariables),
               ) as HTMLInputElement;
+
               if (nextInput) {
                 nextInput.focus();
+              }
+            }
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              const prevInput = document.getElementById(
+                "var" + ((index - 1 + totalVariables) % totalVariables),
+              ) as HTMLInputElement;
+
+              if (prevInput) {
+                prevInput.focus();
               }
             }
           }}

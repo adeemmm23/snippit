@@ -28,6 +28,7 @@ export default function Variables() {
                     index={index}
                     name={name}
                     value={variables[name]}
+                    totalVariables={Object.keys(variables).length}
                   />
                 );
               })}
