@@ -2,7 +2,6 @@ import { Delete01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useRef } from "react";
 
-import variables from "../variables";
 import Helper from "./helper";
 
 import {
@@ -29,7 +28,7 @@ export default function VariableInput({
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (index != 0) {
+    if (index > 0) {
       return;
     }
 
@@ -51,18 +50,15 @@ export default function VariableInput({
       </Label>
       <InputGroup>
         <InputGroupInput
-          id={name}
+          id={"var" + index}
+          ref={ref}
           value={value}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
               // TODO: fix this
-              const varKeys = Object.keys(variables);
-              const currentIndex = varKeys.indexOf(name);
-              const nextIndex = (currentIndex + 1) % varKeys.length;
-              const nextVarName = varKeys[nextIndex];
               const nextInput = document.getElementById(
-                nextVarName,
+                "var" + (index + 1),
               ) as HTMLInputElement;
               if (nextInput) {
                 nextInput.focus();

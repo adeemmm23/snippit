@@ -11,10 +11,12 @@ import { useEditorStore } from "@/stores/editor/editor-store";
 export default function Variables() {
   const variables = useEditorStore((state) => state.variables);
 
+  const isVariables = Object.keys(variables).length <= 0;
+
   // TODO: fix layout here
   return (
     <div className="border-border flex h-full min-w-48 grow flex-col gap-2 rounded-md rounded-r-none border border-r-0 py-2">
-      {Object.keys(variables).length > 0 ? (
+      {!isVariables ? (
         <>
           <VariablesHeader />
           <ScrollArea className="grow overflow-auto">
@@ -38,7 +40,7 @@ export default function Variables() {
             <HugeiconsIcon icon={Delete01Icon} className="size-5" />
           </div>
           <p className="text-sm">No variables detected</p>
-          <p className="mt-2 text-xs">Add [Something] to your template</p>
+          <p className="mt-2 text-xs">{"Add {Something} to your template"}</p>
           <Button variant="ghost" size="xs" className="mt-4">
             Learn More
           </Button>
