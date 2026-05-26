@@ -44,6 +44,7 @@ export const useEditorStore = create<EditorStore>()(
           return { variables: newVariables };
         });
 
+        // Same as above
         get().setTemplate(get().template);
       },
       setTemplate: (template) => {
