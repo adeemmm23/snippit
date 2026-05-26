@@ -7,8 +7,7 @@ export type ThemeSlice = {
   setTheme: (theme: Theme) => void;
 };
 
-// TODO: fix theme state
 export const createThemeSlice: StateCreator<ThemeSlice> = (set) => ({
-  theme: "light",
+  theme: "system",
   setTheme: (theme) => set({ theme }),
 });
