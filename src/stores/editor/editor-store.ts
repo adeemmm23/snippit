@@ -4,12 +4,7 @@ import { persist } from "zustand/middleware";
 import useSettingsStore from "../settings/settings-store";
 
 import { VARIABLE_FORMATS } from "@/constants/files.constants";
-
-export type TemplatePart = {
-  text: string;
-  isVariable: boolean;
-  variableName?: string;
-};
+import type { Part } from "@/types/editor.types";
 
 type EditorStore = {
   variables: Record<string, string>;
@@ -17,7 +12,7 @@ type EditorStore = {
   resetVariables: () => void;
   template: string;
   setTemplate: (template: string) => void;
-  parts: TemplatePart[];
+  parts: Part[];
 };
 
 export const useEditorStore = create<EditorStore>()(
@@ -52,7 +47,7 @@ export const useEditorStore = create<EditorStore>()(
 
         const foundVars = new Set<string>();
         const newVariables: Record<string, string> = {};
-        const newParts: TemplatePart[] = [];
+        const newParts: Part[] = [];
 
         let lastIndex = 0;
         let match: RegExpExecArray | null;
@@ -60,8 +55,8 @@ export const useEditorStore = create<EditorStore>()(
         while ((match = regexValue.exec(template)) !== null) {
           if (match.index > lastIndex) {
             newParts.push({
+              type: "text",
               text: template.slice(lastIndex, match.index),
-              isVariable: false,
             });
           }
 
@@ -72,8 +67,8 @@ export const useEditorStore = create<EditorStore>()(
           newVariables[varName] = value;
 
           newParts.push({
+            type: "variable",
             text: value == "" ? regexLabel.replace("variable", varName) : value,
-            isVariable: true,
             variableName: varName,
           });
 
@@ -82,8 +77,8 @@ export const useEditorStore = create<EditorStore>()(
 
         if (lastIndex < template.length) {
           newParts.push({
+            type: "text",
             text: template.slice(lastIndex),
-            isVariable: false,
           });
         }
 

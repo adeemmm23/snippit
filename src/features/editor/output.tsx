@@ -80,7 +80,7 @@ export function Output() {
             <span
               key={index}
               className={
-                part.isVariable
+                part.type == "variable"
                   ? "dark:text-primary text-primary-foreground"
                   : ""
               }
