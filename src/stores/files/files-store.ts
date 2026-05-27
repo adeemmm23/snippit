@@ -21,6 +21,7 @@ type FilesStore = {
   files: NodeType[];
   latestOpenedFiles: string[][];
   mostOpenedFiles: { path: string[]; count: number }[];
+  newFilePath: string[];
   setFiles: (files: NodeType[]) => void;
   addFiles: (files: NodeType[]) => void;
   saveActiveFile: () => boolean;
@@ -32,6 +33,7 @@ type FilesStore = {
   removeItem: (path: string[]) => void;
   renameItem: (oldPath: string[], newPath: string[]) => void;
   moveItem: (oldPath: string[], newPath: string[]) => void;
+  resetNewFilePath: () => void;
 };
 
 export const useFilesStore = create<FilesStore>()(
@@ -90,6 +92,7 @@ export const useFilesStore = create<FilesStore>()(
       setCurrentWorkingFolder: (currentWorkingFolder) =>
         set({ currentWorkingFolder }),
       files: [],
+      newFilePath: [],
       latestOpenedFiles: [],
       mostOpenedFiles: [],
       setFiles: (files) => set({ files }),
@@ -165,9 +168,12 @@ export const useFilesStore = create<FilesStore>()(
 
         parentItems.push(newItem);
 
+        const newPath = parentPath.concat([finalName]);
+
         // saveFilesToStorage(newFiles);
-        set({ files: newFiles });
+        set({ files: newFiles, newFilePath: newPath });
       },
+      resetNewFilePath: () => set({ newFilePath: [] }),
       removeItem: (path) => {
         const { files } = get();
         const newFiles = JSON.parse(JSON.stringify(files));
