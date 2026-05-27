@@ -1,15 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { findItemByPath, getAvailableName } from "./utils";
+import { getAvailableName } from "./utils";
 import { useEditorStore } from "../editor/editor-store";
 
-import {
-  isFile,
-  isFolder,
-  type NodeType,
-  type FolderType,
-} from "@/types/node.types";
+import { isFile, isFolder, type NodeType } from "@/types/node.types";
 import { getNodeContent } from "@/utils/files.utils";
 
 // TODO: Refactor into global import
@@ -45,6 +40,9 @@ export const useFilesStore = create<FilesStore>()(
       currenFolder: [],
       latestOpenedFiles: [],
       mostOpenedFiles: [],
+      setFiles: (files) => {
+        set({ files });
+      },
       setActiveFile: (activeFilePath) => {
         const { latestOpenedFiles, mostOpenedFiles } = get();
         const newLatestOpenedFiles = [
@@ -93,85 +91,63 @@ export const useFilesStore = create<FilesStore>()(
           mostOpenedFiles: newMostOpenedFiles,
         });
       },
-      setCurrentFolder: (currentWorkingFolder) =>
-        set({ currenFolder: currentWorkingFolder }),
+      setCurrentFolder: (currentWorkingFolder) => {
+        set({ currenFolder: currentWorkingFolder });
+      },
 
-      setFiles: (files) => set({ files }),
       addFiles: (newFiles) => {
         const { files } = get();
         const mergedFiles = [...files, ...newFiles];
         set({ files: mergedFiles });
       },
       saveActiveFile: () => {
-        const { activeFile: activeFilePath, files } = get();
+        const { activeFile, files } = get();
+
         const template = useEditorStore.getState().template;
-        if (activeFilePath.length === 0) return false;
 
-        const newFiles = JSON.parse(JSON.stringify(files));
-        const item = findItemByPath(newFiles, activeFilePath);
+        if (activeFile.length === 0) return false;
 
-        if (!item || !isFile(item)) {
+        const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
+        const node = getNodeContent(activeFile, newFiles);
+
+        if (!node || !isFile(node)) {
           return false;
         }
 
-        item.content = template;
-        // saveFilesToStorage(newFiles);
-        set({ files: newFiles });
+        node.content = template;
 
+        set({ files: newFiles });
         return true;
       },
       createItem: (path, type, content) => {
         const { files } = get();
         const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
-        const parentPath = path.slice(0, -1);
-        const itemName = path[path.length - 1];
+        const name = path[path.length - 1];
 
-        let parentItems: NodeType[];
+        const node = getNodeContent(path.slice(0, -1), newFiles);
+        const parent = node && isFolder(node) ? node.files : newFiles;
 
-        if (parentPath.length === 0) {
-          parentItems = newFiles;
-        } else {
-          const parentFolder = findItemByPath(newFiles, parentPath);
-          if (!parentFolder || !isFolder(parentFolder)) {
-            let current: NodeType[] = newFiles;
-            for (const segment of parentPath) {
-              let folder = current.find(
-                (item) => item.name === segment && isFolder(item),
-              );
-              if (!folder) {
-                folder = { type: "folder", name: segment, files: [] };
-                current.push(folder);
-              }
-              current = (folder as FolderType).files;
-            }
-            parentItems = current;
-          } else {
-            parentItems = parentFolder.files;
-          }
-        }
+        const finalName = getAvailableName(parent, name);
 
-        const finalName = getAvailableName(parentItems, itemName);
-        let newItem: NodeType;
+        let newNode: NodeType;
 
         if (type === "file") {
-          newItem = {
+          newNode = {
             type: "file",
             name: finalName,
             content: content || "",
           };
         } else {
-          newItem = {
+          newNode = {
             type: "folder",
             name: finalName,
             files: [],
           };
         }
 
-        parentItems.push(newItem);
+        parent.push(newNode);
 
-        const newPath = parentPath.concat([finalName]);
-
-        set({ files: newFiles, newFile: newPath });
+        set({ files: newFiles, newFile: path });
       },
       removeItem: (path) => {
         const { files } = get();
