@@ -22,6 +22,25 @@ export const useEditorStore = create<EditorStore>()(
       template: "",
       variables: {},
       parts: [],
+      setTemplate: (template) => {
+        const { label: regexLabel, value: regexValue } = VARIABLE_FORMATS.find(
+          (format) =>
+            format.label === useSettingsStore.getState().variableFormat,
+        )!;
+
+        const { newVariables, newParts } = extractParts({
+          template,
+          variables: get().variables,
+          regexLabel,
+          regexValue,
+        });
+
+        set({
+          template,
+          variables: newVariables,
+          parts: newParts,
+        });
+      },
       setVariable: (name, value) => {
         set((state) => ({
           variables: {
@@ -46,25 +65,6 @@ export const useEditorStore = create<EditorStore>()(
 
         // Same as above
         get().setTemplate(get().template);
-      },
-      setTemplate: (template) => {
-        const { label: regexLabel, value: regexValue } = VARIABLE_FORMATS.find(
-          (format) =>
-            format.label === useSettingsStore.getState().variableFormat,
-        )!;
-
-        const { newVariables, newParts } = extractParts({
-          template,
-          variables: get().variables,
-          regexLabel,
-          regexValue,
-        });
-
-        set({
-          template,
-          variables: newVariables,
-          parts: newParts,
-        });
       },
     }),
     { name: "editor" },

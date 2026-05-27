@@ -7,7 +7,6 @@ import { useEditorStore } from "../editor/editor-store";
 import { isFile, isFolder, type NodeType } from "@/types/node.types";
 import { getNodeContent } from "@/utils/files.utils";
 
-// TODO: Refactor into global import
 type FilesStore = {
   files: NodeType[];
   activeFile: string[];
