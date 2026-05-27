@@ -16,8 +16,8 @@ export default function Settings() {
       <DialogHeader className="shrink-0">
         <DialogTitle className="text-2xl">Settings</DialogTitle>
         <DialogDescription>
-          Here you can modify themes, editor behavior, and other options to make
-          Snippit truly yours.
+          Settings are saved automatically. Changes will be reflected
+          immediately.
         </DialogDescription>
       </DialogHeader>
       <div className="flex min-h-0 flex-1 grow gap-2 py-2">
