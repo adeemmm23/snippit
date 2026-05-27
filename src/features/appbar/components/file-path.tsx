@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
-import type { NodeType } from "@/types/node.types";
+import { isFile } from "@/types/node.types";
+import { getNodeContent } from "@/utils/files.utils";
 
 export default function FilePath() {
   const activeFilePath = useFilesStore((state) => state.activeFilePath);
@@ -140,27 +141,12 @@ function SaveIndicator() {
   const activeFilePath = useFilesStore((state) => state.activeFilePath);
   const files = useFilesStore((state) => state.files);
 
-  const activeFile = getFileContent(activeFilePath, files);
+  const node = getNodeContent(activeFilePath, files);
   const template = useEditorStore((state) => state.template);
-  if (activeFile !== template) {
+
+  if (node && isFile(node) && node.content !== template) {
     return <span className="text-primary"> •</span>;
-  }
-}
-
-// TODO: this is really bad, need to optimize this with a map or something
-const getFileContent = (path: string[], files: NodeType[]) => {
-  let current = files;
-
-  for (const segment of path) {
-    const next = current.find((item) => item.name === segment);
-    if (!next) {
-      return null;
-    }
-    if (next.type === "file") {
-      return next.content;
-    }
-    current = next.files;
   }
 
   return null;
-};
+}

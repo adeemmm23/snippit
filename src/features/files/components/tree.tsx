@@ -15,20 +15,11 @@ import Node from "./node";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
-import { isFile, isFolder, type NodeType } from "@/types/node.types";
+import { isFile, isFolder } from "@/types/node.types";
+import { getNodeContent } from "@/utils/files.utils";
 
 export default function Tree() {
   const setTemplate = useEditorStore((state) => state.setTemplate);
-
-  // const {
-  //   setActiveFilePath,
-  //   activeFilePath,
-  //   files: data,
-  //   currentWorkingFolder,
-  //   setCurrentWorkingFolder,
-  //   moveItem,
-  // } = useFiles();
-
   const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
   const activeFilePath = useFilesStore((state) => state.activeFilePath);
   const data = useFilesStore((state) => state.files);
@@ -40,24 +31,9 @@ export default function Tree() {
   );
   const moveItem = useFilesStore((state) => state.moveItem);
 
-  // Navigate to the current working folder
-  const getCurrentFolderItems = (): NodeType[] => {
-    let current = data;
+  const node = getNodeContent(currentWorkingFolder, data);
 
-    for (const folderName of currentWorkingFolder) {
-      const found = current.find(
-        (item) => isFolder(item) && item.name === folderName,
-      );
-      if (!found || !isFolder(found)) {
-        return [];
-      }
-      current = found.files;
-    }
-
-    return current;
-  };
-
-  const currentItems = getCurrentFolderItems();
+  const currentItems = node && isFolder(node) ? node.files : data;
 
   // Separate folders and files
   const folders = currentItems
@@ -94,7 +70,6 @@ export default function Tree() {
 
         if (!target) return;
 
-        // Don't allow dropping on itself
         if (source?.id === target?.id) {
           return;
         }
@@ -143,16 +118,14 @@ export default function Tree() {
               </div>
             )}
             <DragOverlay dropAnimation={null} className="size-fit!">
-              {
-                // TODO: mx-auto is a temporary fix, need to find a better solution for this
-                (source) =>
-                  source && (
-                    <div className="bg-foreground/80 text-background pointer-events-none mx-auto flex w-fit max-w-40 rounded-sm px-2 py-1">
-                      <p className="truncate text-xs font-medium text-nowrap">
-                        {source.data.name}
-                      </p>
-                    </div>
-                  )
+              {(source) =>
+                source && (
+                  <span className="bg-foreground/80 text-background pointer-events-none flex max-w-40 rounded-sm px-2 py-1">
+                    <p className="truncate text-xs font-medium text-nowrap">
+                      {source.data.name}
+                    </p>
+                  </span>
+                )
               }
             </DragOverlay>
           </div>
