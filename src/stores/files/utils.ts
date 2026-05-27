@@ -1,53 +1,7 @@
-import { isFolder, type FileSystemItem } from "@/components/files/types";
-
-// TODO: refactor all of  these functions
-export const getParentFolder = (
-  items: FileSystemItem[],
-  path: string[],
-): FileSystemItem[] | null => {
-  if (path.length === 0) return items;
-
-  let current: FileSystemItem[] = items;
-
-  for (let i = 0; i < path.length; i++) {
-    const segment = path[i];
-    const found = current.find((item) => item.name === segment);
-
-    if (!found || !isFolder(found)) {
-      return null;
-    }
-
-    current = found.files;
-  }
-
-  return current;
-};
-
-export const findItemByPath = (
-  items: FileSystemItem[],
-  path: string[],
-): FileSystemItem | null => {
-  if (path.length === 0) return null;
-
-  let current: FileSystemItem[] = items;
-
-  for (let i = 0; i < path.length - 1; i++) {
-    const segment = path[i];
-    const found = current.find((item) => item.name === segment);
-
-    if (!found || !isFolder(found)) {
-      return null;
-    }
-
-    current = found.files;
-  }
-
-  const lastSegment = path[path.length - 1];
-  return current.find((item) => item.name === lastSegment) || null;
-};
+import { type NodeType } from "@/types/node.types";
 
 export const getAvailableName = (
-  items: FileSystemItem[],
+  items: NodeType[],
   baseName: string,
 ): string => {
   if (!items.find((item) => item.name === baseName)) {
@@ -63,4 +17,12 @@ export const getAvailableName = (
   }
 
   return finalName;
+};
+
+export const deepClone = <T>(obj: T): T => {
+  return JSON.parse(JSON.stringify(obj)) as T;
+};
+
+export const isDeepEqual = <T>(obj1: T, obj2: T): boolean => {
+  return JSON.stringify(obj1) === JSON.stringify(obj2);
 };
