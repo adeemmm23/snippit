@@ -1,3 +1,5 @@
+import SaveIndicator from "./save-indicator";
+
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -15,23 +17,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
-import { isFile } from "@/types/node.types";
-import { getNodeContent } from "@/utils/files.utils";
 
 export default function FilePath() {
-  const activeFilePath = useFilesStore((state) => state.activeFile);
+  const activeFile = useFilesStore((state) => state.activeFile);
 
   const setCurrentWorkingFolder = useFilesStore(
     (state) => state.setCurrentFolder,
   );
 
-  const { file, parenFolder, rest } = activeFilePath.reduce(
+  const { file, parenFolder, rest } = activeFile.reduce(
     (acc, segment, index) => {
-      if (index === activeFilePath.length - 1) {
+      if (index === activeFile.length - 1) {
         acc.file = segment;
-      } else if (index === activeFilePath.length - 2) {
+      } else if (index === activeFile.length - 2) {
         acc.parenFolder = segment;
       } else {
         acc.rest.push(segment);
@@ -89,7 +88,7 @@ export default function FilePath() {
                           className="truncate"
                           onClick={() =>
                             setCurrentWorkingFolder(
-                              activeFilePath.slice(0, index - rest.length - 1),
+                              activeFile.slice(0, index - rest.length - 1),
                             )
                           }
                         >
@@ -108,9 +107,7 @@ export default function FilePath() {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink
-                onClick={() =>
-                  setCurrentWorkingFolder(activeFilePath.slice(0, -1))
-                }
+                onClick={() => setCurrentWorkingFolder(activeFile.slice(0, -1))}
                 className="select-none"
               >
                 {parenFolder}
@@ -122,9 +119,7 @@ export default function FilePath() {
         {file && (
           <BreadcrumbItem>
             <BreadcrumbPage
-              onClick={() =>
-                setCurrentWorkingFolder(activeFilePath.slice(0, -1))
-              }
+              onClick={() => setCurrentWorkingFolder(activeFile.slice(0, -1))}
               className="select-none"
             >
               {file}
@@ -135,18 +130,4 @@ export default function FilePath() {
       </BreadcrumbList>
     </Breadcrumb>
   );
-}
-
-function SaveIndicator() {
-  const activeFilePath = useFilesStore((state) => state.activeFile);
-  const files = useFilesStore((state) => state.files);
-
-  const node = getNodeContent(activeFilePath, files);
-  const template = useEditorStore((state) => state.template);
-
-  if (node && isFile(node) && node.content !== template) {
-    return <span className="text-primary"> •</span>;
-  }
-
-  return null;
 }
