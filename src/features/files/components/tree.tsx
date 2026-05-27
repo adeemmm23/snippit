@@ -85,7 +85,7 @@ export default function Tree() {
               <Node
                 key={name}
                 name={name}
-                isFile={false}
+                type="folder"
                 path={currentWorkingFolder.concat(name)}
                 onClick={() => {
                   setCurrentWorkingFolder(currentWorkingFolder.concat(name));
@@ -96,7 +96,7 @@ export default function Tree() {
               <Node
                 key={name}
                 name={name}
-                isFile={true}
+                type="file"
                 path={currentWorkingFolder.concat(name)}
                 isActive={
                   activeFilePath.join("/") ===

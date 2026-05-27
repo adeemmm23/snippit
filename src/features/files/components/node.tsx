@@ -22,7 +22,7 @@ import { cn } from "@/utils/cn";
 
 type NodeProps = {
   name: string;
-  isFile: boolean;
+  type: "file" | "folder";
   path: string[];
   isActive?: boolean;
   onClick: () => void;
@@ -30,7 +30,7 @@ type NodeProps = {
 
 export default function Node({
   name,
-  isFile,
+  type,
   onClick,
   isActive,
   path,
@@ -72,7 +72,7 @@ export default function Node({
     <div
       ref={(node) => {
         nodeRef(node);
-        if (!isFile) dropRef(node);
+        if (type == "folder") dropRef(node);
       }}
       role="button"
       tabIndex={0}
@@ -83,7 +83,7 @@ export default function Node({
         "group hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full items-center justify-start gap-2 rounded-md border border-transparent pl-2.5 text-sm font-medium transition-all outline-none select-none focus-visible:ring-[3px]",
         isActive &&
           "bg-card/90 hover:bg-card text-card-foreground focus-within:bg-card focus:bg-card",
-        !isFile &&
+        type == "folder" &&
           isDropTarget &&
           !isDragging &&
           "bg-primary/20 border-primary/50",
@@ -95,7 +95,7 @@ export default function Node({
       }}
     >
       <HugeiconsIcon
-        icon={isFile ? File01Icon : Folder01Icon}
+        icon={type == "file" ? File01Icon : Folder01Icon}
         className="size-4 shrink-0"
       />
       <Name
