@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { getAvailableName } from "./utils";
+import { deepClone, getAvailableName, isDeepEqual } from "./utils";
 import { useEditorStore } from "../editor/editor-store";
 
 import { isFile, isFolder, type NodeType } from "@/types/node.types";
@@ -44,11 +44,10 @@ export const useFilesStore = create<FilesStore>()(
       setActiveFile: (activeFilePath) => {
         const { openedFiles } = get();
 
-        const newOpenedFiles = [...openedFiles];
+        const newOpenedFiles = deepClone(openedFiles);
 
-        const existingFile = openedFiles.find(
-          (file) =>
-            JSON.stringify(file.path) === JSON.stringify(activeFilePath),
+        const existingFile = openedFiles.find((file) =>
+          isDeepEqual(file.path, activeFilePath),
         );
 
         if (existingFile) {
@@ -88,7 +87,7 @@ export const useFilesStore = create<FilesStore>()(
 
         if (activeFile.length === 0) return false;
 
-        const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
+        const newFiles = deepClone(files);
 
         const node = getNodeContent(activeFile, newFiles);
 
@@ -103,7 +102,7 @@ export const useFilesStore = create<FilesStore>()(
       },
       createItem: (path, type, content) => {
         const { files } = get();
-        const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
+        const newFiles = deepClone(files);
         const name = path[path.length - 1];
 
         const node = getNodeContent(path.slice(0, -1), newFiles);
@@ -133,7 +132,7 @@ export const useFilesStore = create<FilesStore>()(
       },
       removeItem: (path) => {
         const { files, openedFiles } = get();
-        const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
+        const newFiles = deepClone(files);
         const node = getNodeContent(path.slice(0, -1), newFiles);
         const parent = node && isFolder(node) ? node.files : newFiles;
 
@@ -151,14 +150,16 @@ export const useFilesStore = create<FilesStore>()(
         }
 
         parent.splice(itemIndex, 1);
+
+        // TODO: if parent folder is removed
         const newOpenedFiles = openedFiles.filter(
-          (file) => JSON.stringify(file.path) !== JSON.stringify(path),
+          (file) => !isDeepEqual(file.path, path),
         );
         set({ files: newFiles, openedFiles: newOpenedFiles });
       },
       moveItem: (oldPath, newPath) => {
         const { files, activeFile, openedFiles } = get();
-        const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
+        const newFiles = deepClone(files);
         const node = getNodeContent(oldPath, newFiles);
 
         if (!node) {
@@ -200,15 +201,12 @@ export const useFilesStore = create<FilesStore>()(
         removedItem.name = finalName;
         newParent.push(removedItem);
 
-        if (
-          activeFile.length > 0 &&
-          JSON.stringify(activeFile) === JSON.stringify(oldPath)
-        ) {
+        if (activeFile.length > 0 && isDeepEqual(oldPath, activeFile)) {
           set({ activeFile: newPath.slice(0, -1).concat([finalName]) });
         }
 
         const newOpenedFiles = openedFiles.filter(
-          (file) => JSON.stringify(file.path) !== JSON.stringify(oldPath),
+          (file) => !isDeepEqual(file.path, oldPath),
         );
 
         set({ files: newFiles, openedFiles: newOpenedFiles });
@@ -217,7 +215,9 @@ export const useFilesStore = create<FilesStore>()(
         const { moveItem } = get();
         moveItem(path, [...path.slice(0, -1), newName]);
       },
-      resetNewFile: () => set({ newFile: [] }),
+      resetNewFile: () => {
+        set({ newFile: [] });
+      },
     }),
     {
       name: "files",

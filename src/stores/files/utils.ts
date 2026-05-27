@@ -18,3 +18,11 @@ export const getAvailableName = (
 
   return finalName;
 };
+
+export const deepClone = <T>(obj: T): T => {
+  return JSON.parse(JSON.stringify(obj)) as T;
+};
+
+export const isDeepEqual = <T>(obj1: T, obj2: T): boolean => {
+  return JSON.stringify(obj1) === JSON.stringify(obj2);
+};
