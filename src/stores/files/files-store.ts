@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { findItemByPath, getAvailableName, getParentFolder } from "./utils";
+import { findItemByPath, getAvailableName } from "./utils";
 import { useEditorStore } from "../editor/editor-store";
 
 import {
@@ -10,19 +10,19 @@ import {
   type NodeType,
   type FolderType,
 } from "@/types/node.types";
+import { getNodeContent } from "@/utils/files.utils";
 
 // TODO: Refactor into global import
-
 type FilesStore = {
-  activeFilePath: string[];
-  setActiveFilePath: (path: string[]) => void;
-  currentWorkingFolder: string[];
-  setCurrentWorkingFolder: (path: string[]) => void;
   files: NodeType[];
+  activeFile: string[];
+  newFile: string[];
+  currenFolder: string[];
   latestOpenedFiles: string[][];
   mostOpenedFiles: { path: string[]; count: number }[];
-  newFilePath: string[];
   setFiles: (files: NodeType[]) => void;
+  setActiveFile: (path: string[]) => void;
+  setCurrentFolder: (path: string[]) => void;
   addFiles: (files: NodeType[]) => void;
   saveActiveFile: () => boolean;
   createItem: (
@@ -31,16 +31,21 @@ type FilesStore = {
     content?: string,
   ) => void;
   removeItem: (path: string[]) => void;
-  renameItem: (oldPath: string[], newPath: string[]) => void;
   moveItem: (oldPath: string[], newPath: string[]) => void;
-  resetNewFilePath: () => void;
+  renameItem: (path: string[], name: string) => void;
+  resetNewFile: () => void;
 };
 
 export const useFilesStore = create<FilesStore>()(
   persist(
     (set, get) => ({
-      activeFilePath: [],
-      setActiveFilePath: (activeFilePath) => {
+      files: [],
+      activeFile: [],
+      newFile: [],
+      currenFolder: [],
+      latestOpenedFiles: [],
+      mostOpenedFiles: [],
+      setActiveFile: (activeFilePath) => {
         const { latestOpenedFiles, mostOpenedFiles } = get();
         const newLatestOpenedFiles = [
           activeFilePath,
@@ -83,18 +88,14 @@ export const useFilesStore = create<FilesStore>()(
         }
 
         set({
-          activeFilePath,
+          activeFile: activeFilePath,
           latestOpenedFiles: newLatestOpenedFiles,
           mostOpenedFiles: newMostOpenedFiles,
         });
       },
-      currentWorkingFolder: [],
-      setCurrentWorkingFolder: (currentWorkingFolder) =>
-        set({ currentWorkingFolder }),
-      files: [],
-      newFilePath: [],
-      latestOpenedFiles: [],
-      mostOpenedFiles: [],
+      setCurrentFolder: (currentWorkingFolder) =>
+        set({ currenFolder: currentWorkingFolder }),
+
       setFiles: (files) => set({ files }),
       addFiles: (newFiles) => {
         const { files } = get();
@@ -102,7 +103,7 @@ export const useFilesStore = create<FilesStore>()(
         set({ files: mergedFiles });
       },
       saveActiveFile: () => {
-        const { activeFilePath, files } = get();
+        const { activeFile: activeFilePath, files } = get();
         const template = useEditorStore.getState().template;
         if (activeFilePath.length === 0) return false;
 
@@ -121,7 +122,7 @@ export const useFilesStore = create<FilesStore>()(
       },
       createItem: (path, type, content) => {
         const { files } = get();
-        const newFiles = JSON.parse(JSON.stringify(files));
+        const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
         const parentPath = path.slice(0, -1);
         const itemName = path[path.length - 1];
 
@@ -170,26 +171,20 @@ export const useFilesStore = create<FilesStore>()(
 
         const newPath = parentPath.concat([finalName]);
 
-        // saveFilesToStorage(newFiles);
-        set({ files: newFiles, newFilePath: newPath });
+        set({ files: newFiles, newFile: newPath });
       },
-      resetNewFilePath: () => set({ newFilePath: [] }),
       removeItem: (path) => {
         const { files } = get();
-        const newFiles = JSON.parse(JSON.stringify(files));
-        const parentPath = path.slice(0, -1);
+        const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
+        const node = getNodeContent(path.slice(0, -1), newFiles);
+        const parent = node && isFolder(node) ? node.files : newFiles;
 
-        const parentItems =
-          parentPath.length === 0
-            ? newFiles
-            : getParentFolder(newFiles, parentPath);
-
-        if (!parentItems) {
+        if (!parent) {
           return;
         }
 
         const itemName = path[path.length - 1];
-        const itemIndex = parentItems.findIndex(
+        const itemIndex = parent.findIndex(
           (item: NodeType) => item.name === itemName,
         );
 
@@ -197,101 +192,67 @@ export const useFilesStore = create<FilesStore>()(
           return;
         }
 
-        parentItems.splice(itemIndex, 1);
-        // saveFilesToStorage(newFiles);
-        set({ files: newFiles });
-      },
-      renameItem: (oldPath, newPath) => {
-        const { files } = get();
-        const newFiles = JSON.parse(JSON.stringify(files));
-        const item = findItemByPath(newFiles, oldPath);
-
-        if (!item) {
-          return;
-        }
-
-        const parentPath = oldPath.slice(0, -1);
-        const parentItems =
-          parentPath.length === 0
-            ? newFiles
-            : getParentFolder(newFiles, parentPath);
-
-        if (!parentItems) {
-          return;
-        }
-
-        const itemIndex = parentItems.findIndex(
-          (i: NodeType) => i.name === oldPath[oldPath.length - 1],
-        );
-        if (itemIndex === -1) {
-          return;
-        }
-
-        const newName = newPath[newPath.length - 1];
-        const finalName = getAvailableName(
-          parentItems.filter((_: NodeType, i: number) => i !== itemIndex),
-          newName,
-        );
-
-        item.name = finalName;
-        // saveFilesToStorage(newFiles);
+        parent.splice(itemIndex, 1);
         set({ files: newFiles });
       },
       moveItem: (oldPath, newPath) => {
-        const { files, activeFilePath } = get();
-        const newFiles = JSON.parse(JSON.stringify(files));
-        const item = findItemByPath(newFiles, oldPath);
+        const { files, activeFile } = get();
+        const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
+        const node = getNodeContent(oldPath, newFiles);
 
-        if (!item) {
+        if (!node) {
           return;
         }
 
-        const oldParentPath = oldPath.slice(0, -1);
-        const oldParentItems =
-          oldParentPath.length === 0
-            ? newFiles
-            : getParentFolder(newFiles, oldParentPath);
+        const oldParentNode = getNodeContent(oldPath.slice(0, -1), newFiles);
+        const oldParent =
+          oldParentNode && isFolder(oldParentNode)
+            ? oldParentNode.files
+            : newFiles;
 
-        if (!oldParentItems) {
+        if (!oldParent) {
           return;
         }
 
-        const itemIndex = oldParentItems.findIndex(
+        const itemIndex = oldParent.findIndex(
           (i: NodeType) => i.name === oldPath[oldPath.length - 1],
         );
+
         if (itemIndex === -1) {
           return;
         }
 
-        const removedItem = oldParentItems.splice(itemIndex, 1)[0];
+        const removedItem = oldParent.splice(itemIndex, 1)[0];
+        const newParentNode = getNodeContent(newPath.slice(0, -1), newFiles);
+        const newParent =
+          newParentNode && isFolder(newParentNode)
+            ? newParentNode.files
+            : newFiles;
 
-        const newParentPath = newPath.slice(0, -1);
-        const newParentItems =
-          newParentPath.length === 0
-            ? newFiles
-            : getParentFolder(newFiles, newParentPath);
-
-        if (!newParentItems) {
-          oldParentItems.splice(itemIndex, 0, removedItem);
+        if (!newParent) {
+          oldParent.splice(itemIndex, 0, removedItem);
           return;
         }
 
-        const newName = newPath[newPath.length - 1];
-        const finalName = getAvailableName(newParentItems, newName);
+        const removedItemName = newPath[newPath.length - 1];
+        const finalName = getAvailableName(newParent, removedItemName);
         removedItem.name = finalName;
-
-        newParentItems.push(removedItem);
+        newParent.push(removedItem);
 
         if (
-          activeFilePath.length > 0 &&
-          JSON.stringify(activeFilePath) === JSON.stringify(oldPath)
+          activeFile.length > 0 &&
+          JSON.stringify(activeFile) === JSON.stringify(oldPath)
         ) {
-          set({ activeFilePath: newParentPath.concat([finalName]) });
+          set({ activeFile: newPath.slice(0, -1).concat([finalName]) });
         }
 
-        // saveFilesToStorage(newFiles);
         set({ files: newFiles });
       },
+      renameItem: (path, newName) => {
+        const { moveItem } = get();
+        moveItem(path, [...path.slice(0, -1), newName]);
+      },
+      resetNewFile: () => set({ newFile: [] }),
     }),
     {
       name: "files",

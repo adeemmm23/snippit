@@ -23,9 +23,7 @@ import { useFilesStore } from "@/stores/files/files-store";
 export default function Header() {
   const createItem = useFilesStore((state) => state.createItem);
   const setFiles = useFilesStore((state) => state.setFiles);
-  const currentWorkingFolder = useFilesStore(
-    (state) => state.currentWorkingFolder,
-  );
+  const currentWorkingFolder = useFilesStore((state) => state.currenFolder);
 
   return (
     // TODO: implement collection

@@ -39,7 +39,7 @@ export default function Node({
 }: NodeProps) {
   const removeItem = useFilesStore((state) => state.removeItem);
   const renameItem = useFilesStore((state) => state.renameItem);
-  const resetNewFilePath = useFilesStore((state) => state.resetNewFilePath);
+  const resetNewFilePath = useFilesStore((state) => state.resetNewFile);
   const [isRenaming, setIsRenaming] = useState(false);
 
   const { isDragging, ref: nodeRef } = useDraggable({
@@ -69,7 +69,7 @@ export default function Node({
   };
 
   const handleRenameEnd = (newName: string) => {
-    renameItem(path, [...path.slice(0, -1), newName]);
+    renameItem(path, newName);
     setIsRenaming(false);
     if (isNew) {
       resetNewFilePath();

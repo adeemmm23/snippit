@@ -1,5 +1,3 @@
-// TODO: Refactor into global import
-
 import { isFolder, type NodeType } from "@/types/node.types";
 
 // TODO: refactor all of  these functions

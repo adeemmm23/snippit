@@ -12,11 +12,9 @@ import { useFilesStore } from "@/stores/files/files-store";
 import { cn } from "@/utils/cn";
 
 export default function FolderHeader() {
-  const currentWorkingFolder = useFilesStore(
-    (state) => state.currentWorkingFolder,
-  );
+  const currentWorkingFolder = useFilesStore((state) => state.currenFolder);
   const setCurrentWorkingFolder = useFilesStore(
-    (state) => state.setCurrentWorkingFolder,
+    (state) => state.setCurrentFolder,
   );
 
   const { isDropTarget, ref: dropRef } = useDroppable({

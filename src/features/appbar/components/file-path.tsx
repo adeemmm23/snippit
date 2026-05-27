@@ -21,10 +21,10 @@ import { isFile } from "@/types/node.types";
 import { getNodeContent } from "@/utils/files.utils";
 
 export default function FilePath() {
-  const activeFilePath = useFilesStore((state) => state.activeFilePath);
+  const activeFilePath = useFilesStore((state) => state.activeFile);
 
   const setCurrentWorkingFolder = useFilesStore(
-    (state) => state.setCurrentWorkingFolder,
+    (state) => state.setCurrentFolder,
   );
 
   const { file, parenFolder, rest } = activeFilePath.reduce(
@@ -138,7 +138,7 @@ export default function FilePath() {
 }
 
 function SaveIndicator() {
-  const activeFilePath = useFilesStore((state) => state.activeFilePath);
+  const activeFilePath = useFilesStore((state) => state.activeFile);
   const files = useFilesStore((state) => state.files);
 
   const node = getNodeContent(activeFilePath, files);

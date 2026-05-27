@@ -20,15 +20,13 @@ import { getNodeContent } from "@/utils/files.utils";
 
 export default function Tree() {
   const setTemplate = useEditorStore((state) => state.setTemplate);
-  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
-  const newFilePath = useFilesStore((state) => state.newFilePath);
-  const activeFilePath = useFilesStore((state) => state.activeFilePath);
+  const setActiveFilePath = useFilesStore((state) => state.setActiveFile);
+  const newFilePath = useFilesStore((state) => state.newFile);
+  const activeFilePath = useFilesStore((state) => state.activeFile);
   const data = useFilesStore((state) => state.files);
-  const currentWorkingFolder = useFilesStore(
-    (state) => state.currentWorkingFolder,
-  );
+  const currentWorkingFolder = useFilesStore((state) => state.currenFolder);
   const setCurrentWorkingFolder = useFilesStore(
-    (state) => state.setCurrentWorkingFolder,
+    (state) => state.setCurrentFolder,
   );
   const moveItem = useFilesStore((state) => state.moveItem);
 

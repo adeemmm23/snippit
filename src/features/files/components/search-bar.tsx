@@ -131,7 +131,7 @@ type FileItemProps = {
 };
 
 function FileItem({ file, onSelectEnd }: FileItemProps) {
-  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
+  const setActiveFilePath = useFilesStore((state) => state.setActiveFile);
   const setTemplate = useEditorStore((state) => state.setTemplate);
 
   return (

@@ -11,7 +11,7 @@ import { useEditorStore } from "@/stores/editor/editor-store";
 import { useFilesStore } from "@/stores/files/files-store";
 
 export default function TemporaryFileButton() {
-  const setActiveFilePath = useFilesStore((state) => state.setActiveFilePath);
+  const setActiveFilePath = useFilesStore((state) => state.setActiveFile);
   const setTemplate = useEditorStore((state) => state.setTemplate);
 
   return (
