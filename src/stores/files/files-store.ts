@@ -46,7 +46,7 @@ export const useFilesStore = create<FilesStore>()(
 
         const newOpenedFiles = deepClone(openedFiles);
 
-        const existingFile = openedFiles.find((file) =>
+        const existingFile = newOpenedFiles.find((file) =>
           isDeepEqual(file.path, activeFilePath),
         );
 
@@ -61,11 +61,9 @@ export const useFilesStore = create<FilesStore>()(
           });
         }
 
-        const reversedOpenedFiles = [...newOpenedFiles].reverse();
-
         set({
           activeFile: activeFilePath,
-          openedFiles: reversedOpenedFiles,
+          openedFiles: newOpenedFiles,
         });
 
         set({
@@ -151,10 +149,24 @@ export const useFilesStore = create<FilesStore>()(
 
         parent.splice(itemIndex, 1);
 
-        // TODO: if parent folder is removed
-        const newOpenedFiles = openedFiles.filter(
-          (file) => !isDeepEqual(file.path, path),
-        );
+        const newOpenedFiles = openedFiles.filter((file) => {
+          if (isDeepEqual(file.path, path)) {
+            return false;
+          }
+
+          if (file.path.length < path.length) {
+            return true;
+          }
+
+          for (let i = 0; i < path.length; i++) {
+            if (file.path[i] !== path[i]) {
+              return true;
+            }
+          }
+
+          return false;
+        });
+
         set({ files: newFiles, openedFiles: newOpenedFiles });
       },
       moveItem: (oldPath, newPath) => {
@@ -205,9 +217,23 @@ export const useFilesStore = create<FilesStore>()(
           set({ activeFile: newPath.slice(0, -1).concat([finalName]) });
         }
 
-        const newOpenedFiles = openedFiles.filter(
-          (file) => !isDeepEqual(file.path, oldPath),
-        );
+        const newOpenedFiles = openedFiles.filter((file) => {
+          if (isDeepEqual(file.path, oldPath)) {
+            return false;
+          }
+
+          if (file.path.length < oldPath.length) {
+            return true;
+          }
+
+          for (let i = 0; i < oldPath.length; i++) {
+            if (file.path[i] !== oldPath[i]) {
+              return true;
+            }
+          }
+
+          return false;
+        });
 
         set({ files: newFiles, openedFiles: newOpenedFiles });
       },
