@@ -37,10 +37,7 @@ export default function Node({
 }: NodeProps) {
   const removeItem = useFilesStore((state) => state.removeItem);
   const renameItem = useFilesStore((state) => state.renameItem);
-
   const [isRenaming, setIsRenaming] = useState(false);
-  const [newName, setNewName] = useState(name);
-  const spanRef = useRef<HTMLSpanElement>(null);
 
   const { isDragging, ref: nodeRef } = useDraggable({
     id: path.join("/"),
@@ -57,48 +54,18 @@ export default function Node({
     },
   });
 
-  useEffect(() => {
-    if (isRenaming && spanRef.current) {
-      spanRef.current.focus();
-      // Select all text
-      const range = document.createRange();
-      range.selectNodeContents(spanRef.current);
-      const selection = window.getSelection();
-      if (selection) {
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
-    }
-  }, [isRenaming]);
-
   const handleRenameStart = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsRenaming(true);
-    setNewName(name);
   };
 
-  const handleRenameEnd = () => {
-    if (newName.trim() && newName !== name) {
-      const newPath = [...path];
-      newPath[newPath.length - 1] = newName.trim();
-      renameItem(path, newPath);
-    }
+  const handleRenameEnd = (newName: string) => {
+    renameItem(path, [...path.slice(0, -1), newName]);
     setIsRenaming(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleRenameEnd();
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      setIsRenaming(false);
-    }
-  };
-
-  const handleInput = (e: React.InputEvent<HTMLSpanElement>) => {
-    const text = e.currentTarget.textContent.trim() || "";
-    setNewName(text);
+  const handleRenameCancel = () => {
+    setIsRenaming(false);
   };
 
   return (
@@ -131,24 +98,12 @@ export default function Node({
         icon={isFile ? File01Icon : Folder01Icon}
         className="size-4 shrink-0"
       />
-      {isRenaming ? (
-        <span
-          ref={spanRef}
-          contentEditable="plaintext-only"
-          autoCorrect="off"
-          suppressContentEditableWarning
-          className="bg-primary/10 focus:bg-primary/20 box-border block min-w-0 flex-1 grow cursor-text overflow-hidden rounded-xs px-0.5 text-start text-ellipsis whitespace-nowrap outline-none"
-          onBlur={handleRenameEnd}
-          onKeyDown={handleKeyDown}
-          onInput={handleInput}
-        >
-          {name}
-        </span>
-      ) : (
-        <span className="box-border min-w-0 grow overflow-hidden px-0.5 text-start text-ellipsis whitespace-nowrap">
-          {name}
-        </span>
-      )}
+      <Name
+        name={name}
+        isRenaming={isRenaming}
+        onRenameEnd={handleRenameEnd}
+        onRenameCancel={handleRenameCancel}
+      />
       <div className="ml-auto flex size-9 shrink-0 items-center justify-center">
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -184,5 +139,89 @@ export default function Node({
         </DropdownMenu>
       </div>
     </div>
+  );
+}
+
+function Name({
+  name,
+  isRenaming,
+  onRenameEnd,
+  onRenameCancel,
+}: {
+  name: string;
+  isRenaming: boolean;
+  onRenameEnd: (newName: string) => void;
+  onRenameCancel: () => void;
+}) {
+  const [newName, setNewName] = useState(name);
+  const spanRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (isRenaming && spanRef.current) {
+      setNewName(name);
+      spanRef.current.textContent = name;
+      spanRef.current.focus();
+      // Select all text
+      const range = document.createRange();
+      range.selectNodeContents(spanRef.current);
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+  }, [isRenaming, name]);
+
+  const commitRename = () => {
+    const nextName = newName.trim();
+    if (nextName && nextName !== name) {
+      onRenameEnd(nextName);
+    } else {
+      onRenameCancel();
+    }
+  };
+
+  const cancelRename = () => {
+    setNewName(name);
+    if (spanRef.current) {
+      spanRef.current.textContent = name;
+    }
+    onRenameCancel();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      commitRename();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      cancelRename();
+    }
+  };
+
+  const handleInput = (e: React.InputEvent<HTMLSpanElement>) => {
+    const text = e.currentTarget.textContent || "";
+    setNewName(text);
+  };
+
+  if (isRenaming)
+    return (
+      <span
+        ref={spanRef}
+        contentEditable="plaintext-only"
+        autoCorrect="off"
+        suppressContentEditableWarning
+        className="bg-primary/10 focus:bg-primary/20 box-border block min-w-0 flex-1 grow cursor-text overflow-hidden rounded-xs px-0.5 text-start text-ellipsis whitespace-nowrap outline-none"
+        onBlur={cancelRename}
+        onKeyDown={handleKeyDown}
+        onInput={handleInput}
+      >
+        {name}
+      </span>
+    );
+  return (
+    <span className="box-border min-w-0 grow overflow-hidden px-0.5 text-start text-ellipsis whitespace-nowrap">
+      {name}
+    </span>
   );
 }
