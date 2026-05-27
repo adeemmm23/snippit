@@ -59,6 +59,7 @@ export default function Node({
 
   useEffect(() => {
     if (!isNew) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsRenaming(true);
   }, [isNew]);
 
