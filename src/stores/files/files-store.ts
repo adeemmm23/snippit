@@ -13,8 +13,7 @@ type FilesStore = {
   activeFile: string[];
   newFile: string[];
   currenFolder: string[];
-  latestOpenedFiles: string[][];
-  mostOpenedFiles: { path: string[]; count: number }[];
+  openedFiles: { path: string[]; count: number; openedAt: number }[];
   setFiles: (files: NodeType[]) => void;
   setActiveFile: (path: string[]) => void;
   setCurrentFolder: (path: string[]) => void;
@@ -38,63 +37,45 @@ export const useFilesStore = create<FilesStore>()(
       activeFile: [],
       newFile: [],
       currenFolder: [],
-      latestOpenedFiles: [],
-      mostOpenedFiles: [],
+      openedFiles: [],
       setFiles: (files) => {
         set({ files });
       },
       setActiveFile: (activeFilePath) => {
-        const { latestOpenedFiles, mostOpenedFiles } = get();
-        const newLatestOpenedFiles = [
-          activeFilePath,
-          ...latestOpenedFiles.filter(
-            (path) => JSON.stringify(path) !== JSON.stringify(activeFilePath),
-          ),
-        ];
+        const { openedFiles } = get();
 
-        // TODO: extract into sperate methode
-        // TODO: stop using JSON.stringify for path comparison
-        // TODO: implement decaying score for most opened files
-        const now = Date.now();
+        const newOpenedFiles = [...openedFiles];
 
-        const existingMostOpened = mostOpenedFiles.find(
-          (item) =>
-            JSON.stringify(item.path) === JSON.stringify(activeFilePath),
+        const existingFile = openedFiles.find(
+          (file) =>
+            JSON.stringify(file.path) === JSON.stringify(activeFilePath),
         );
 
-        let newMostOpenedFiles;
-
-        if (existingMostOpened) {
-          newMostOpenedFiles = mostOpenedFiles.map((item) =>
-            JSON.stringify(item.path) === JSON.stringify(activeFilePath)
-              ? {
-                  ...item,
-                  count: item.count + 1,
-                  lastOpenedAt: now,
-                }
-              : item,
-          );
+        if (existingFile) {
+          existingFile.count += 1;
+          existingFile.openedAt = Date.now();
         } else {
-          newMostOpenedFiles = [
-            ...mostOpenedFiles,
-            {
-              path: activeFilePath,
-              count: 1,
-              lastOpenedAt: now,
-            },
-          ];
+          newOpenedFiles.push({
+            path: activeFilePath,
+            count: 1,
+            openedAt: Date.now(),
+          });
         }
+
+        const reversedOpenedFiles = [...newOpenedFiles].reverse();
 
         set({
           activeFile: activeFilePath,
-          latestOpenedFiles: newLatestOpenedFiles,
-          mostOpenedFiles: newMostOpenedFiles,
+          openedFiles: reversedOpenedFiles,
+        });
+
+        set({
+          activeFile: activeFilePath,
         });
       },
       setCurrentFolder: (currentWorkingFolder) => {
         set({ currenFolder: currentWorkingFolder });
       },
-
       addFiles: (newFiles) => {
         const { files } = get();
         const mergedFiles = [...files, ...newFiles];
@@ -108,6 +89,7 @@ export const useFilesStore = create<FilesStore>()(
         if (activeFile.length === 0) return false;
 
         const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
+
         const node = getNodeContent(activeFile, newFiles);
 
         if (!node || !isFile(node)) {
@@ -150,7 +132,7 @@ export const useFilesStore = create<FilesStore>()(
         set({ files: newFiles, newFile: path });
       },
       removeItem: (path) => {
-        const { files } = get();
+        const { files, openedFiles } = get();
         const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
         const node = getNodeContent(path.slice(0, -1), newFiles);
         const parent = node && isFolder(node) ? node.files : newFiles;
@@ -169,10 +151,13 @@ export const useFilesStore = create<FilesStore>()(
         }
 
         parent.splice(itemIndex, 1);
-        set({ files: newFiles });
+        const newOpenedFiles = openedFiles.filter(
+          (file) => JSON.stringify(file.path) !== JSON.stringify(path),
+        );
+        set({ files: newFiles, openedFiles: newOpenedFiles });
       },
       moveItem: (oldPath, newPath) => {
-        const { files, activeFile } = get();
+        const { files, activeFile, openedFiles } = get();
         const newFiles = JSON.parse(JSON.stringify(files)) as NodeType[];
         const node = getNodeContent(oldPath, newFiles);
 
@@ -222,7 +207,11 @@ export const useFilesStore = create<FilesStore>()(
           set({ activeFile: newPath.slice(0, -1).concat([finalName]) });
         }
 
-        set({ files: newFiles });
+        const newOpenedFiles = openedFiles.filter(
+          (file) => JSON.stringify(file.path) !== JSON.stringify(oldPath),
+        );
+
+        set({ files: newFiles, openedFiles: newOpenedFiles });
       },
       renameItem: (path, newName) => {
         const { moveItem } = get();

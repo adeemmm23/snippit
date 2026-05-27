@@ -21,18 +21,21 @@ export default function SearchBar() {
   const [open, setOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
 
-  const latestOpenedFiles = useFilesStore((state) => state.latestOpenedFiles);
-  const mostOpenedFiles = useFilesStore((state) => state.mostOpenedFiles);
+  const openedFiles = useFilesStore((state) => state.openedFiles);
   const files = useFilesStore((state) => state.files);
 
   const indexedFiles = flattenFiles(files, "");
 
   const generateMostOpened = () => {
-    return mostOpenedFiles
-      .sort((a, b) => b.count - a.count)
+    return openedFiles
+      .sort(
+        (a, b) => getScore(b.count, b.openedAt) - getScore(a.count, a.openedAt),
+      )
       .slice(0, 3)
-      .map((item, index) => {
-        const file = indexedFiles.find((f) => f.path === item.path.join("/"));
+      .map((fileData, index) => {
+        const file = indexedFiles.find(
+          (f) => f.path === fileData.path.join("/"),
+        );
         if (!file) return null;
 
         return (
@@ -46,14 +49,23 @@ export default function SearchBar() {
   };
 
   const generateLatest = () => {
-    return latestOpenedFiles.slice(0, 3).map((path, index) => {
-      const file = indexedFiles.find((f) => f.path === path.join("/"));
-      if (!file) return null;
+    return openedFiles
+      .sort((a, b) => b.openedAt - a.openedAt)
+      .slice(0, 3)
+      .map((fileData, index) => {
+        const file = indexedFiles.find(
+          (f) => f.path === fileData.path.join("/"),
+        );
+        if (!file) return null;
 
-      return (
-        <FileItem key={index} file={file} onSelectEnd={() => setOpen(false)} />
-      );
-    });
+        return (
+          <FileItem
+            key={index}
+            file={file}
+            onSelectEnd={() => setOpen(false)}
+          />
+        );
+      });
   };
 
   const generatePreview = () => {
@@ -74,7 +86,6 @@ export default function SearchBar() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  // TODO: Implement actual search functionality instead of showing all files as results
   return (
     <div className="flex px-2">
       <Button
@@ -107,13 +118,13 @@ export default function SearchBar() {
             <CommandEmpty>
               {query.length > 0 ? "No results found." : "Search for a file"}
             </CommandEmpty>
-            {query.length == 0 && mostOpenedFiles.length > 0 && (
-              <CommandGroup heading="Most opened">
-                {generateMostOpened()}
-              </CommandGroup>
-            )}
-            {query.length == 0 && latestOpenedFiles.length > 0 && (
-              <CommandGroup heading="Latest">{generateLatest()}</CommandGroup>
+            {query.length == 0 && openedFiles.length > 0 && (
+              <>
+                <CommandGroup heading="Most opened">
+                  {generateMostOpened()}
+                </CommandGroup>
+                <CommandGroup heading="Latest">{generateLatest()}</CommandGroup>
+              </>
             )}
             {query.length > 0 && (
               <CommandGroup heading="Results">{generatePreview()}</CommandGroup>
@@ -174,4 +185,11 @@ const flattenFiles = (
   }
 
   return result;
+};
+
+const getScore = (count: number, lastOpenedAt: number) => {
+  const now = Date.now();
+  const timeElapsed = (now - lastOpenedAt) / (1000 * 60 * 60 * 24);
+  const LAMBDA = 0.1;
+  return count * Math.exp(-LAMBDA * timeElapsed);
 };
