@@ -160,7 +160,7 @@ function PasswordSettingContent({
     lowerCase: true,
     upperCase: true,
     numbers: true,
-    specials: false,
+    specials: true,
   };
 
   useEffect(() => {

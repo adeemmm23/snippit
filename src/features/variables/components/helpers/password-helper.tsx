@@ -30,7 +30,7 @@ export default function PasswordHelper({
               options?.upperCase ?? true,
               options?.lowerCase ?? true,
               options?.numbers ?? true,
-              options?.specials ?? false,
+              options?.specials ?? true,
             ),
           )
         }
@@ -51,13 +51,13 @@ const generateRandomPassword = (
   const lowerCaseString = "abcdefghijklmnopqrstuvwxyz";
   const upperCaseString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const numbersString = "0123456789";
-  const specialStrings = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+  const specialsStrings = "!@#$%&*()_+}{[]:;?></-=";
 
   const allChars =
     (upperCase ? upperCaseString : "") +
     (lowerCase ? lowerCaseString : "") +
     (numbers ? numbersString : "") +
-    (specials ? specialStrings : "");
+    (specials ? specialsStrings : "");
 
   let password = "";
 
@@ -65,8 +65,5 @@ const generateRandomPassword = (
     password += allChars.charAt(Math.floor(Math.random() * allChars.length));
   }
 
-  return password
-    .split("")
-    .sort(() => Math.random() - 0.5)
-    .join("");
+  return password;
 };
