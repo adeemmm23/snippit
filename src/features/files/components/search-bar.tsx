@@ -18,11 +18,11 @@ import { useFilesStore } from "@/stores/files/files-store";
 import { isFile, isFolder, type NodeType } from "@/types/node.types";
 
 export default function SearchBar() {
-  const [open, setOpen] = useState<boolean>(false);
-  const [query, setQuery] = useState<string>("");
-
   const openedFiles = useFilesStore((state) => state.openedFiles);
   const files = useFilesStore((state) => state.files);
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
 
   const indexedFiles = flattenFiles(files, "");
 
@@ -147,16 +147,15 @@ function FileItem({ file, onSelectEnd }: FileItemProps) {
 
   return (
     <CommandItem
+      className="gap-5"
       onSelect={() => {
         setTemplate(file.content);
         setActiveFilePath(file.path.split("/"));
         onSelectEnd();
       }}
     >
-      <span className="grow overflow-hidden text-ellipsis whitespace-nowrap">
-        {file.filename}
-      </span>
-      <span className="text-muted-foreground ml-auto flex-1 overflow-hidden text-right text-xs text-ellipsis whitespace-nowrap">
+      <span className="shrink-0 truncate">{file.filename}</span>
+      <span className="text-muted-foreground grow truncate text-right text-xs">
         {file.path}
       </span>
     </CommandItem>
