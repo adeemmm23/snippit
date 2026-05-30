@@ -16,7 +16,7 @@ type FilesStore = {
   setFiles: (files: NodeType[]) => void;
   setActiveFile: (path: string[]) => void;
   setCurrentFolder: (path: string[]) => void;
-  addFiles: (files: NodeType[]) => void;
+  addFiles: (files: NodeType[], path: string[]) => void;
   saveActiveFile: () => boolean;
   createItem: (
     path: string[],
@@ -72,10 +72,19 @@ export const useFilesStore = create<FilesStore>()(
       setCurrentFolder: (currentWorkingFolder) => {
         set({ currenFolder: currentWorkingFolder });
       },
-      addFiles: (newFiles) => {
+      addFiles: (newFiles, path) => {
         const { files } = get();
-        const mergedFiles = [...files, ...newFiles];
-        set({ files: mergedFiles });
+        const updatedFiles = deepClone(files);
+
+        const node = getNodeContent(path, updatedFiles);
+
+        if (node && isFolder(node)) {
+          node.files.push(...newFiles);
+        } else {
+          updatedFiles.push(...newFiles);
+        }
+
+        set({ files: updatedFiles });
       },
       saveActiveFile: () => {
         const { activeFile, files } = get();
