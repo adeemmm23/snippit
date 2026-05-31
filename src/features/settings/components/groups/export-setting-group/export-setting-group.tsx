@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Close,
+  File01Icon,
   Folder01Icon,
   FolderAddIcon,
 } from "@hugeicons/core-free-icons";
@@ -48,6 +49,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useFilesStore } from "@/stores/files/files-store";
 import { isFolder } from "@/types/node.types";
+import { cn } from "@/utils/cn";
 import { getNodeContent } from "@/utils/files.utils";
 
 export default function ExportGroup() {
@@ -60,6 +62,8 @@ export default function ExportGroup() {
   const [importOpen, setImportOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importFolderPath, setImportFolderPath] = useState<string[]>([]);
+  const [isDraggingImportFile, setIsDraggingImportFile] = useState(false);
+  const importFileInputRef = useRef<HTMLInputElement>(null);
 
   const sanitizedExportFileName = useMemo(() => {
     const trimmed = exportFileName.trim();
@@ -69,9 +73,6 @@ export default function ExportGroup() {
 
   const canConfirmExport = sanitizedExportFileName.length > 0;
   const canConfirmImport = importFile !== null;
-
-  const importFolderLabel =
-    importFolderPath.length === 0 ? "Root" : importFolderPath.join(" / ");
 
   const handleExport = () => {
     if (!canConfirmExport) return;
@@ -119,6 +120,7 @@ export default function ExportGroup() {
             setImportOpen(open);
             if (!open) {
               setImportFile(null);
+              setIsDraggingImportFile(false);
             }
           }}
         >
@@ -135,17 +137,50 @@ export default function ExportGroup() {
             </DialogHeader>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="import-file">JSON file</Label>
-                <Button
-                  className="justify-start"
-                  variant="outline"
-                  onClick={() =>
-                    document.getElementById("import-file")?.click()
-                  }
+                <Label htmlFor="import-file">Select File</Label>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className={cn(
+                    "border-input hover:border-primary/60 bg-card flex h-full min-h-36 flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed p-4 text-center transition",
+                    isDraggingImportFile && "border-primary bg-primary/10",
+                  )}
+                  onClick={() => importFileInputRef.current?.click()}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      importFileInputRef.current?.click();
+                    }
+                  }}
+                  onDragOver={(event) => {
+                    event.preventDefault();
+                    setIsDraggingImportFile(true);
+                  }}
+                  onDragLeave={() => setIsDraggingImportFile(false)}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    setIsDraggingImportFile(false);
+                    const droppedFile = event.dataTransfer.files?.[0] ?? null;
+                    if (droppedFile) {
+                      setImportFile(droppedFile);
+                    }
+                  }}
                 >
-                  {importFile ? importFile.name : "Select file"}
-                </Button>
+                  <HugeiconsIcon
+                    icon={File01Icon}
+                    className="text-muted-foreground size-6"
+                  />
+                  <div className="text-sm font-medium">
+                    {importFile ? importFile.name : "Drop JSON file here"}
+                  </div>
+                  <div className="text-muted-foreground text-xs">
+                    {importFile
+                      ? "Drop another file to replace or click to browse"
+                      : "or click to browse"}
+                  </div>
+                </div>
                 <input
+                  ref={importFileInputRef}
                   id="import-file"
                   type="file"
                   accept="application/json"
@@ -159,7 +194,8 @@ export default function ExportGroup() {
                   <DialogTrigger
                     render={
                       <Button className="justify-start" variant="outline">
-                        {importFolderLabel}
+                        {importFolderPath[importFolderPath.length - 1] ||
+                          "Select folder"}
                       </Button>
                     }
                   />
@@ -292,7 +328,12 @@ function FolderSelector({ onSelect }: FolderSelectorProps) {
           )}
         </div>
       </ScrollArea>
-      <ImportDialogFooter onSelect={onSelect} path={path} />
+      <ImportDialogFooter
+        onSelect={() => {
+          onSelect(selectedPath);
+        }}
+        path={path}
+      />
     </DialogContent>
   );
 }
@@ -378,7 +419,7 @@ function FilePath({ path, setPath }: FilePathProps) {
 }
 
 type ImportDialogFooterProps = {
-  onSelect: (folder: string[]) => void;
+  onSelect: () => void;
   path: string[];
 };
 
@@ -451,7 +492,7 @@ function ImportDialogFooter({ onSelect, path }: ImportDialogFooterProps) {
       <DialogClose render={<Button variant="outline">Cancel</Button>} />
       <DialogClose
         render={<Button>Use this folder</Button>}
-        onClick={() => onSelect(path.length > 0 ? path : [])}
+        onClick={() => onSelect()}
       />
     </DialogFooter>
   );
