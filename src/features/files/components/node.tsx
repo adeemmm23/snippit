@@ -38,7 +38,9 @@ export default function Node({
 }: NodeProps) {
   const removeItem = useFilesStore((state) => state.removeItem);
   const renameItem = useFilesStore((state) => state.renameItem);
+
   const [isRenaming, setIsRenaming] = useState(false);
+  // const [isSelected, setIsSelected] = useState(false);
 
   const { isDragging, ref: nodeRef } = useDraggable({
     id: path.join("/"),
@@ -69,6 +71,7 @@ export default function Node({
     setIsRenaming(false);
   };
 
+  // TODO: check styling
   return (
     <div
       ref={(node) => {
@@ -88,8 +91,14 @@ export default function Node({
           isDropTarget &&
           !isDragging &&
           "bg-primary/20 border-primary/50",
+        // isSelected && "bg-card/50",
+        isDragging && "opacity-50",
       )}
-      onClick={() => {
+      // onClick={(e) => {
+      //   e.stopPropagation();
+      //   setIsSelected((prev) => !prev);
+      // }}
+      onDoubleClick={() => {
         if (!isRenaming) {
           onClick();
         }
