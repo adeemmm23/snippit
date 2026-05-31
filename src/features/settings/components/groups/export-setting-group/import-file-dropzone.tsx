@@ -22,7 +22,7 @@ export default function ImportFileDropzone({
         role="button"
         tabIndex={0}
         className={cn(
-          "border-input hover:border-primary/60 bg-card flex h-full min-h-36 flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed p-4 text-center transition",
+          "border-input hover:border-primary/60 bg-card flex h-full min-h-36 flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed p-4 text-center transition select-none",
           isDragging && "border-primary bg-primary/10",
         )}
         onClick={() => inputRef.current?.click()}
