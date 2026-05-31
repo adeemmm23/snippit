@@ -21,7 +21,6 @@ import { getNodeContent } from "@/utils/files.utils";
 export default function Tree() {
   const setTemplate = useEditorStore((state) => state.setTemplate);
   const setActiveFilePath = useFilesStore((state) => state.setActiveFile);
-  const newFilePath = useFilesStore((state) => state.newFile);
   const activeFilePath = useFilesStore((state) => state.activeFile);
   const data = useFilesStore((state) => state.files);
   const currentWorkingFolder = useFilesStore((state) => state.currenFolder);
@@ -86,10 +85,6 @@ export default function Tree() {
                 name={name}
                 type="folder"
                 path={currentWorkingFolder.concat(name)}
-                isNew={
-                  newFilePath.join("/") ===
-                  currentWorkingFolder.concat(name).join("/")
-                }
                 onClick={() => {
                   setCurrentWorkingFolder(currentWorkingFolder.concat(name));
                 }}
@@ -103,10 +98,6 @@ export default function Tree() {
                 path={currentWorkingFolder.concat(name)}
                 isActive={
                   activeFilePath.join("/") ===
-                  currentWorkingFolder.concat(name).join("/")
-                }
-                isNew={
-                  newFilePath.join("/") ===
                   currentWorkingFolder.concat(name).join("/")
                 }
                 onClick={() => {

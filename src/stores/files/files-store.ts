@@ -10,7 +10,6 @@ import { getNodeContent } from "@/utils/files.utils";
 type FilesStore = {
   files: NodeType[];
   activeFile: string[];
-  newFile: string[];
   currenFolder: string[];
   openedFiles: { path: string[]; count: number; openedAt: number }[];
   setFiles: (files: NodeType[]) => void;
@@ -26,7 +25,6 @@ type FilesStore = {
   removeItem: (path: string[]) => void;
   moveItem: (oldPath: string[], newPath: string[]) => void;
   renameItem: (path: string[], name: string) => void;
-  resetNewFile: () => void;
 };
 
 export const useFilesStore = create<FilesStore>()(
@@ -134,7 +132,7 @@ export const useFilesStore = create<FilesStore>()(
 
         parent.push(newNode);
 
-        set({ files: newFiles, newFile: path });
+        set({ files: newFiles });
       },
       removeItem: (path) => {
         const { files, openedFiles } = get();
@@ -248,9 +246,6 @@ export const useFilesStore = create<FilesStore>()(
       renameItem: (path, newName) => {
         const { moveItem } = get();
         moveItem(path, [...path.slice(0, -1), newName]);
-      },
-      resetNewFile: () => {
-        set({ newFile: [] });
       },
     }),
     {
