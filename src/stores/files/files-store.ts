@@ -7,17 +7,15 @@ import { useEditorStore } from "../editor/editor-store";
 import { isFile, isFolder, type NodeType } from "@/types/node.types";
 import { getNodeContent } from "@/utils/files.utils";
 
-// TODO: Refactor into global import
 type FilesStore = {
   files: NodeType[];
   activeFile: string[];
-  newFile: string[];
   currenFolder: string[];
   openedFiles: { path: string[]; count: number; openedAt: number }[];
   setFiles: (files: NodeType[]) => void;
   setActiveFile: (path: string[]) => void;
   setCurrentFolder: (path: string[]) => void;
-  addFiles: (files: NodeType[]) => void;
+  addFiles: (files: NodeType[], path: string[]) => void;
   saveActiveFile: () => boolean;
   createItem: (
     path: string[],
@@ -27,7 +25,6 @@ type FilesStore = {
   removeItem: (path: string[]) => void;
   moveItem: (oldPath: string[], newPath: string[]) => void;
   renameItem: (path: string[], name: string) => void;
-  resetNewFile: () => void;
 };
 
 export const useFilesStore = create<FilesStore>()(
@@ -46,7 +43,7 @@ export const useFilesStore = create<FilesStore>()(
 
         const newOpenedFiles = deepClone(openedFiles);
 
-        const existingFile = openedFiles.find((file) =>
+        const existingFile = newOpenedFiles.find((file) =>
           isDeepEqual(file.path, activeFilePath),
         );
 
@@ -61,11 +58,9 @@ export const useFilesStore = create<FilesStore>()(
           });
         }
 
-        const reversedOpenedFiles = [...newOpenedFiles].reverse();
-
         set({
           activeFile: activeFilePath,
-          openedFiles: reversedOpenedFiles,
+          openedFiles: newOpenedFiles,
         });
 
         set({
@@ -75,10 +70,19 @@ export const useFilesStore = create<FilesStore>()(
       setCurrentFolder: (currentWorkingFolder) => {
         set({ currenFolder: currentWorkingFolder });
       },
-      addFiles: (newFiles) => {
+      addFiles: (newFiles, path) => {
         const { files } = get();
-        const mergedFiles = [...files, ...newFiles];
-        set({ files: mergedFiles });
+        const updatedFiles = deepClone(files);
+
+        const node = getNodeContent(path, updatedFiles);
+
+        if (node && isFolder(node)) {
+          node.files.push(...newFiles);
+        } else {
+          updatedFiles.push(...newFiles);
+        }
+
+        set({ files: updatedFiles });
       },
       saveActiveFile: () => {
         const { activeFile, files } = get();
@@ -128,7 +132,7 @@ export const useFilesStore = create<FilesStore>()(
 
         parent.push(newNode);
 
-        set({ files: newFiles, newFile: path });
+        set({ files: newFiles });
       },
       removeItem: (path) => {
         const { files, openedFiles } = get();
@@ -151,10 +155,24 @@ export const useFilesStore = create<FilesStore>()(
 
         parent.splice(itemIndex, 1);
 
-        // TODO: if parent folder is removed
-        const newOpenedFiles = openedFiles.filter(
-          (file) => !isDeepEqual(file.path, path),
-        );
+        const newOpenedFiles = openedFiles.filter((file) => {
+          if (isDeepEqual(file.path, path)) {
+            return false;
+          }
+
+          if (file.path.length < path.length) {
+            return true;
+          }
+
+          for (let i = 0; i < path.length; i++) {
+            if (file.path[i] !== path[i]) {
+              return true;
+            }
+          }
+
+          return false;
+        });
+
         set({ files: newFiles, openedFiles: newOpenedFiles });
       },
       moveItem: (oldPath, newPath) => {
@@ -205,18 +223,29 @@ export const useFilesStore = create<FilesStore>()(
           set({ activeFile: newPath.slice(0, -1).concat([finalName]) });
         }
 
-        const newOpenedFiles = openedFiles.filter(
-          (file) => !isDeepEqual(file.path, oldPath),
-        );
+        const newOpenedFiles = openedFiles.filter((file) => {
+          if (isDeepEqual(file.path, oldPath)) {
+            return false;
+          }
+
+          if (file.path.length < oldPath.length) {
+            return true;
+          }
+
+          for (let i = 0; i < oldPath.length; i++) {
+            if (file.path[i] !== oldPath[i]) {
+              return true;
+            }
+          }
+
+          return false;
+        });
 
         set({ files: newFiles, openedFiles: newOpenedFiles });
       },
       renameItem: (path, newName) => {
         const { moveItem } = get();
         moveItem(path, [...path.slice(0, -1), newName]);
-      },
-      resetNewFile: () => {
-        set({ newFile: [] });
       },
     }),
     {

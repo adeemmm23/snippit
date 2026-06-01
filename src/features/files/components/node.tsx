@@ -34,13 +34,13 @@ export default function Node({
   type,
   onClick,
   isActive,
-  isNew,
   path,
 }: NodeProps) {
   const removeItem = useFilesStore((state) => state.removeItem);
   const renameItem = useFilesStore((state) => state.renameItem);
-  const resetNewFilePath = useFilesStore((state) => state.resetNewFile);
+
   const [isRenaming, setIsRenaming] = useState(false);
+  // const [isSelected, setIsSelected] = useState(false);
 
   const { isDragging, ref: nodeRef } = useDraggable({
     id: path.join("/"),
@@ -57,12 +57,6 @@ export default function Node({
     },
   });
 
-  useEffect(() => {
-    if (!isNew) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsRenaming(true);
-  }, [isNew]);
-
   const handleRenameStart = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsRenaming(true);
@@ -71,18 +65,13 @@ export default function Node({
   const handleRenameEnd = (newName: string) => {
     renameItem(path, newName);
     setIsRenaming(false);
-    if (isNew) {
-      resetNewFilePath();
-    }
   };
 
   const handleRenameCancel = () => {
     setIsRenaming(false);
-    if (isNew) {
-      resetNewFilePath();
-    }
   };
 
+  // TODO: check styling
   return (
     <div
       ref={(node) => {
@@ -102,8 +91,14 @@ export default function Node({
           isDropTarget &&
           !isDragging &&
           "bg-primary/20 border-primary/50",
+        // isSelected && "bg-card/50",
+        isDragging && "opacity-50",
       )}
-      onClick={() => {
+      // onClick={(e) => {
+      //   e.stopPropagation();
+      //   setIsSelected((prev) => !prev);
+      // }}
+      onDoubleClick={() => {
         if (!isRenaming) {
           onClick();
         }

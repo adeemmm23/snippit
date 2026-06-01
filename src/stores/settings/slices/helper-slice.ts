@@ -16,7 +16,21 @@ export type HelpersSlice = {
 };
 
 export const createHelpersSlice: StateCreator<HelpersSlice> = (set) => ({
-  helpers: [],
+  helpers: [
+    { name: "Date", type: "date" },
+    {
+      name: "Password",
+      type: "password",
+      options: {
+        length: 12,
+        lowerCase: true,
+        upperCase: true,
+        numbers: true,
+        specials: true,
+      },
+    },
+    { name: "Duration", type: "duration" },
+  ],
   addHelper: () =>
     set((state) => ({
       helpers: [...state.helpers, { name: "", type: null }],
