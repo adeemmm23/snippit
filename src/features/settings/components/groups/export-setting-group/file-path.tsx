@@ -63,17 +63,20 @@ export default function FilePath({ path, onPathChange }: FilePathProps) {
                 <DropdownMenuContent align="start" className="w-50">
                   <DropdownMenuGroup>
                     {rest.map((segment, index) => (
-                      <DropdownMenuItem key={segment}>
-                        <BreadcrumbLink
-                          title={segment}
-                          className="truncate"
-                          onClick={() => {
-                            onPathChange(path.slice(0, index + 1));
-                          }}
-                        >
-                          {segment}
-                        </BreadcrumbLink>
-                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        key={segment}
+                        render={
+                          <BreadcrumbLink
+                            title={segment}
+                            className="truncate"
+                            onClick={() => {
+                              onPathChange(path.slice(0, index + 1));
+                            }}
+                          >
+                            {segment}
+                          </BreadcrumbLink>
+                        }
+                      />
                     ))}
                   </DropdownMenuGroup>
                 </DropdownMenuContent>

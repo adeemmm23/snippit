@@ -40,7 +40,7 @@ export default function Header() {
   const [createType, setCreateType] = useState<"file" | "folder">("file");
   const [createName, setCreateName] = useState("");
 
-  const defaultName = createType === "file" ? "NewFile" : "NewFolder";
+  const defaultName = createType === "file" ? "New File" : "New Folder";
 
   useEffect(() => {
     if (createDialogOpen) {
@@ -132,7 +132,9 @@ export default function Header() {
                   handleCreateItem();
                 }
               }}
-              placeholder={defaultName}
+              placeholder={
+                createType === "folder" ? "Folder name" : "File name"
+              }
             />
           </div>
           <DialogFooter>
