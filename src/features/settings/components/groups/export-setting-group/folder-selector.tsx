@@ -65,11 +65,14 @@ export default function FolderSelector({ onSelect }: FolderSelectorProps) {
       </div>
       <Separator />
       <ScrollArea className="min-h-0 flex-1 grow">
-        <div className="flex flex-col gap-1">
+        <div className="flex h-full flex-col gap-1">
           {currentFolders.length === 0 ? (
-            <p className="text-muted-foreground px-2 py-3 text-sm">
-              No folders in this location.
-            </p>
+            <div className="text-muted-foreground flex h-full flex-col items-center justify-center text-sm">
+              <HugeiconsIcon icon={Folder01Icon} className="size-6 shrink-0" />
+              <p className="px-2 py-3 text-sm select-none">
+                No folders in this location
+              </p>
+            </div>
           ) : (
             currentFolders.map((folder) => {
               const nextPath = [...path, folder.name];
