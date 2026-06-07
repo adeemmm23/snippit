@@ -2,12 +2,9 @@ import { useDroppable } from "@dnd-kit/react";
 import { ArrowLeft01Icon, Home02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
+import Menu from "./menu";
+
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
 import { useFilesStore } from "@/stores/files/files-store";
 import { cn } from "@/utils/cn";
 
@@ -26,8 +23,8 @@ export default function FolderHeader() {
 
   return (
     <div className="flex px-2">
-      {currentWorkingFolder.length > 0 ? (
-        <div className="flex w-full gap-1">
+      <div className="flex w-full gap-1">
+        {currentWorkingFolder.length > 0 ? (
           <div
             ref={dropRef}
             role="button"
@@ -46,31 +43,14 @@ export default function FolderHeader() {
               {currentWorkingFolder[currentWorkingFolder.length - 1]}
             </span>
           </div>
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    setCurrentWorkingFolder([]);
-                  }}
-                >
-                  <HugeiconsIcon icon={Home02Icon} className="size-4" />
-                </Button>
-              }
-            />
-            <TooltipContent side="right">
-              <p>Go back to Root</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      ) : (
-        <Button variant="ghost" className="w-full justify-start gap-2">
-          <HugeiconsIcon icon={Home02Icon} className="size-4" />
-          <span>Root</span>
-        </Button>
-      )}
+        ) : (
+          <Button variant="ghost" className="grow justify-start gap-2">
+            <HugeiconsIcon icon={Home02Icon} className="size-4" />
+            <span>Root</span>
+          </Button>
+        )}
+        <Menu />
+      </div>
     </div>
   );
 }
