@@ -32,6 +32,7 @@ import { useFilesStore } from "@/stores/files/files-store";
 
 export default function Menu() {
   const createItem = useFilesStore((state) => state.createItem);
+  const createCollection = useFilesStore((state) => state.createCollection);
   const setFiles = useFilesStore((state) => state.setFiles);
   const currentWorkingFolder = useFilesStore((state) => state.currenFolder);
 
@@ -88,6 +89,7 @@ export default function Menu() {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
+                createCollection("IT Support Snippets");
                 const newFiles = JSON.parse(
                   JSON.stringify(IT_SUPPORT_SNIPPETS),
                 );

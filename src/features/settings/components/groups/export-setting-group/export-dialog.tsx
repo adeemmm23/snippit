@@ -15,7 +15,10 @@ import { Label } from "@/components/ui/label";
 import { useFilesStore } from "@/stores/files/files-store";
 
 export default function ExportDialog() {
-  const files = useFilesStore((state) => state.files);
+  const collections = useFilesStore((state) => state.collections);
+  const activeCollection = useFilesStore((state) => state.activeCollection);
+  const files =
+    collections.find((c) => c.name === activeCollection)?.files || [];
 
   const [exportOpen, setExportOpen] = useState(false);
   const [exportFileName, setExportFileName] = useState("snippets.json");

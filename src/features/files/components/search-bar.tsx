@@ -19,7 +19,10 @@ import { isFile, isFolder, type NodeType } from "@/types/node.types";
 
 export default function SearchBar() {
   const openedFiles = useFilesStore((state) => state.openedFiles);
-  const files = useFilesStore((state) => state.files);
+  const collections = useFilesStore((state) => state.collections);
+  const activeCollection = useFilesStore((state) => state.activeCollection);
+  const files =
+    collections.find((c) => c.name === activeCollection)?.files || [];
 
   const [open, setOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
