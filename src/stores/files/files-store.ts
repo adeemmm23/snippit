@@ -17,6 +17,8 @@ type FilesStore = {
   activeCollection: string;
   createCollection: (name: string) => void;
   setActiveCollection: (name: string) => void;
+  deleteCollection: (name: string) => void;
+  renameCollection: (oldName: string, newName: string) => void;
   activeFile: string[];
   currenFolder: string[];
   openedFiles: { path: string[]; count: number; openedAt: number }[];
@@ -64,6 +66,56 @@ export const useFilesStore = create<FilesStore>()(
         set({
           collections: [...collections, { name, files: [] }],
           activeCollection: name,
+        });
+      },
+      deleteCollection: (name) => {
+        const { collections, activeCollection } = get();
+
+        const updatedCollections = collections.filter((c) => c.name !== name);
+
+        if (updatedCollections.length === 0) {
+          set({
+            collections: updatedCollections,
+            activeCollection: "",
+            activeFile: [],
+            currenFolder: [],
+            openedFiles: [],
+          });
+          return;
+        }
+
+        let newActiveCollection = activeCollection;
+        if (activeCollection === name) {
+          newActiveCollection = updatedCollections[0].name;
+          const setTemplate = useEditorStore.getState().setTemplate;
+          setTemplate("");
+        }
+
+        set({
+          collections: updatedCollections,
+          activeCollection: newActiveCollection,
+          activeFile: activeCollection === name ? [] : undefined,
+          currenFolder: activeCollection === name ? [] : undefined,
+          openedFiles: activeCollection === name ? [] : undefined,
+        });
+      },
+      renameCollection: (oldName, newName) => {
+        const { collections } = get();
+
+        if (collections.some((c) => c.name === newName)) {
+          return;
+        }
+
+        const updatedCollections = collections.map((c) =>
+          c.name === oldName ? { ...c, name: newName } : c,
+        );
+
+        set({
+          collections: updatedCollections,
+          activeCollection:
+            get().activeCollection === oldName
+              ? newName
+              : get().activeCollection,
         });
       },
       activeFile: [],
