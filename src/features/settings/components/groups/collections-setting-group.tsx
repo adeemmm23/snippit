@@ -22,6 +22,7 @@ import { useFilesStore } from "@/stores/files/files-store";
 
 type ActionDialogType = "delete" | "rename" | "create" | null;
 
+// TODO: handle span overflow
 export default function CollectionsSettingGroup() {
   const collections = useFilesStore((state) => state.collections);
   const createCollection = useFilesStore((state) => state.createCollection);
