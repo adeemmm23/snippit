@@ -94,9 +94,11 @@ export const useFilesStore = create<FilesStore>()(
         set({
           collections: updatedCollections,
           activeCollection: newActiveCollection,
-          activeFile: activeCollection === name ? [] : undefined,
-          currenFolder: activeCollection === name ? [] : undefined,
-          openedFiles: activeCollection === name ? [] : undefined,
+          ...(activeCollection === name && {
+            activeFile: [],
+            currenFolder: [],
+            openedFiles: [],
+          }),
         });
       },
       renameCollection: (oldName, newName) => {
