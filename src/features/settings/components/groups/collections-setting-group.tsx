@@ -239,6 +239,11 @@ export default function CollectionsSettingGroup() {
               collection. This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
+          {collections.length <= 1 && (
+            <p className="text-destructive text-sm">
+              Note: You cannot delete your last remaining collection.
+            </p>
+          )}
           <DialogFooter>
             <Button
               variant="outline"
@@ -249,7 +254,11 @@ export default function CollectionsSettingGroup() {
             >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button
+              disabled={collections.length <= 1}
+              variant="destructive"
+              onClick={handleDelete}
+            >
               Delete
             </Button>
           </DialogFooter>
