@@ -15,13 +15,13 @@ type Collection = {
 type FilesStore = {
   collections: Collection[];
   activeCollection: string;
+  activeFile: string[];
+  currenFolder: string[];
+  openedFiles: { path: string[]; count: number; openedAt: number }[];
   createCollection: (name: string) => void;
   setActiveCollection: (name: string) => void;
   deleteCollection: (name: string) => void;
   renameCollection: (oldName: string, newName: string) => void;
-  activeFile: string[];
-  currenFolder: string[];
-  openedFiles: { path: string[]; count: number; openedAt: number }[];
   setFiles: (files: NodeType[]) => void;
   setActiveFile: (path: string[]) => void;
   setCurrentFolder: (path: string[]) => void;
@@ -40,8 +40,29 @@ type FilesStore = {
 export const useFilesStore = create<FilesStore>()(
   persist(
     (set, get) => ({
-      collections: [],
-      activeCollection: "",
+      collections: [
+        {
+          name: "Default",
+          files: [],
+        },
+      ],
+      activeCollection: "Default",
+      activeFile: [],
+      newFile: [],
+      currenFolder: [],
+      openedFiles: [],
+      setFiles: (files) => {
+        const { activeCollection, collections } = get();
+
+        const updatedCollections = collections.map((collection) => {
+          if (collection.name === activeCollection) {
+            return { ...collection, files };
+          }
+          return collection;
+        });
+
+        set({ collections: updatedCollections });
+      },
       setActiveCollection: (name) => {
         const { collections } = get();
         if (!collections.some((c) => c.name === name)) {
@@ -119,22 +140,6 @@ export const useFilesStore = create<FilesStore>()(
               ? newName
               : get().activeCollection,
         });
-      },
-      activeFile: [],
-      newFile: [],
-      currenFolder: [],
-      openedFiles: [],
-      setFiles: (files) => {
-        const { activeCollection, collections } = get();
-
-        const updatedCollections = collections.map((collection) => {
-          if (collection.name === activeCollection) {
-            return { ...collection, files };
-          }
-          return collection;
-        });
-
-        set({ collections: updatedCollections });
       },
       setActiveFile: (activeFilePath) => {
         const { openedFiles } = get();
