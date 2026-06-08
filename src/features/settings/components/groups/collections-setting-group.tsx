@@ -76,7 +76,6 @@ export default function CollectionsSettingGroup() {
     setNewName("");
   };
 
-  // TODO: consistent delete icon
   return (
     <>
       <SettingGroup title="Collections">
