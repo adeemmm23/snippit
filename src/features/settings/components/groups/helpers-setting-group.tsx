@@ -1,6 +1,6 @@
 import {
   Add01Icon,
-  Delete01Icon,
+  Delete02Icon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -133,8 +133,8 @@ function HelperSettingInput({
           />
         )}
       </Dialog>
-      <Button variant="outline" size="icon" onClick={onDelete}>
-        <HugeiconsIcon icon={Delete01Icon} />
+      <Button variant="destructive" size="icon" onClick={onDelete}>
+        <HugeiconsIcon icon={Delete02Icon} />
       </Button>
     </div>
   );

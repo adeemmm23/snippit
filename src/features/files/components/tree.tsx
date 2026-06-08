@@ -22,7 +22,10 @@ export default function Tree() {
   const setTemplate = useEditorStore((state) => state.setTemplate);
   const setActiveFilePath = useFilesStore((state) => state.setActiveFile);
   const activeFilePath = useFilesStore((state) => state.activeFile);
-  const data = useFilesStore((state) => state.files);
+  const collections = useFilesStore((state) => state.collections);
+  const activeCollection = useFilesStore((state) => state.activeCollection);
+  const data =
+    collections.find((c) => c.name === activeCollection)?.files || [];
   const currentWorkingFolder = useFilesStore((state) => state.currenFolder);
   const setCurrentWorkingFolder = useFilesStore(
     (state) => state.setCurrentFolder,

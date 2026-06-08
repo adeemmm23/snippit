@@ -88,10 +88,7 @@ export default function FilePath({ path, onPathChange }: FilePathProps) {
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink
-                onClick={() => onPathChange(path.slice(0, -1))}
-                className="select-none"
-              >
+              <BreadcrumbLink className="select-none">
                 {parenFolder}
               </BreadcrumbLink>
             </BreadcrumbItem>
