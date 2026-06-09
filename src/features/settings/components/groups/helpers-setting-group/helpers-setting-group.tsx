@@ -70,7 +70,7 @@ function HelperSettingInput({
 }: HelperSettingInput) {
   const items = [
     { label: "Date", value: "date" },
-    { label: "Duration", value: "duration" },
+    { label: "Range", value: "range" },
     { label: "Password", value: "password" },
     { label: "Select", value: "select" },
   ];
@@ -110,7 +110,7 @@ function HelperSettingInput({
               variant="outline"
               size="icon"
               disabled={
-                !type || name == "" || type == "date" || type == "duration"
+                !type || name == "" || type == "date" || type == "range"
               }
             >
               <HugeiconsIcon icon={Settings01Icon} />

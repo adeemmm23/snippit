@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 
-export type HelperType = "date" | "duration" | "password" | "select";
+export type HelperType = "date" | "range" | "password" | "select";
 
 export type Helper = {
   name: string;
@@ -29,7 +29,7 @@ export const createHelpersSlice: StateCreator<HelpersSlice> = (set) => ({
         specials: true,
       },
     },
-    { name: "Duration", type: "duration" },
+    { name: "Range", type: "range" },
   ],
   addHelper: () =>
     set((state) => ({
