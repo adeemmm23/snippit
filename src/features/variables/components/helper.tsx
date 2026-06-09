@@ -1,6 +1,7 @@
 import DateHelper from "./helpers/date-helper";
 import DurationHelper from "./helpers/duration-helper";
 import PasswordHelper from "./helpers/password-helper";
+import SelectHelper from "./helpers/select-helper";
 
 import useSettingsStore from "@/stores/settings/settings-store";
 
@@ -22,6 +23,10 @@ export default function Helper({ name, onChange }: HelperProps) {
 
   if (helper.type === "password") {
     return <PasswordHelper onGenerate={onChange} options={helper.options} />;
+  }
+
+  if (helper.type === "select") {
+    return <SelectHelper onGenerate={onChange} options={helper.options} />;
   }
 
   if (helper.type === "date") {

@@ -1,11 +1,11 @@
 import type { StateCreator } from "zustand";
 
-export type HelperType = "date" | "duration" | "password";
+export type HelperType = "date" | "duration" | "password" | "select";
 
 export type Helper = {
   name: string;
   type: HelperType | null;
-  options?: Record<string, string | number | boolean>;
+  options?: Record<string, string | number | boolean | string[]>;
 };
 
 export type HelpersSlice = {
