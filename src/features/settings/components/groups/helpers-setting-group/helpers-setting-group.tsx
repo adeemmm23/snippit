@@ -90,11 +90,11 @@ function HelperSettingInput({
         disabled={name == ""}
       >
         <SelectTrigger className="w-full max-w-48">
-          <SelectValue placeholder="Select helper type" />
+          <SelectValue placeholder="Select helper" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Variable Regex</SelectLabel>
+            <SelectLabel>Helpers</SelectLabel>
             {items.map((item) => (
               <SelectItem key={item.value} value={item.value}>
                 {item.label}
