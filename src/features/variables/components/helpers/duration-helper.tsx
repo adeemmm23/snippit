@@ -8,11 +8,11 @@ import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group";
 import { PopoverContent } from "@/components/ui/popover";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 
-type DurationAddonProps = {
+type DurationHelperProps = {
   onSelect: (formatedDuration: string) => void;
 };
 
-export default function DurationHelper({ onSelect }: DurationAddonProps) {
+export default function DurationHelper({ onSelect }: DurationHelperProps) {
   const [open, setOpen] = useState(false);
   const [range, setRange] = useState<DateRange | undefined>();
   const [month, setMonth] = useState(new Date());

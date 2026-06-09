@@ -3,7 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group";
 
-type PasswordAddonProps = {
+type PasswordHelperProps = {
   onGenerate: (generatedPassword: string) => void;
   options?: {
     length?: number;
@@ -17,7 +17,7 @@ type PasswordAddonProps = {
 export default function PasswordHelper({
   onGenerate,
   options,
-}: PasswordAddonProps) {
+}: PasswordHelperProps) {
   return (
     <InputGroupAddon align="inline-end">
       <InputGroupButton
