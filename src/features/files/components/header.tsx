@@ -3,6 +3,7 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -37,6 +38,7 @@ export default function Header() {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
+              <SelectLabel>Collections</SelectLabel>
               {items.map((item) => (
                 <SelectItem key={item.value} value={item.value}>
                   {item.label}
