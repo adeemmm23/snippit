@@ -2,12 +2,14 @@ import {
   Add01Icon,
   Delete02Icon,
   InputCursorTextIcon,
+  Warning,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 
 import SettingGroup from "../ui/setting-group";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -240,9 +242,14 @@ export default function CollectionsSettingGroup() {
             </DialogDescription>
           </DialogHeader>
           {collections.length <= 1 && (
-            <p className="text-destructive text-sm">
-              Note: You cannot delete your last remaining collection.
-            </p>
+            <Alert>
+              <HugeiconsIcon icon={Warning} />
+              <AlertTitle>Cannot delete collection</AlertTitle>
+              <AlertDescription>
+                You must have at least one collection. Please create a new
+                collection before deleting this one.
+              </AlertDescription>
+            </Alert>
           )}
           <DialogFooter>
             <Button

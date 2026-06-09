@@ -7,11 +7,11 @@ import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group";
 import { PopoverContent } from "@/components/ui/popover";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 
-type DateAddonProps = {
+type DateHelperProps = {
   onSelect: (formatedDate: string) => void;
 };
 
-export default function DateHelper({ onSelect }: DateAddonProps) {
+export default function DateHelper({ onSelect }: DateHelperProps) {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [month, setMonth] = useState<Date | undefined>(date);

@@ -8,11 +8,11 @@ import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group";
 import { PopoverContent } from "@/components/ui/popover";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 
-type DurationAddonProps = {
-  onSelect: (formatedDuration: string) => void;
+type RangeHelperProps = {
+  onSelect: (formatedRange: string) => void;
 };
 
-export default function DurationHelper({ onSelect }: DurationAddonProps) {
+export default function RangeHelper({ onSelect }: RangeHelperProps) {
   const [open, setOpen] = useState(false);
   const [range, setRange] = useState<DateRange | undefined>();
   const [month, setMonth] = useState(new Date());
@@ -46,7 +46,7 @@ export default function DurationHelper({ onSelect }: DurationAddonProps) {
             selected={range}
             onSelect={(range) => {
               setRange(range);
-              onSelect(formatDuration(range));
+              onSelect(formatRange(range));
             }}
           />
         </PopoverContent>
@@ -55,7 +55,7 @@ export default function DurationHelper({ onSelect }: DurationAddonProps) {
   );
 }
 
-function formatDuration(dateRange: DateRange | undefined) {
+function formatRange(dateRange: DateRange | undefined) {
   if (!dateRange || !dateRange.from || !dateRange.to) {
     return "";
   }
