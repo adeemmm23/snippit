@@ -7,6 +7,7 @@ import SettingGroup from "../ui/setting-group";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -17,7 +18,6 @@ import {
 import { cn } from "@/utils/cn";
 
 export default function ResetSettingGroup() {
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleConfirm = () => {
@@ -31,7 +31,7 @@ export default function ResetSettingGroup() {
       <p className="text-muted-foreground text-sm">
         Clear all app data stored in your browser. This action cannot be undone.
       </p>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog>
         <DialogTrigger
           render={
             <Button variant="destructive" className="w-fit">
@@ -47,9 +47,7 @@ export default function ResetSettingGroup() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
+            <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <Button
               className="relative"
               variant="destructive"
