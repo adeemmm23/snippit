@@ -1,4 +1,4 @@
-import { ChevronDown } from "@hugeicons/core-free-icons";
+import { CarouselVerticalIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import {
@@ -36,7 +36,7 @@ export default function SelectHelper({
               size="icon-xs"
               aria-label="Select option"
             >
-              <HugeiconsIcon icon={ChevronDown} className="size-4" />
+              <HugeiconsIcon icon={CarouselVerticalIcon} className="size-4" />
             </InputGroupButton>
           }
         />

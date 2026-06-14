@@ -11,6 +11,15 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -41,6 +50,7 @@ export default function Node({
 
   const [isRenaming, setIsRenaming] = useState(false);
   // const [isSelected, setIsSelected] = useState(false);
+  const [isOpened, setIsOpened] = useState(false);
 
   const { isDragging, ref: nodeRef } = useDraggable({
     id: path.join("/"),
@@ -71,84 +81,115 @@ export default function Node({
     setIsRenaming(false);
   };
 
+  const isDraggingOver = type == "folder" && isDropTarget && !isDragging;
+
   // TODO: check styling
   return (
-    <div
-      ref={(node) => {
-        nodeRef(node);
-        if (type == "folder") dropRef(node);
-      }}
-      role="button"
-      tabIndex={0}
-      key={name}
-      title={name}
-      data-path={path.join("/")}
-      className={cn(
-        "group hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full items-center justify-start gap-2 rounded-md border border-transparent pl-2.5 text-sm font-medium transition-all outline-none select-none focus-visible:ring-[3px]",
-        isActive &&
-          "bg-card/90 hover:bg-card text-card-foreground focus-within:bg-card focus:bg-card",
-        type == "folder" &&
-          isDropTarget &&
-          !isDragging &&
-          "bg-primary/20 border-primary/50",
-        // isSelected && "bg-card/50",
-        isDragging && "opacity-50",
-      )}
-      // onClick={(e) => {
-      //   e.stopPropagation();
-      //   setIsSelected((prev) => !prev);
-      // }}
-      onDoubleClick={() => {
-        if (!isRenaming) {
-          onClick();
+    <>
+      <Button
+        variant="ghost"
+        nativeButton={false}
+        className={cn(
+          "group w-full justify-start pr-0",
+          isActive && "bg-foreground/5 hover:bg-foreground/10",
+          isDraggingOver && "bg-primary/20 border-primary/50",
+          isDragging && "opacity-50",
+        )}
+        render={
+          <div
+            ref={(node) => {
+              nodeRef(node);
+              if (type == "folder") dropRef(node);
+            }}
+            role="button"
+            tabIndex={0}
+            title={name}
+            data-path={path.join("/")}
+            // onClick={(e) => {
+            //   e.stopPropagation();
+            //   setIsSelected((prev) => !prev);
+            // }}
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              if (!isRenaming) {
+                onClick();
+              }
+            }}
+          >
+            <HugeiconsIcon
+              icon={type == "file" ? File01Icon : Folder01Icon}
+              className="size-4 shrink-0"
+            />
+            <Name
+              name={name}
+              isRenaming={isRenaming}
+              onRenameEnd={handleRenameEnd}
+              onRenameCancel={handleRenameCancel}
+            />
+            <div className="ml-auto flex size-9 shrink-0 items-center justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  onClick={(e) => e.stopPropagation()}
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      className="pointer-events-none shrink-0 opacity-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 data-popup-open:pointer-events-auto data-popup-open:opacity-100"
+                    >
+                      <HugeiconsIcon
+                        icon={MoreVerticalIcon}
+                        className="size-4"
+                      />
+                    </Button>
+                  }
+                />
+                <DropdownMenuContent align="end">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={handleRenameStart}>
+                      <HugeiconsIcon
+                        icon={InputCursorTextIcon}
+                        className="size-4"
+                      />
+                      Rename
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsOpened(true);
+                      }}
+                    >
+                      <HugeiconsIcon icon={Delete02Icon} className="size-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
         }
-      }}
-    >
-      <HugeiconsIcon
-        icon={type == "file" ? File01Icon : Folder01Icon}
-        className="size-4 shrink-0"
-      />
-      <Name
-        name={name}
-        isRenaming={isRenaming}
-        onRenameEnd={handleRenameEnd}
-        onRenameCancel={handleRenameCancel}
-      />
-      <div className="ml-auto flex size-9 shrink-0 items-center justify-center">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            onClick={(e) => e.stopPropagation()}
-            render={
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                className="pointer-events-none shrink-0 opacity-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 data-popup-open:pointer-events-auto data-popup-open:opacity-100"
-              >
-                <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-              </Button>
-            }
-          />
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <DropdownMenuItem onClick={handleRenameStart}>
-                <HugeiconsIcon icon={InputCursorTextIcon} className="size-4" />
-                Rename
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeItem(path);
-                }}
-              >
-                <HugeiconsIcon icon={Delete02Icon} className="size-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </div>
+      ></Button>
+      <Dialog open={isOpened} onOpenChange={setIsOpened}>
+        <DialogContent forceOverlayRender className="bg-popover">
+          <DialogHeader>
+            <DialogTitle>Remove {name}</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to remove {name}?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline">Cancel</Button>} />
+            <Button
+              className="relative"
+              variant="destructive"
+              onClick={() => removeItem(path)}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 

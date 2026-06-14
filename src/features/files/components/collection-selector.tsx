@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { useFilesStore } from "@/stores/files/files-store";
 
-export default function Header() {
+export default function CollectionSelector() {
   const collections = useFilesStore((state) => state.collections);
   const activeCollection = useFilesStore((state) => state.activeCollection);
   const setActiveCollection = useFilesStore(
