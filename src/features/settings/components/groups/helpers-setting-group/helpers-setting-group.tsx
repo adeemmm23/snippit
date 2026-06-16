@@ -9,6 +9,7 @@ import PasswordSettingContent from "./password-setting-content";
 import SelectSettingContent from "./select-setting-content";
 import SettingGroup from "../../ui/setting-group";
 
+import { ConfirmDialog } from "@/components/base/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -59,8 +60,9 @@ export default function HelpersSettingGroup() {
 
 type HelperSettingInput = Helper & {
   onChange?: ({ name, type, options }: Partial<Helper>) => void;
-  onDelete?: () => void;
+  onDelete: () => void;
 };
+
 function HelperSettingInput({
   name,
   type,
@@ -130,9 +132,18 @@ function HelperSettingInput({
           />
         )}
       </Dialog>
-      <Button variant="destructive" size="icon" onClick={onDelete}>
-        <HugeiconsIcon icon={Delete02Icon} />
-      </Button>
+      <ConfirmDialog
+        title="Delete Helper"
+        description="Are you sure you want to delete this helper?"
+        trigger={
+          <Button variant="destructive" size="icon">
+            <HugeiconsIcon icon={Delete02Icon} />
+          </Button>
+        }
+        onConfirm={onDelete}
+        confirmClose
+        destructive
+      />
     </div>
   );
 }
