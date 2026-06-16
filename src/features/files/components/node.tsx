@@ -9,16 +9,8 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useRef, useState } from "react";
 
+import { ConfirmDialog } from "@/components/base/confirm-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -169,26 +161,18 @@ export default function Node({
           </div>
         }
       ></Button>
-      <Dialog open={isOpened} onOpenChange={setIsOpened}>
-        <DialogContent forceOverlayRender className="bg-popover">
-          <DialogHeader>
-            <DialogTitle>Remove {name}</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to remove {name}?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose render={<Button variant="outline">Cancel</Button>} />
-            <Button
-              className="relative"
-              variant="destructive"
-              onClick={() => removeItem(path)}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={isOpened}
+        onOpenChange={setIsOpened}
+        title={`Remove ${type}`}
+        description={`Are you sure you want to remove ${name}?`}
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => {
+          removeItem(path);
+          setIsOpened(false);
+        }}
+      />
     </>
   );
 }

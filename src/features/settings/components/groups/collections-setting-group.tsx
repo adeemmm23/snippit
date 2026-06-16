@@ -9,6 +9,7 @@ import { useState } from "react";
 
 import SettingGroup from "../ui/setting-group";
 
+import { ConfirmDialog } from "@/components/base/confirm-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +26,7 @@ import { useFilesStore } from "@/stores/files/files-store";
 type ActionDialogType = "delete" | "rename" | "create" | null;
 
 // TODO: handle span overflow
+// TODO: fix closing animation comes with default values
 export default function CollectionsSettingGroup() {
   const collections = useFilesStore((state) => state.collections);
   const createCollection = useFilesStore((state) => state.createCollection);
@@ -224,7 +226,7 @@ export default function CollectionsSettingGroup() {
       </Dialog>
 
       {/* Delete Dialog */}
-      <Dialog
+      <ConfirmDialog
         open={actionDialog === "delete"}
         onOpenChange={(open) => {
           if (!open) {
@@ -232,16 +234,10 @@ export default function CollectionsSettingGroup() {
             setSelectedCollection(null);
           }
         }}
-      >
-        <DialogContent className="bg-popover" forceOverlayRender>
-          <DialogHeader>
-            <DialogTitle>Delete Collection?</DialogTitle>
-            <DialogDescription>
-              Deleting "{selectedCollection}" will remove all files in this
-              collection. This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          {collections.length <= 1 && (
+        title="Delete Collection"
+        description={`Deleting "${selectedCollection}" will remove all files in this collection.`}
+        additionalContent={
+          collections.length <= 1 ? (
             <Alert>
               <HugeiconsIcon icon={Warning} />
               <AlertTitle>Cannot delete collection</AlertTitle>
@@ -250,27 +246,12 @@ export default function CollectionsSettingGroup() {
                 collection before deleting this one.
               </AlertDescription>
             </Alert>
-          )}
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setActionDialog(null);
-                setSelectedCollection(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={collections.length <= 1}
-              variant="destructive"
-              onClick={handleDelete}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          ) : undefined
+        }
+        destructive
+        disabled={collections.length <= 1}
+        onConfirm={handleDelete}
+      />
     </>
   );
 }
