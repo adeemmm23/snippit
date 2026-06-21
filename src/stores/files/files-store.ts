@@ -18,11 +18,11 @@ type FilesStore = {
   activeFile: string[];
   currenFolder: string[];
   openedFiles: { path: string[]; count: number; openedAt: number }[];
-  createCollection: (name: string) => void;
+  setFiles: (files: NodeType[]) => void;
   setActiveCollection: (name: string) => void;
+  createCollection: (name: string) => void;
   deleteCollection: (name: string) => void;
   renameCollection: (oldName: string, newName: string) => void;
-  setFiles: (files: NodeType[]) => void;
   setActiveFile: (path: string[]) => void;
   setCurrentFolder: (path: string[]) => void;
   addFiles: (files: NodeType[], path: string[]) => void;
@@ -48,7 +48,6 @@ export const useFilesStore = create<FilesStore>()(
       ],
       activeCollection: "Default",
       activeFile: [],
-      newFile: [],
       currenFolder: [],
       openedFiles: [],
       setFiles: (files) => {
