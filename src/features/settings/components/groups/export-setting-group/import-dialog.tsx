@@ -14,10 +14,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { VARIABLE_FORMATS } from "@/constants/files.constants";
 import { useFilesStore } from "@/stores/files/files-store";
+import useSettingsStore from "@/stores/settings/settings-store";
+import type { NodeType } from "@/types/node.types";
 
 export default function ImportDialog() {
   const addFiles = useFilesStore((state) => state.addFiles);
+  const variableFormat = useSettingsStore((state) => state.variableFormat);
 
   const [importOpen, setImportOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -33,10 +37,22 @@ export default function ImportDialog() {
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const importedFiles = JSON.parse(event.target?.result as string);
-        if (!Array.isArray(importedFiles)) return;
+        const importedData = JSON.parse(event.target?.result as string);
+        const { files, variableFormat: newVariableFormat } = importedData;
 
-        addFiles(importedFiles, importFolderPath);
+        if (!newVariableFormat) return;
+        if (!Array.isArray(files)) return;
+
+        let fixedFiles = files;
+
+        if (newVariableFormat !== variableFormat) {
+          fixedFiles = changeVariableFormat(
+            files,
+            newVariableFormat,
+            variableFormat,
+          );
+        }
+        addFiles(fixedFiles, importFolderPath);
         setImportOpen(false);
         setImportFile(null);
       } catch (error) {
@@ -101,3 +117,33 @@ export default function ImportDialog() {
     </Dialog>
   );
 }
+
+const formatVariable = (name: string, format: string) => {
+  return format.replace("variable", name);
+};
+
+const changeVariableFormat = (
+  items: NodeType[],
+  fromFormat: string,
+  toFormat: string,
+): NodeType[] => {
+  const fromRegex = VARIABLE_FORMATS.find((f) => f.label === fromFormat)?.value;
+
+  if (!fromRegex) return items;
+
+  return items.map((item) => {
+    if (item.type === "folder") {
+      return {
+        ...item,
+        files: changeVariableFormat(item.files, fromFormat, toFormat),
+      };
+    }
+
+    return {
+      ...item,
+      content: item.content.replace(fromRegex, (_, variableName) =>
+        formatVariable(variableName, toFormat),
+      ),
+    };
+  });
+};
