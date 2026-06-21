@@ -1,10 +1,12 @@
-import { CarouselVerticalIcon } from "@hugeicons/core-free-icons";
+import { MenuTwoLineIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group";
@@ -36,20 +38,23 @@ export default function SelectHelper({
               size="icon-xs"
               aria-label="Select option"
             >
-              <HugeiconsIcon icon={CarouselVerticalIcon} className="size-4" />
+              <HugeiconsIcon icon={MenuTwoLineIcon} className="size-4" />
             </InputGroupButton>
           }
         />
         <DropdownMenuContent align="end">
-          {optionsList.map((option) => (
-            <DropdownMenuItem
-              key={option}
-              onClick={() => onGenerate(option)}
-              className="cursor-pointer"
-            >
-              {option}
-            </DropdownMenuItem>
-          ))}
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Options</DropdownMenuLabel>
+            {optionsList.map((option) => (
+              <DropdownMenuItem
+                key={option}
+                onClick={() => onGenerate(option)}
+                className="cursor-pointer"
+              >
+                {option}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </InputGroupAddon>

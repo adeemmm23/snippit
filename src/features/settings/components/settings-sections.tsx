@@ -57,13 +57,11 @@ export default function SettingsSections() {
     };
   }, []);
 
-  // TODO: Change bottom padding to something more accurate
-  // px-4 is a work arround of ring not appearing when no padding
   return (
     <main ref={ref} className="h-full flex-1">
       <ScrollArea className="size-full overflow-auto">
         <div
-          className="flex flex-col gap-10 px-4 pb-120"
+          className="flex min-h-full flex-col gap-10 px-4"
           id="settings-sections"
         >
           <SettingSection title="Appearance">
@@ -84,10 +82,12 @@ export default function SettingsSections() {
           <SettingSection title="Danger">
             <ResetSettingGroup />
           </SettingSection>
-          <SettingSection title="About">
+          <SettingSection title="About" last>
             <AboutSettingGroup />
           </SettingSection>
         </div>
+        {/* End of content, push scroll area to bottom */}
+        <div className="min-h-[calc(100%-18.75rem)]" />
       </ScrollArea>
     </main>
   );

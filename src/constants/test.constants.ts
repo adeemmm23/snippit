@@ -1,3 +1,6 @@
+export const TUTORIAL =
+  "Hello {User},\n\nWelcome to Snippit! Here's a quick tutorial to help you get started.\n\nVariables use this format: {Something}. You can change the variable format in Settings. Any variable in your template can be edited from the Variables panel on the left.\n\nVariables with the same name share the same value:\nHello {Name}\nWelcome back {Name}\n\nTry changing the Name variable in the Variables panel and see how both values update automatically.\n\nSpecial variables can use Helpers, which assist with generating values automatically.\n\nExample: {Password}\n\nYou can create and configure your own Helpers in Settings.\n\nFinally, you can organize your templates by creating folders and files, then save them wherever you'd like in the Files section on the right.\n\nHave a wonderful day!";
+
 export const IT_SUPPORT_SNIPPETS = [
   {
     type: "folder",

@@ -1,4 +1,4 @@
-import { Delete01Icon } from "@hugeicons/core-free-icons";
+import { ThreeDViewIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import VariableInput from "./components/variable-input";
@@ -6,10 +6,12 @@ import VariablesHeader from "./components/variables-header";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { TUTORIAL } from "@/constants/test.constants";
 import { useEditorStore } from "@/stores/editor/editor-store";
 
 export default function Variables() {
   const variables = useEditorStore((state) => state.variables);
+  const setTemplate = useEditorStore((state) => state.setTemplate);
 
   const isVariables = Object.keys(variables).length <= 0;
 
@@ -38,12 +40,17 @@ export default function Variables() {
       ) : (
         <div className="text-muted-foreground my-auto py-8 text-center">
           <div className="bg-muted mb-4 inline-flex items-center justify-center rounded-sm p-2">
-            <HugeiconsIcon icon={Delete01Icon} className="size-5" />
+            <HugeiconsIcon icon={ThreeDViewIcon} className="size-5" />
           </div>
           <p className="text-sm">No variables detected</p>
           <p className="mt-2 text-xs">{"Add {Something} to your template"}</p>
-          <Button variant="ghost" size="xs" className="mt-4">
-            Learn More
+          <Button
+            variant="ghost"
+            size="xs"
+            className="mt-4"
+            onClick={() => setTemplate(TUTORIAL)}
+          >
+            Quick Start
           </Button>
         </div>
       )}

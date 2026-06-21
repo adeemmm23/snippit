@@ -13,12 +13,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useFilesStore } from "@/stores/files/files-store";
+import useSettingsStore from "@/stores/settings/settings-store";
 
 export default function ExportDialog() {
   const collections = useFilesStore((state) => state.collections);
   const activeCollection = useFilesStore((state) => state.activeCollection);
   const files =
     collections.find((c) => c.name === activeCollection)?.files || [];
+  const variableFormat = useSettingsStore((state) => state.variableFormat);
 
   const [exportOpen, setExportOpen] = useState(false);
   const [exportFileName, setExportFileName] = useState("snippets.json");
@@ -34,9 +36,11 @@ export default function ExportDialog() {
   const handleExport = () => {
     if (!canConfirmExport) return;
 
-    const dataStr =
-      "data:text/json;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(files));
+    const data = {
+      files,
+      variableFormat,
+    };
+    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`;
     const downloadAnchorNode = document.createElement("a");
     downloadAnchorNode.setAttribute("href", dataStr);
     downloadAnchorNode.setAttribute("download", sanitizedExportFileName);
