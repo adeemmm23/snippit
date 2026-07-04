@@ -118,7 +118,7 @@ export default function ImportDialog() {
                 setSelectedCollection(value ?? activeCollection);
               }}
             >
-              <SelectTrigger className="dark:bg-background w-full border-0 shadow-none">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select Collection" />
               </SelectTrigger>
               <SelectContent>
