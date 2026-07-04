@@ -20,13 +20,16 @@ import { getNodeContent } from "@/utils/files.utils";
 
 type FolderSelectorProps = {
   onSelect: (folder: string[]) => void;
+  selectedCollection: string;
 };
 
-export default function FolderSelector({ onSelect }: FolderSelectorProps) {
+export default function FolderSelector({
+  onSelect,
+  selectedCollection,
+}: FolderSelectorProps) {
   const collections = useFilesStore((state) => state.collections);
-  const activeCollection = useFilesStore((state) => state.activeCollection);
   const files =
-    collections.find((c) => c.name === activeCollection)?.files || [];
+    collections.find((c) => c.name === selectedCollection)?.files || [];
 
   const [path, setPath] = useState<string[]>([]);
   const [selectedPath, setSelectedPath] = useState<string[]>([]);
@@ -105,6 +108,7 @@ export default function FolderSelector({ onSelect }: FolderSelectorProps) {
         onSelect={() => {
           onSelect(selectedPath);
         }}
+        selectedCollection={selectedCollection}
       />
     </DialogContent>
   );

@@ -12,14 +12,33 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useFilesStore } from "@/stores/files/files-store";
 import useSettingsStore from "@/stores/settings/settings-store";
 
 export default function ExportDialog() {
   const collections = useFilesStore((state) => state.collections);
+  const collectionsList = collections.map((collection) => ({
+    value: collection.name,
+    label: collection.name,
+  }));
+
   const activeCollection = useFilesStore((state) => state.activeCollection);
+
+  const [selectedCollection, setSelectedCollection] =
+    useState(activeCollection);
+
   const files =
-    collections.find((c) => c.name === activeCollection)?.files || [];
+    collections.find((c) => c.name === selectedCollection)?.files || [];
+
   const variableFormat = useSettingsStore((state) => state.variableFormat);
 
   const [exportOpen, setExportOpen] = useState(false);
@@ -60,6 +79,27 @@ export default function ExportDialog() {
             Choose a file name for your export.
           </DialogDescription>
         </DialogHeader>
+        <Select
+          items={collectionsList}
+          value={selectedCollection}
+          onValueChange={(value) => {
+            setSelectedCollection(value ?? activeCollection);
+          }}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Collection" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Collections</SelectLabel>
+              {collections.map((item) => (
+                <SelectItem key={item.name} value={item.name}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
         <div className="flex flex-col gap-2">
           <Label htmlFor="export-file-name">File name</Label>
           <Input
