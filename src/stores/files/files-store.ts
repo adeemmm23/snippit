@@ -25,11 +25,16 @@ type FilesStore = {
   renameCollection: (oldName: string, newName: string) => void;
   setActiveFile: (path: string[]) => void;
   setCurrentFolder: (path: string[]) => void;
-  addFiles: (files: NodeType[], path: string[]) => void;
+  addFiles: (
+    files: NodeType[],
+    path: string[],
+    selectedCollection?: string,
+  ) => void;
   saveActiveFile: () => boolean;
   createItem: (
     path: string[],
     type: "file" | "folder",
+    selectedCollection?: string,
     content?: string,
   ) => void;
   removeItem: (path: string[]) => void;
@@ -172,10 +177,12 @@ export const useFilesStore = create<FilesStore>()(
       setCurrentFolder: (currentWorkingFolder) => {
         set({ currenFolder: currentWorkingFolder });
       },
-      addFiles: (newFiles, path) => {
+      addFiles: (newFiles, path, selecteCollection) => {
         const { collections, activeCollection } = get();
         const files =
-          collections.find((c) => c.name === activeCollection)?.files || [];
+          collections.find(
+            (c) => c.name === (selecteCollection ?? activeCollection),
+          )?.files || [];
         const updatedFiles = deepClone(files);
 
         const node = getNodeContent(path, updatedFiles);
@@ -187,7 +194,7 @@ export const useFilesStore = create<FilesStore>()(
         }
 
         const updatedCollections = collections.map((collection) => {
-          if (collection.name === activeCollection) {
+          if (collection.name === (selecteCollection ?? activeCollection)) {
             return { ...collection, files: updatedFiles };
           }
           return collection;
@@ -225,10 +232,14 @@ export const useFilesStore = create<FilesStore>()(
         set({ collections: updatedCollections });
         return true;
       },
-      createItem: (path, type, content) => {
+      createItem: (path, type, selecteCollection, content) => {
         const { collections, activeCollection } = get();
         const files =
-          collections.find((c) => c.name === activeCollection)?.files || [];
+          collections.find(
+            (c) => c.name === (selecteCollection ?? activeCollection),
+          )?.files || [];
+
+        console.log("createItem", path, type, content, selecteCollection);
         const newFiles = deepClone(files);
         const name = path[path.length - 1];
 
@@ -256,7 +267,7 @@ export const useFilesStore = create<FilesStore>()(
         parent.push(newNode);
 
         const updatedCollections = collections.map((collection) => {
-          if (collection.name === activeCollection) {
+          if (collection.name === (selecteCollection ?? activeCollection)) {
             return { ...collection, files: newFiles };
           }
           return collection;

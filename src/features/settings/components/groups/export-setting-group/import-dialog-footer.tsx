@@ -15,15 +15,29 @@ import { useFilesStore } from "@/stores/files/files-store";
 type ImportDialogFooterProps = {
   onSelect: () => void;
   path: string[];
+  selectedCollection: string;
 };
 
 export default function ImportDialogFooter({
   onSelect,
   path,
+  selectedCollection,
 }: ImportDialogFooterProps) {
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const createItem = useFilesStore((state) => state.createItem);
+
+  const handleCreateFolder = () => {
+    if (!inputRef.current?.value) return;
+    if (inputRef.current?.value.trim() === "") return;
+
+    createItem(
+      [...path, inputRef.current?.value ?? "New folder"],
+      "folder",
+      selectedCollection,
+    );
+    setIsCreatingFolder(false);
+  };
 
   if (isCreatingFolder) {
     return (
@@ -34,13 +48,9 @@ export default function ImportDialogFooter({
             ref={inputRef}
             placeholder="New folder name"
             onKeyDown={(e) => {
+              e.preventDefault();
               if (e.key === "Enter") {
-                e.preventDefault();
-                createItem(
-                  [...path, inputRef.current?.value ?? "New folder"],
-                  "folder",
-                );
-                setIsCreatingFolder(false);
+                handleCreateFolder();
               }
             }}
           />
@@ -49,11 +59,7 @@ export default function ImportDialogFooter({
               variant="ghost"
               size="icon-xs"
               onClick={() => {
-                createItem(
-                  [...path, inputRef.current?.value ?? "New folder"],
-                  "folder",
-                );
-                setIsCreatingFolder(false);
+                handleCreateFolder();
               }}
             >
               <HugeiconsIcon icon={ArrowRight} className="size-4 shrink-0" />

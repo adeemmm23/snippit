@@ -14,6 +14,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { VARIABLE_FORMATS } from "@/constants/files.constants";
 import { useFilesStore } from "@/stores/files/files-store";
 import useSettingsStore from "@/stores/settings/settings-store";
@@ -22,6 +31,15 @@ import type { NodeType } from "@/types/node.types";
 export default function ImportDialog() {
   const addFiles = useFilesStore((state) => state.addFiles);
   const variableFormat = useSettingsStore((state) => state.variableFormat);
+
+  const collections = useFilesStore((state) => state.collections);
+  const collectionsList = collections.map((collection) => ({
+    value: collection.name,
+    label: collection.name,
+  }));
+  const activeCollection = useFilesStore((state) => state.activeCollection);
+  const [selectedCollection, setSelectedCollection] =
+    useState(activeCollection);
 
   const [importOpen, setImportOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -52,7 +70,7 @@ export default function ImportDialog() {
             variableFormat,
           );
         }
-        addFiles(fixedFiles, importFolderPath);
+        addFiles(fixedFiles, importFolderPath, selectedCollection);
         setImportOpen(false);
         setImportFile(null);
       } catch (error) {
@@ -92,6 +110,30 @@ export default function ImportDialog() {
             />
           </div>
           <div className="flex flex-col gap-2">
+            <Label htmlFor="import-folder">Collection</Label>
+            <Select
+              items={collectionsList}
+              value={selectedCollection}
+              onValueChange={(value) => {
+                setSelectedCollection(value ?? activeCollection);
+              }}
+            >
+              <SelectTrigger className="dark:bg-background w-full border-0 shadow-none">
+                <SelectValue placeholder="Select Collection" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Collections</SelectLabel>
+                  {collections.map((item) => (
+                    <SelectItem key={item.name} value={item.name}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
             <Label htmlFor="import-folder">Folder location</Label>
             <Dialog>
               <DialogTrigger
@@ -101,7 +143,10 @@ export default function ImportDialog() {
                   </Button>
                 }
               />
-              <FolderSelector onSelect={setImportFolderPath} />
+              <FolderSelector
+                onSelect={setImportFolderPath}
+                selectedCollection={selectedCollection}
+              />
             </Dialog>
           </div>
         </div>
